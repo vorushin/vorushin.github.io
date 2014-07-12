@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Контроль в широком смысле
-permalink: /blog/control-in-its-wider-sense-russian-translation
+permalink: /blog/18-control-in-its-wider-sense-russian-translation
 ---
 Перевод свежего поста из блога Signals vs. Noise [Control in its wider sense](http://37signals.com/svn/posts/2060-control-in-its-wider-sense):
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Каких программистов берут в GitHub
-permalink: /blog/github-chris-wanstrath
+permalink: /blog/2-github-chris-wanstrath
 ---
 Один из создателей [GitHub](http://github.com), Chris Wanstrath, выступил на конференции [Ruby Hoedown 2008](http://rubyhoedown2008.confreaks.com/). Особенно порадовали слова о том, каким нужно быть (а точнее что нужно делать), чтобы начать делать интересные проекты с самыми лучшими разрабочиками со всего мира:
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: if request.method == 'GET'
-permalink: /blog/if-request-method-get
+permalink: /blog/55-if-request-method-get
 ---
 Наконец-то я понял, почему пишут так
 

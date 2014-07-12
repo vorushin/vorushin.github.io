@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Рисоваська и Erlang
-permalink: /blog/risovaska-erlang
+permalink: /blog/13-risovaska-erlang
 ---
 Сегодня получил письмо от Михаила:
 

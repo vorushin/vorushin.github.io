@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Coders at Work
-permalink: /blog/coders-at-work
+permalink: /blog/14-coders-at-work
 ---
 <a href="http://www.amazon.com/Coders-at-Work-Peter-Seibel/dp/1430219483"><img src="http://www.codersatwork.com/cover.jpg" align="left" style="margin: 0 10px 10px 0;"></a>
 

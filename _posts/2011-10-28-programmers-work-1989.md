@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Programmers at work (1989)
-permalink: /blog/programmers-work-1989
+permalink: /blog/68-programmers-work-1989
 ---
 С большим удовольствием читаю книгу ["Programmers at work"](http://www.amazon.com/Programmers-Work-Interviews-Computer-Industry/dp/1556152116), выпущенную в 1989 году. Думаю, что она понравится всем тем, кому понравилась книга ["Coders at work"](http://www.codersatwork.com/) ([также известная как "Кодеры за работой"](http://softwaremaniacs.org/blog/2011/04/02/coder-at-work-in-russian/)). Ниже - некоторые цитаты, которые я уже подчеркнул (а я еще в самом начале книги).
 <!--more-->

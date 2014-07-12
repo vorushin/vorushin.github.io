@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Махатма Ганди о веб-сервисах
-permalink: /blog/mahatma-gandhi-on-web-services
+permalink: /blog/39-mahatma-gandhi-on-web-services
 ---
 Цитата из ["Автобиографии"](http://en.wikipedia.org/wiki/The_Story_of_My_Experiments_with_Truth) Ганди:
 

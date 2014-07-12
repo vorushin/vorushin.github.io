@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Слабые места Javascript
-permalink: /blog/weak-parts-of-javascript
+permalink: /blog/38-weak-parts-of-javascript
 ---
 Все больше пишу на Javascript - сначала jQuery для всяких формочек, потом Google/Yandex Maps, сейчас большой проект с Canvas. Среди друзей больше всего работал с JS [Дима Смолин](http://dimsmol.livejournal.com), на днях обсуждали с ним слабые места Javascript:
 

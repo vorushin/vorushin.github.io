@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Еще одна отличная книга, "Doug Lea, Concurrent Programming in Java"
-permalink: /blog/doug-lea-concurrent-programming-book
+permalink: /blog/76-doug-lea-concurrent-programming-book
 ---
 Вчера начал читать книгу Doug Lea "Concurrent Programming in Java". Пусть слово Java вас не смущает - хоть примеры в книге и написаны на Java, принципы, приемы и паттерны применимы и ко многим другим языкам.
 

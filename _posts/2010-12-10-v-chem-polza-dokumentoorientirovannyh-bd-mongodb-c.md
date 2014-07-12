@@ -1,7 +1,7 @@
 ---
 layout: post
 title: В чем польза документоориентированных БД
-permalink: /blog/v-chem-polza-dokumentoorientirovannyh-bd-mongodb-c
+permalink: /blog/52-v-chem-polza-dokumentoorientirovannyh-bd-mongodb-c
 ---
 Первый use-case использования документоориентированных БД, который не дает мне покоя.
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Бывают ли такие дизайнеры?
-permalink: /blog/byvayut-li-takie-dizajnery
+permalink: /blog/47-byvayut-li-takie-dizajnery
 ---
 У меня есть больной вопрос, мои уважаемые читатели.
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Сложности обучения
-permalink: /blog/hard-parts-of-learning
+permalink: /blog/71-hard-parts-of-learning
 ---
 ### Учиться тяжело
 

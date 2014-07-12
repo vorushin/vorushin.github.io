@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Celery - task queue/job queue based on distributed message passing
-permalink: /blog/celery-task-queuejob-queue-based-distributed-messa
+permalink: /blog/32-celery-task-queuejob-queue-based-distributed-messa
 ---
 Определяем в питоновском коде задачи, которые должны выполняться асинхронно:
 

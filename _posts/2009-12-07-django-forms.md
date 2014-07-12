@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Django Forms
-permalink: /blog/django-forms
+permalink: /blog/12-django-forms
 ---
 <a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!"><img src="http://dl.dropbox.com/u/318944/badge.png" width="210" height="65" alt="pony powered"></a>
 

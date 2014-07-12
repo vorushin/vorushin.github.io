@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Развертывание Django-проектов c помощью Fabric
-permalink: /blog/razvertyvanie-django-proektov-c-pomoshyu-fabric
+permalink: /blog/10-razvertyvanie-django-proektov-c-pomoshyu-fabric
 ---
 В одном из проектов необходимо регулярно выкладывать код из ветки stage на staging сервер. Начали делать это вручную - входишь через ssh, делаешь git push origin stage, если нужно - обновляешь базу и затем перезапускаешь apache. К концу этой недели решили, что хорошо бы все эти действия выполнять одной командой. Я прошерстил блоги - сейчас очень активно пишут про использования для этих целей библиотеки [Fabric](http://fabfile.org) (это аналог [Capistrano](http://www.capify.org/) из Ruby on Rails).
 <!--more-->

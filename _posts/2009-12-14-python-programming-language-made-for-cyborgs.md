@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Язык программирования Python создан специально для киборгов
-permalink: /blog/python-programming-language-made-for-cyborgs
+permalink: /blog/17-python-programming-language-made-for-cyborgs
 ---
 ![](http://dl.dropbox.com/u/318944/python_cyborgs/Picture%203.png)
 

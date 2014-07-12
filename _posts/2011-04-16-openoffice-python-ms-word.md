@@ -1,7 +1,7 @@
 ---
 layout: post
 title: OpenOffice + Python, pабота с файлами MS Word
-permalink: /blog/openoffice-python-ms-word
+permalink: /blog/58-openoffice-python-ms-word
 ---
 Пару недель назад для проекта [Grammarly Handbook](http://handbook.grammarly.com) понадобилось импортировать много форматированного текста из документов MS Word. Текст находился в 40 файлах размером от одной до двадцати страниц. Первые несколько страниц я перенес вручную и несколько утомился - механическая работа меня не очень радует. Начал искать возможность читать вордовские документы из Питона.
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Python quotes
-permalink: /blog/python-quotes
+permalink: /blog/28-python-quotes
 ---
 Есть такой замечательный ресурс [Python Quotes](http://www.amk.ca/quotations/python-quotes/) - 10 страниц отборных цитат из переписки в python-dev, вот некоторые из них:
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: AkismetModerator для комментариев в Django
-permalink: /blog/akismet-moderator-for-django-comments
+permalink: /blog/15-akismet-moderator-for-django-comments
 ---
 В django есть хорошее встроенное приложение comments с поддержкой [модерации](http://docs.djangoproject.com/en/dev/ref/contrib/comments/moderation/#ref-contrib-comments-moderation). Сегодня написал AkismetModerator - крохотный класс, который фильтрует спам в комментариях с помощью сервиса [Akismet](http://akismet.com):
 

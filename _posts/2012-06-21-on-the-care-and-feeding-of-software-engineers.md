@@ -1,7 +1,7 @@
 ---
 layout: post
 title: О статье "Кормление и уход за программистами"
-permalink: /blog/on-the-care-and-feeding-of-software-engineers
+permalink: /blog/75-on-the-care-and-feeding-of-software-engineers
 ---
 В [недавнем дайджесте dou.ua](http://dou.ua/lenta/digests/digest-105/) я нашел ссылку на статью [The care and feeding of software engineers](http://www.nczonline.net/blog/2012/06/12/the-care-and-feeding-of-software-engineers-or-why-engineers-are-grumpy/). Название не особо впечатляло, размер статьи не очень вдохновлял, но я все же начал ее читать. И оказалось, что не напрасно. Многие фрагменты я выделил и хочу поделиться ими с вами.
 <!--more-->

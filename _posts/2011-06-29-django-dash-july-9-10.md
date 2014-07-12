@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Django Dash 9-10 июля
-permalink: /blog/django-dash-july-9-10
+permalink: /blog/62-django-dash-july-9-10
 ---
 [Django Dash](http://djangodash.com) - международный конкурс, в котором [компактные спецназ-команды](http://vorushin.ru/blog/44-compact-swat-teams/) за 48 часов создают полноценный проект. Правила простые:
 

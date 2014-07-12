@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Лев Валкин про Силиконовую долину
-permalink: /blog/lev-valkin-pro-silikonovuyu-dolinu
+permalink: /blog/66-lev-valkin-pro-silikonovuyu-dolinu
 ---
 Вчера [Лев](http://lionet.info/) рассказывал про то, что отличает Силиконовую долину от России-Украины и что нам делать чтобы появилась среда, благоприятная для стартапов.
 

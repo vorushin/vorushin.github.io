@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Подробнее о Celery
-permalink: /blog/celery-described
+permalink: /blog/34-celery-described
 ---
 Пока проверял как [Celery](http://ask.github.com/celery/getting-started/introduction.html) работает с MySQL в качестве брокера, материала набежало на большую статью. Сергей Лебедев, спасибо за этот замечательный [вопрос](http://vorushin.ru/blog/32-celery-task-queuejob-queue-based-distributed-messa/#comments)!
 <!--more-->

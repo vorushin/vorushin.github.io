@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Выбор инструментов
-permalink: /blog/vybor-instrumentov
+permalink: /blog/50-vybor-instrumentov
 ---
 Короткая мысль:
 

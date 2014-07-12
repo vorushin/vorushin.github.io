@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Шаблоны страниц глазами дизайнера
-permalink: /blog/page-templates-from-designers-perspective
+permalink: /blog/48-page-templates-from-designers-perspective
 ---
 В новом проекте я много работаю в роли дизайнера-юзабилиста-фронтендщика. Пишу html, css, javascript. Думаю страницами, действиями, приоритетами. Хочу поделиться тем, что я успел увидеть глазами дизайнера в оформлении шаблонов страниц сайта.
 

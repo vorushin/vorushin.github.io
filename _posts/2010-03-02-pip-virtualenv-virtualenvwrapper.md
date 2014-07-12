@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Pip, virtualenv и virtualenvwrapper
-permalink: /blog/pip-virtualenv-virtualenvwrapper
+permalink: /blog/29-pip-virtualenv-virtualenvwrapper
 ---
 В мейл-конференции Python-Dev всерьез обсуждают [включение фукнциональности virtualenv в Python](http://www.mail-archive.com/python-dev@python.org/msg45750.html). Это очень удобный инструмент питониста, позволяющий легко работать на одной машине с разными версиями библиотек (например, с django 1.0.4 и django из транка), быстро передавать список зависимостей проекта другим разработчикам (а они смогут поставить все библиотеки одной командой), упрощают деплоймент.
 <!--more-->

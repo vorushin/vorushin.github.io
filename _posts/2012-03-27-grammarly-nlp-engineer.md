@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Grammarly, ищем Natural Language Processing Engineer
-permalink: /blog/grammarly-nlp-engineer
+permalink: /blog/72-grammarly-nlp-engineer
 ---
 С тех пор, как [мы переехали в Киев](/blog/42-moved-to-kiev/), я работаю в компании [Grammarly](http://grammarly.com). Это частная продуктовая компания с офисами в Киеве и Сан-Франциско. Продукты компании нацелены на улучшение англоязычных текстов ([spelling-grammar-plagiarism checker](http://grammarly.com), [English Q&A community](http://answers.grammarly.com/), [English Handbook](http://www.grammarly.com/handbook/)). 
 <!--more-->

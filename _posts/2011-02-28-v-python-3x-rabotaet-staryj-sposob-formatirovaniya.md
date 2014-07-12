@@ -1,7 +1,7 @@
 ---
 layout: post
 title: В Python 3.x работает старый способ форматирования строк
-permalink: /blog/v-python-3x-rabotaet-staryj-sposob-formatirovaniya
+permalink: /blog/57-v-python-3x-rabotaet-staryj-sposob-formatirovaniya
 ---
 А старый добрый способ форматирования строк с помощью % в Python 3000 всё-таки оставили!
 

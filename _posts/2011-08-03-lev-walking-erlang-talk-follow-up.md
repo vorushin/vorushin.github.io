@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Лев Валкин про ФП и Erlang
-permalink: /blog/lev-walking-erlang-talk-follow-up
+permalink: /blog/65-lev-walking-erlang-talk-follow-up
 ---
 Вчера ходили с [@vseloved](https://twitter.com/#!/vseloved) и [@matveym](https://twitter.com/#!/matveym) на [выступление Льва Валкина](http://www.developers.org.ua/calendar/751/) про функциональное программирование в целом и Erlang в частности. Кратко запишу основные тезисы, которые мне очень актуальны.
 

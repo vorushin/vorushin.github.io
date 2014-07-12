@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Какой совет я мог бы дать себе 20-летнему?
-permalink: /blog/possible-advice-to-20-yrs-old-me
+permalink: /blog/77-possible-advice-to-20-yrs-old-me
 ---
 Вчера по дороге из офиса я думал на тему "Какой совет я мог бы дать себе 20-летнему?". И вот что у меня получилось:
 

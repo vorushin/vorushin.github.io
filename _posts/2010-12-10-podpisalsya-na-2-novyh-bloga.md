@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Подписался на 2 новых блога
-permalink: /blog/podpisalsya-na-2-novyh-bloga
+permalink: /blog/51-podpisalsya-na-2-novyh-bloga
 ---
 <http://codeascraft.etsy.com/> - компания [Etsy](http://etsy.com) делится своим опытом в разработке, мониторинге и прочих областях
 

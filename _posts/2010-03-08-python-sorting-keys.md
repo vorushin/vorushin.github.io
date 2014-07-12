@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Sorting with keys
-permalink: /blog/python-sorting-keys
+permalink: /blog/30-python-sorting-keys
 ---
 И снова цитата из [Code Like a Pythonista](http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#sorting-with-keys):
 

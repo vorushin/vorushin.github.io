@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Очистка кеша memcached
-permalink: /blog/clear-cache-memcached
+permalink: /blog/16-clear-cache-memcached
 ---
     from memcache import Client
     c = Client(('127.0.0.1:11211',))

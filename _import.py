@@ -11,9 +11,9 @@ def post_text(entry):
 	s = """---
 layout: post
 title: %s
-permalink: /blog/%s
+permalink: /blog/%s-%s
 ---
-%s""" % (fields["title"], fields["slug"], fields["text_markdown"])
+%s""" % (fields["title"], entry["pk"], fields["slug"], fields["text_markdown"])
 	return s.encode("utf-8")
 
 

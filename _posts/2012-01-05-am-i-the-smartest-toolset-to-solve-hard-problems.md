@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Продуктивно ли считать себя самым умным и как решать действительно сложные задачи
-permalink: /blog/am-i-the-smartest-toolset-to-solve-hard-problems
+permalink: /blog/70-am-i-the-smartest-toolset-to-solve-hard-problems
 ---
 Сегодня мне очень удачно [попался](http://news.ycombinator.com/item?id=3427762) [замечательный комментарий](http://www.reddit.com/r/confession/comments/nxdzz/im_not_as_smart_as_i_thought_i_was/c3d91jl) про ощущение себя самым умным и про то, как решать действительно сложные задачи. Эти два вопроса очень важны для меня в последнее время, поэтому воспользуюсь таким прекрасным поводом поделиться своими находками.
 <!--more-->

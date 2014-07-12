@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Python и скорость. Unladen Swallow, PyPy, Cython
-permalink: /blog/python-i-skorost-unladen-swallow-pypy-cython
+permalink: /blog/9-python-i-skorost-unladen-swallow-pypy-cython
 ---
 Краткий перевод обсуждения [Recommendation against Python?](http://groups.google.com/group/unladen-swallow/browse_thread/thread/4edbc406f544643e#):
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Python XML serializer
-permalink: /blog/python-xml-serializer
+permalink: /blog/11-python-xml-serializer
 ---
 Потребовалось мне на днях сделать сериализацию простого Python-dictionary в XML. Элементы словаря - списки и прочие объекты. Готового сниппета я не нашел, написал свой компактный (меньше 30 строчек) сериализатор.
 <!--more-->

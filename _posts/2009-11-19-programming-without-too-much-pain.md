@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Программировать без лишней боли
-permalink: /blog/programming-without-too-much-pain
+permalink: /blog/6-programming-without-too-much-pain
 ---
 <img src="http://farm3.static.flickr.com/2658/4107572026_9c0e8ed3f9_m.jpg" align="left" style="margin: 0 1em 2em 0;"/>
 
