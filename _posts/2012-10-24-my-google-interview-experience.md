@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Мой опыт собеседования в Google
-permalink: /blog/my-google-interview-experience
+permalink: /blog/79-my-google-interview-experience
 ---
 Этим летом я проходил собеседование на роль Software Engineer в Google Zürich. Процесс меня приятно удивил - оказалось, что алгоритмическим задачкам отводится не так уж много времени, а такие важные области как software engineering и software design прорабатываются весьма тщательно.
 <!--more-->
