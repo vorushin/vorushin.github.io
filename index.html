@@ -1,1 +1,18 @@
-Hello, Github Pages
+---
+layout: default
+---
+<div id="entries">
+{% for post in site.posts %}
+	<h2>
+	  <a href="{{ post.url }}" class="entry_title" rel="bookmark">{{ post.title }}</a>
+	  <span class="entry_date">{{ post.date | date: "%d.%m.%Y" }}</span>
+	</h2>
+	{% if post.content contains site.excerpt_separator %}
+	<div class="entry">{{ post.excerpt }}</div>
+	<h4><a href="{{ post.url }}">Читать дальше &rarr;</a></h4>
+	{% else %}
+	<div class="entry">{{ post.content }}</div>
+	{% endif %}
+{% endfor %}
+<h2><a href="/">Архив статей</a></h2>
+</div>
