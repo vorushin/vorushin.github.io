@@ -7,6 +7,7 @@ permalink: /blog/interview-startup
 
 <object width="400" height="320"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=7626222&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=7626222&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=00ADEF&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="400" height="320"></embed></object><p><a href="http://vimeo.com/7626222">Роман Ворушин</a> from <a href="http://vimeo.com/user2498296">kamblog</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
 <!--more-->
+
 ###Что произошло
 
 Я работал руководителем группы программистов в Казкоммерцбанке. Работа была интересная, ребята замечательные - в компании собрались сильные программисты со всей страны, а в свой отдел я набирал самых умных, подвижных и смелых. Большая зарплата, бонусы-премии, съемная квартира в пяти минутах ходьбы и горы рядом с городом. Преподаватели из Carnegie Mellon University, хорошее руководство и лето с февраля по ноябрь.
