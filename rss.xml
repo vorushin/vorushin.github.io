@@ -6,10 +6,10 @@ redirect_from: "/feeds/entries/"
 <feed xmlns="http://www.w3.org/2005/Atom">
   
   <title type="text" xml:lang="en">{{ site.root_desc }}</title>
-  <link type="application/atom+xml" href="http://vorushin.github.io/feeds/entries/" rel="self"/>
-  <link type="text" href="http://vorushin.github.io" rel="alternate"/>
+  <link type="application/atom+xml" href="https://vorushin.github.io/feeds/entries/" rel="self"/>
+  <link type="text" href="https://vorushin.github.io" rel="alternate"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
-  <id>http://vorushin.github.io</id>
+  <id>https://vorushin.github.io</id>
   <author>
     <name>Roman Vorushin</name>
   </author>
@@ -18,9 +18,9 @@ redirect_from: "/feeds/entries/"
   {% for post in site.posts limit:20 %}
   <entry>
     <title>{{ post.title }}</title>
-    <link href="http://vorushin.github.io{{ post.url }}"/>
+    <link href="https://vorushin.github.io{{ post.url }}"/>
     <updated>{{ post.date | date_to_xmlschema }}</updated>
-    <id>http://vorushin.github.io{{ post.id }}</id>
+    <id>https://vorushin.github.io{{ post.id }}</id>
     <content type="html">{{ post.content | xml_escape }}</content>
   </entry>
   {% endfor %}
