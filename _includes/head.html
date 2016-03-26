@@ -9,3 +9,9 @@
 <link rel="alternate" type="application/atom+xml" title="Блог - свежие записи" href="/feeds/entries/"/>
 
 <title>{% if page.title %}{{ page.title }} - {% endif %}Блог Романа Ворушина</title>
+
+<script>
+if (window.location.host.substr(-10) == '.github.io' && window.location.protocol != 'https:') {
+    window.location.protocol = 'https:';
+}
+</script>
