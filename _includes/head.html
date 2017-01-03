@@ -1,15 +1,20 @@
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
 
 <meta name="keywords" content="python, django, программирование, блог, software engineer, google, жизнь">
 
 <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" type="text/css" media="all" href="/css/main.css"/>
 
 <link rel="alternate" type="application/atom+xml" title="Блог - свежие записи" href="/feeds/entries/"/>
 
+<link rel="stylesheet" type="text/css" media="all" href="/css/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="/css/main.css"/>
+
 <title>{% if page.title %}{{ page.title }} - {% endif %}Блог Романа Ворушина</title>
 
+<!-- Redirect http: to https: -->
 <script>
 if (window.location.host.substr(-10) == '.github.io' && window.location.protocol != 'https:') {
     window.location.protocol = 'https:';
@@ -24,5 +29,4 @@ if (window.location.host.substr(-10) == '.github.io' && window.location.protocol
 
   ga('create', 'UA-75635705-1', 'auto');
   ga('send', 'pageview');
-
 </script>

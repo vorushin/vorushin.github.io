@@ -1,90 +1,27 @@
 @CHARSET "UTF-8";
 
-/*
-    reset reloaded from meyerweb.com
-*/
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, font, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: 0;
-	font-weight: inherit;
-	font-style: inherit;
-	font-size: 100%;
-	font-family: inherit;
-	vertical-align: baseline;
-}
-/* remember to define focus styles! */
-:focus {
-	outline: 0;
-}
-body {
-	line-height: 1;
-	color: black;
-	background: white;
-}
-ol, ul {
-	list-style: none;
-}
-/* tables still need 'cellspacing="0"' in the markup */
-table {
-	border-collapse: separate;
-	border-spacing: 0;
-}
-caption, th, td {
-	text-align: left;
-	font-weight: normal;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: "";
-}
-blockquote, q {
-	quotes: "" "";
-}
-
 /***********************
      MAIN LAYOUT
 ***********************/
 
 html {
+    margin: 0 auto;
+    padding: 0 5%;
+    line-height: 18px;
+    position: relative; /* special for IE and floats */
+}
+body {
     font-family: trebuchet, Verdana, Geneva;
-	/*font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;*/
-    /*font-size: 0.8em;*/
     font-size: 13px;
     line-height: 1.4em;
     background-color: white;
     color: black;
-    margin: 0 auto;
-    padding: 0 5%;
-    min-width: 820px;
-    max-width: 820px;
-    line-height: 18px;
-    position: relative; /* special for IE and floats */
 }
 #entries {
     float: left;
-    width: 600px;
 }
 .single_column {
     float: left;
-    width: 800px;
-}
-.right_bar {
-    margin-left: 720px;
-}
-#links {
-    /*float: left;*/
-    /*width: 280px;*/
-    margin-left: 640px;
 }
 p {
     line-height: 1.4em;
@@ -209,46 +146,11 @@ a.comments_count {
     font-size: 16px;
 }
 
-/***********************
-     ENTRY COMMENTS
-***********************/
-#add_comment {
-    border-style: dotted;
-    border-width: 1px 0 0 0;
-    border-color: black;
-    padding-top: 0px;
-}
-#add_comment_form {
-    margin-bottom: 24px;
-}
-.vorushin_comment {
-    background: #ddd;
-}
-#id_name, #id_email, #id_url, #id_comment {
-    width: 450px;
-}
-#id_comment {
-    height: 240px;
-}
-#id_honeypot {
-    display: none;
-}
-#id_submit {
-    width: 30%;
-    margin-left: 35%;
-}
-.gray {
-    color: #888;
-    font-size: 12px;
-}
-.add_comment_table td{
-    vertical-align: middle;
-    padding: 0.5% 0%;
-}
-.add_comment_table .label {
-    width: 40%;
-}
-ul.errorlist {
-    color: red;
-    font-weight: bold;
+
+/*
+ * Override Bootstrap's default container.
+ */
+
+.container {
+  max-width: 60rem;
 }

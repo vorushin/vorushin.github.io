@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   {% include head.html %}
 </head>
 <body>
-	<div id="header">
+	<div id="header" class="container">
 	<h2 id="top_title">
 	  <a href="/">Блог Романа Ворушина</a>
 	  <a href="/feeds/entries/">
-	     <img src="/img/feed-icon-14x14.png" id="feed_icon" alt="Блог - свежие записи и ссылки (Atom)">
+	     <img src="/img/feed-icon-14x14.png" id="feed_icon" alt="Блог - свежие записи (Atom)">
 	  </a>
 	</h2>
 	<p>Программирование, веб, python, django и многое-многое другое</p>
 	</div>
-	<div class="single_column">{{ content }}</div>
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-try {
-var pageTracker = _gat._getTracker("UA-11723567-1");
-pageTracker._trackPageview();
-} catch(err) {}</script>
+	<div class="container">{{ content }}</div>
+	<script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+	try {
+	var pageTracker = _gat._getTracker("UA-11723567-1");
+	pageTracker._trackPageview();
+	} catch(err) {}</script>
 </body>
 </html>
