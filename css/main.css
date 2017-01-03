@@ -6,7 +6,6 @@
 
 html {
     margin: 0 auto;
-    padding: 0 5%;
     line-height: 18px;
     position: relative; /* special for IE and floats */
 }
