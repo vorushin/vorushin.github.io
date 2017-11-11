@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Как запрыгнуть в поезд технологий Deep Machine Learning
+title: Как запрыгнуть в поезд глубокого машинного обучения
 permalink: /blog/how-to-jump-into-deep-ml-train
 ---
 
