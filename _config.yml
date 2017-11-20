@@ -5,3 +5,6 @@ paginate: 20
 name: Блог Романа Ворушина
 url: https://vorushin.github.io
 author: Roman Vorushin (roman.vorushin@gmail.com)
+
+plugins:
+  - jekyll-feed
