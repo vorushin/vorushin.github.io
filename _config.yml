@@ -5,9 +5,9 @@ paginate: 20
 name: Блог Романа Ворушина
 url: vorushin.github.io
 author: Roman Vorushin (roman.vorushin@gmail.com)
-rss_path: feeds/entries/
-rss_name: index.html
-rss_post_limit: 20
+
+plugins:
+  - jekyll-feed
 
 gems:
   - jekyll-redirect-from
