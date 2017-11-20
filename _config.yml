@@ -8,3 +8,6 @@ author: Roman Vorushin (roman.vorushin@gmail.com)
 
 plugins:
   - jekyll-feed
+
+feed:
+  path: /feeds/entries/
