@@ -3,7 +3,7 @@ markdown: kramdown
 paginate: 20
 
 name: Блог Романа Ворушина
-url: vorushin.github.io
+url: https://vorushin.github.io
 author: Roman Vorushin (roman.vorushin@gmail.com)
 
 plugins:
