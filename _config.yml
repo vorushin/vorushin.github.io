@@ -6,6 +6,21 @@ name: Блог Романа Ворушина
 url: https://vorushin.github.io
 author: Roman Vorushin (roman.vorushin@gmail.com)
 
+# jekyll-seo-tag
+title: Блог Романа Ворушина, программирование и жизнь
+description: Блог о программировании, машинном обучении, жизни в Швейцарии, работе в Google
+twitter:
+  username: vorushin
+social:
+  name: Roman Vorushin
+  links:
+    - https://twitter.com/vorushin
+    - https://www.facebook.com/vorushin
+    - https://www.linkedin.com/in/vorushin/
+    - https://plus.google.com/+RomanVorushin
+    - https://github.com/vorushin
+lang: ru_RU
+
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
