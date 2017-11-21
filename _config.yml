@@ -8,3 +8,4 @@ author: Roman Vorushin (roman.vorushin@gmail.com)
 
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
