@@ -45,8 +45,8 @@ permalink: /blog/how-to-jump-into-deep-ml-train
 
 А вот книги могу порекомендовать две, обе отличные:
 
-* [neuralnetworksanddeeplearning.com](neuralnetworksanddeeplearning.com) (попроще)
-* [www.deeplearningbook.org](www.deeplearningbook.org) (подетальнее, включая research)
+* [neuralnetworksanddeeplearning.com](http://neuralnetworksanddeeplearning.com) (попроще)
+* [www.deeplearningbook.org](http://www.deeplearningbook.org) (подетальнее, включая research)
 
 ### Практика
 
