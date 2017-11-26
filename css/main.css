@@ -120,6 +120,7 @@ img .entry {
     margin-bottom: 2em;
 }
 img + em {
+    display: block;
     font-size: 0.75em;
     color: #555;
 }
