@@ -68,7 +68,7 @@ permalink: /blog/systems-drift-to-low-performance
 
 Вот еще замечательная статья о повышенном уровне стресса иммигрантов от Яны Ворушиной - [Что такое «Парадокс иммигрантов»? Как влияет на здоровье, беременность и роды переезд за границу?](https://myhebamme.wordpress.com/2017/04/29/%D1%87%D1%82%D0%BE-%D1%82%D0%B0%D0%BA%D0%BE%D0%B5-%D0%BF%D0%B0%D1%80%D0%B0%D0%B4%D0%BE%D0%BA%D1%81-%D0%B8%D0%BC%D0%BC%D0%B8%D0%B3%D1%80%D0%B0%D0%BD%D1%82%D0%BE%D0%B2-%D0%BA%D0%B0%D0%BA-%D0%B2/).
 
-Что же рекомендует Donella Meadows в книге "Thinking in systems":
+Вот что рекомендует Donella Meadows в книге "Thinking in systems", чтобы избежать Drift to low performance:
 
 > Keep performance standards absolute. Even better, let standards be enhanced by the best actual performance instead of being discouraged by the worst. Use the same structure to set up a drift toward high performance!
 
