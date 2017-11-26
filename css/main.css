@@ -119,6 +119,10 @@ img .entry {
     margin-right: 1em;
     margin-bottom: 2em;
 }
+img + em {
+    font-size: 0.75em;
+    color: #555;
+}
 #feed_icon {
     margin-left: 0.5em;
 }
