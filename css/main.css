@@ -119,6 +119,9 @@ img .entry {
     margin-right: 1em;
     margin-bottom: 2em;
 }
+img {
+    max-width: 100%;
+}
 img + em {
     display: block;
     font-size: 0.6em;
