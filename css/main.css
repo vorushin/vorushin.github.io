@@ -120,7 +120,7 @@ img .entry {
     margin-bottom: 2em;
 }
 img {
-    max-width: 60rem;
+    max-width: 100%;
 }
 img + em {
     display: block;
