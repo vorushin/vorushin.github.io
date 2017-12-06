@@ -153,9 +153,12 @@ a.comments_count {
     font-size: 16px;
 }
 
+p.social {
+    margin-top: 1em;
+}
 p.social a {
     display: inline;
-    margin-right: 1em;
+    margin-right: 0.5em;
 }
 
 
