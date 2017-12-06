@@ -153,6 +153,11 @@ a.comments_count {
     font-size: 16px;
 }
 
+p.social a {
+    display: inline;
+    margin-right: 1em;
+}
+
 
 /*
  * Override Bootstrap's default container.
