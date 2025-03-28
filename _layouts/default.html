@@ -4,24 +4,55 @@
   {% include head.html %}
 </head>
 <body>
-	<div id="header" class="container">
-	<h2 id="top_title">
-	  <a href="/">Блог Романа Ворушина</a>
-	  <a href="/feed.xml">
-	     <img src="/img/feed-icon-14x14.png" id="feed_icon" alt="Блог - свежие записи (Atom)">
-	  </a>
-	</h2>
-	<p>Программирование, машинное обучение, и жизнь</p>
-	</div>
-	<div class="container">{{ content }}</div>
-	<script type="text/javascript">
-	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	</script>
-	<script type="text/javascript">
-	try {
-	var pageTracker = _gat._getTracker("UA-11723567-1");
-	pageTracker._trackPageview();
-	} catch(err) {}</script>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="/">Блог Романа Ворушина</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/feed.xml" title="RSS Feed"><i class="fa-solid fa-rss"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://twitter.com/vorushin" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/vorushin" title="GitHub"><i class="fa-brands fa-github"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="py-3">
+    <div class="container">
+      <p class="lead mb-0">Программирование, машинное обучение, и жизнь</p>
+    </div>
+  </header>
+
+  <main class="container py-4">
+    {{ content }}
+  </main>
+
+  <footer class="footer mt-5 py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <p>© {{ site.time | date: '%Y' }} Roman Vorushin</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <a href="https://www.facebook.com/vorushin"><i class="fa-brands fa-facebook me-3"></i></a>
+          <a href="https://twitter.com/vorushin"><i class="fa-brands fa-twitter me-3"></i></a>
+          <a href="https://vk.com/vorushin"><i class="fa-brands fa-vk me-3"></i></a>
+          <a href="https://github.com/vorushin"><i class="fa-brands fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
