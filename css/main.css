@@ -1,15 +1,24 @@
-/* Modern Tech Blog Theme 2025 */
+/* AI-Focused Modern Tech Blog Theme 2025 */
 
 :root {
-  --primary-color: #2563eb;
-  --secondary-color: #3b82f6;
-  --background-color: #f9fafb;
-  --text-color: #1f2937;
-  --text-secondary: #4b5563;
-  --gray-light: #e5e7eb;
-  --gray-lighter: #f3f4f6;
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --accent-color: #06b6d4;
+  --ai-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --neural-gradient: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  --background-color: #f8fafc;
+  --text-color: #0f172a;
+  --text-secondary: #475569;
+  --gray-light: #e2e8f0;
+  --gray-lighter: #f1f5f9;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-mono: 'Roboto Mono', monospace;
+  --font-mono: 'Roboto Mono', 'Fira Code', monospace;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 /* Base Styles */
@@ -106,20 +115,34 @@ img {
 
 /* Layout Components */
 .container {
-  max-width: 52rem;
+  max-width: 56rem;
   padding: 0 1.5rem;
 }
 
 .navbar {
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-  padding: 1rem 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
+  padding: 1.25rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--gray-light);
 }
 
 .navbar-brand {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-color);
-  font-size: 1.25rem;
+  font-size: 1.35rem;
+  background: var(--ai-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
 }
 
 .nav-link {
@@ -138,29 +161,72 @@ img {
 }
 
 header.py-3 {
-  padding: 1.5rem 0;
-  background-color: white;
-  border-bottom: 1px solid var(--gray-light);
+  padding: 3rem 0;
+  background: var(--ai-gradient);
+  border-bottom: none;
+  position: relative;
+  overflow: hidden;
+}
+
+header.py-3::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+  animation: neural-pattern 20s linear infinite;
+}
+
+@keyframes neural-pattern {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(60px) translateY(60px); }
 }
 
 header .lead {
-  color: var(--text-secondary);
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
   margin-top: 0.5rem;
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 2;
 }
 
 /* Posts List */
 .post-card {
-  background-color: white;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--gray-light);
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--ai-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
 }
 
 .post-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-color);
+}
+
+.post-card:hover::before {
+  transform: scaleX(1);
 }
 
 .post-title {
@@ -308,33 +374,170 @@ header .lead {
   }
 }
 
+/* AI Content Styling */
+.ai-tag {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ai-gradient);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  animation: ai-pulse 2s ease-in-out infinite;
+}
+
+.ai-tag::before {
+  content: '🤖';
+  margin-right: 0.4rem;
+}
+
+@keyframes ai-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+.ml-tag {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.ml-tag::before {
+  content: '🧠';
+  margin-right: 0.4rem;
+}
+
+.tech-tag {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.tech-tag::before {
+  content: '⚡';
+  margin-right: 0.4rem;
+}
+
+/* Code blocks with syntax highlighting enhancement */
+pre {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #e2e8f0;
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0.75rem;
+  position: relative;
+}
+
+pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--ai-gradient);
+  border-radius: 0 0.75rem 0 0.75rem;
+  opacity: 0.1;
+}
+
+/* Neural network visualization effects */
+.neural-bg {
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+  animation: neural-flow 15s ease-in-out infinite;
+}
+
+@keyframes neural-flow {
+  0%, 100% { 
+    background-position: 0% 50%, 100% 20%, 40% 80%;
+  }
+  50% { 
+    background-position: 100% 50%, 0% 20%, 60% 20%;
+  }
+}
+
+/* Enhanced quote blocks for AI insights */
+blockquote {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-left: 4px solid var(--primary-color);
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+blockquote::before {
+  content: '💡';
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  opacity: 0.3;
+}
+
+/* Reading progress indicator */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: var(--ai-gradient);
+  z-index: 9999;
+  transition: width 0.3s ease;
+}
+
 /* Dark mode support for users who prefer it */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-color: #111827;
-    --text-color: #e5e7eb;
-    --text-secondary: #9ca3af;
-    --gray-light: #374151;
-    --gray-lighter: #1f2937;
-  }
-  
-  .navbar, header.py-3, .post-card, .post, .footer {
-    background-color: #1f2937;
+    --background-color: #0f172a;
+    --text-color: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --gray-light: #334155;
+    --gray-lighter: #1e293b;
   }
   
   .navbar {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%);
+    backdrop-filter: blur(10px);
   }
   
   .post-card, .post {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%);
+    border-color: var(--gray-light);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   }
   
-  code, pre {
-    background-color: #111827;
+  .footer {
+    background-color: #1e293b;
+  }
+  
+  code {
+    background-color: #1e293b;
+    color: #e2e8f0;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    color: #f3f4f6;
+    color: #f1f5f9;
+  }
+  
+  .neural-bg {
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
   }
 }
