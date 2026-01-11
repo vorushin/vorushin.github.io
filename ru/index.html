@@ -1,0 +1,34 @@
+---
+layout: default
+title: Архив постов на русском
+---
+<h1 class="mb-4">Архив постов на русском</h1>
+
+<div class="posts">
+  {% assign ru_posts = site.posts | where: "lang", "ru" %}
+  {% for post in ru_posts %}
+  <article class="post-card mb-5">
+    <header class="post-header mb-3">
+      <h2 class="post-title">
+        <a href="{{ post.url }}" class="entry_title" rel="bookmark">{{ post.title }}</a>
+      </h2>
+      <div class="post-meta">
+        <time class="entry_date">{{ post.date | date: "%d.%m.%Y" }}</time>
+      </div>
+    </header>
+
+    {% if post.content contains site.excerpt_separator %}
+    <div class="post-excerpt">
+      {{ post.excerpt }}
+      <div class="read-more mt-3">
+        <a href="{{ post.url }}" class="btn btn-outline-primary btn-sm">Читать дальше &rarr;</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="post-content">
+      {{ post.content }}
+    </div>
+    {% endif %}
+  </article>
+  {% endfor %}
+</div>

@@ -2,22 +2,23 @@
 layout: default
 ---
 <div class="posts">
-  {% for post in paginator.posts %}
+  {% assign en_posts = site.posts | where: "lang", "en" %}
+  {% for post in en_posts %}
   <article class="post-card mb-5">
     <header class="post-header mb-3">
       <h2 class="post-title">
         <a href="{{ post.url }}" class="entry_title" rel="bookmark">{{ post.title }}</a>
       </h2>
       <div class="post-meta">
-        <time class="entry_date">{{ post.date | date: "%d.%m.%Y" }}</time>
+        <time class="entry_date">{{ post.date | date: "%B %d, %Y" }}</time>
       </div>
     </header>
-    
+
     {% if post.content contains site.excerpt_separator %}
     <div class="post-excerpt">
       {{ post.excerpt }}
       <div class="read-more mt-3">
-        <a href="{{ post.url }}" class="btn btn-outline-primary btn-sm">Читать дальше &rarr;</a>
+        <a href="{{ post.url }}" class="btn btn-outline-primary btn-sm">Read more &rarr;</a>
       </div>
     </div>
     {% else %}
@@ -27,36 +28,12 @@ layout: default
     {% endif %}
   </article>
   {% endfor %}
+
+  {% if en_posts.size == 0 %}
+  <p class="text-muted">No posts yet. Check back soon!</p>
+  {% endif %}
 </div>
 
-<nav aria-label="Page navigation" class="mt-5">
-  <ul class="pagination justify-content-center">
-    {% if paginator.previous_page %}
-    <li class="page-item">
-      <a class="page-link" href="{% if paginator.previous_page == 1%}/{% else %}/page{{ paginator.previous_page }}{% endif %}" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span> Назад
-      </a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-      <span class="page-link"><span aria-hidden="true">&laquo;</span> Назад</span>
-    </li>
-    {% endif %}
-    
-    <li class="page-item disabled">
-      <span class="page-link">Страница: {{ paginator.page }} из {{ paginator.total_pages }}</span>
-    </li>
-    
-    {% if paginator.next_page %}
-    <li class="page-item">
-      <a class="page-link" href="/page{{ paginator.next_page }}" aria-label="Next">
-        Вперёд <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-    {% else %}
-    <li class="page-item disabled">
-      <span class="page-link">Вперёд <span aria-hidden="true">&raquo;</span></span>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
+<div class="mt-5 pt-4 border-top">
+  <a href="/ru/" class="text-secondary">Архив постов на русском &rarr;</a>
+</div>

@@ -15,14 +15,6 @@ layout: default
     {{ content }}
   </div>
 
-  <div class="post-share mt-5">
-    <h4>Поделиться</h4>
-    <div class="social-icons">
-      <a href="https://www.facebook.com/sharer/sharer.php?u={{ site.url }}{{ page.url }}" class="social-icon" target="_blank" title="Share on Facebook"><i class="fa-brands fa-facebook"></i></a>
-      <a href="https://twitter.com/intent/tweet?text={{ page.title }}&url={{ site.url }}{{ page.url }}" class="social-icon" target="_blank" title="Share on Twitter"><i class="fa-brands fa-twitter"></i></a>
-      <a href="https://vk.com/share.php?url={{ site.url }}{{ page.url }}" class="social-icon" target="_blank" title="Share on VK"><i class="fa-brands fa-vk"></i></a>
-    </div>
-  </div>
 </article>
 
 {% include comments.html %}

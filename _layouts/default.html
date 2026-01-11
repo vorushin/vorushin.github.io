@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
+
 <head>
   {% include head.html %}
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand" href="/">Блог Романа Ворушина</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="/">Roman Vorushin's Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -16,10 +19,15 @@
             <a class="nav-link" href="/feed.xml" title="RSS Feed"><i class="fa-solid fa-rss"></i></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="https://twitter.com/vorushin" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+            <a class="nav-link" href="https://x.com/vorushin" title="X/Twitter"><i class="fa-brands fa-twitter"></i></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="https://github.com/vorushin" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            <a class="nav-link" href="https://github.com/vorushin" title="GitHub"><i
+                class="fa-brands fa-github"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/vorushin/" title="LinkedIn"><i
+                class="fa-brands fa-linkedin"></i></a>
           </li>
         </ul>
       </div>
@@ -27,10 +35,10 @@
   </nav>
 
   <div class="reading-progress"></div>
-  
+
   <header class="py-3 neural-bg">
     <div class="container">
-      <p class="lead mb-0">Программирование, AI, машинное обучение, и жизнь 🚀🤖</p>
+      <p class="lead mb-0">Programming, AI, Machine Learning, and Life</p>
     </div>
   </header>
 
@@ -45,10 +53,9 @@
           <p>© {{ site.time | date: '%Y' }} Roman Vorushin</p>
         </div>
         <div class="col-md-6 text-md-end">
-          <a href="https://www.facebook.com/vorushin"><i class="fa-brands fa-facebook me-3"></i></a>
-          <a href="https://twitter.com/vorushin"><i class="fa-brands fa-twitter me-3"></i></a>
-          <a href="https://vk.com/vorushin"><i class="fa-brands fa-vk me-3"></i></a>
-          <a href="https://github.com/vorushin"><i class="fa-brands fa-github"></i></a>
+          <a href="https://x.com/vorushin"><i class="fa-brands fa-twitter me-3"></i></a>
+          <a href="https://github.com/vorushin"><i class="fa-brands fa-github me-3"></i></a>
+          <a href="https://www.linkedin.com/in/vorushin/"><i class="fa-brands fa-linkedin"></i></a>
         </div>
       </div>
     </div>
@@ -56,10 +63,10 @@
 
   <!-- Bootstrap JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <!-- Reading Progress Script -->
   <script>
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scrolled = (winScroll / height) * 100;
@@ -67,4 +74,5 @@
     });
   </script>
 </body>
+
 </html>

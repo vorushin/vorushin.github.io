@@ -1,0 +1,18 @@
+---
+layout: post-en
+title: "Intro"
+lang: en
+permalink: /blog/intro
+---
+
+![Jogging in San-Diego, Dec 2025](/img/intro/roman_san_diego.jpg)
+
+My name is Roman Vorushin. I am a Research Engineer at [Google DeepMind](https://deepmind.google/), working on [Gemini](https://deepmind.google/technologies/gemini/).
+
+I fell in love with ML and AI back in 2011, thanks to the legendary MOOCs: ai-class.org (Peter Norvig, Sebastian Thrun) and ml-class.org (Andrew Ng). I joined Google in 2012 to get into an environment where I could learn and push these technologies forward.
+
+Before Google I was an early Grammarly employee, had my own startup, and worked in Kazkommertsbank. I am a lifelong learner, read a lot on my multiple Kindle devices (nowadays it's a Kindle Scribe), and learn a lot from having coffees with extremely talented and passionate friends.
+
+I used to have a technical blog in Russian ([archived here](/ru/)). Now I plan to start writing longer technical articles about LLM training and artificial intelligence. I also post shorter updates on [LinkedIn](https://www.linkedin.com/in/vorushin/).
+
+
