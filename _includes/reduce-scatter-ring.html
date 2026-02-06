@@ -1,0 +1,451 @@
+<style>
+    .reduce-scatter-viz {
+        font-family: 'IBM Plex Sans', sans-serif;
+        background: var(--bg, #fafaf9);
+        color: var(--fg, #1c1917);
+        width: 100%;
+        margin: 2rem auto;
+    }
+
+    .reduce-scatter-viz .canvas-wrap {
+        position: relative;
+        width: 100%;
+        border: 1px solid #d6d3d1;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fafaf9;
+    }
+
+    .reduce-scatter-viz canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .reduce-scatter-viz .controls {
+        position: absolute;
+        bottom: 0.75rem;
+        right: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .reduce-scatter-viz button {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 0.78rem;
+        font-weight: 500;
+        padding: 0.4rem 0.85rem;
+        border: 1px solid #d6d3d1;
+        border-radius: 6px;
+        background: white;
+        color: #1c1917;
+        cursor: pointer;
+        transition: all 0.15s;
+        user-select: none;
+    }
+
+    .reduce-scatter-viz button:hover {
+        background: #f5f5f4;
+        border-color: #a8a29e;
+    }
+
+    .reduce-scatter-viz button:active {
+        background: #e7e5e4;
+    }
+
+    .reduce-scatter-viz button.active {
+        background: #1c1917;
+        color: white;
+        border-color: #1c1917;
+    }
+
+
+
+</style>
+
+<div class="reduce-scatter-viz">
+    <div class="canvas-wrap">
+        <canvas id="reduceScatterCanvas"></canvas>
+        <div class="controls">
+            <button id="reduceScatterPlayBtn" class="active">⏸ Pause</button>
+            <button id="reduceScatterResetBtn">↺ Reset</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // ─── Constants ───
+        const N = 8;
+        const COLORS = [
+            '#dc2626', '#ea580c', '#ca8a04', '#16a34a',
+            '#0891b2', '#2563eb', '#7c3aed', '#c026d3'
+        ];
+
+        const canvas = document.getElementById('reduceScatterCanvas');
+        const ctx = canvas.getContext('2d');
+        const DPR = 2;
+        const CW = 720 * DPR;
+        const CH = 680 * DPR;
+        canvas.width = CW;
+        canvas.height = CH;
+
+        const S = DPR;
+        const CX = CW / 2;
+        const CY = CH / 2 + 5 * S;
+        const RING_R = 250 * S;
+        const CELL = 10 * S;
+        const GRID = N * CELL;
+        const PAD = 8 * S;
+        const BOX = GRID + PAD * 2;
+        const BLK = CELL - 1.5 * S;
+        const FLY_BLK = BLK;
+
+        // ─── TPU positions ───
+        function tpuAngle(i) { return -Math.PI / 2 + i * (2 * Math.PI / N); }
+        function tpuXY(i) {
+            const a = tpuAngle(i);
+            return [CX + RING_R * Math.cos(a), CY + RING_R * Math.sin(a)];
+        }
+
+        function cellXY(tpu, row, col) {
+            const [tx, ty] = tpuXY(tpu);
+            return [
+                tx - GRID / 2 + col * CELL + (CELL - BLK) / 2,
+                ty - GRID / 2 + row * CELL + (CELL - BLK) / 2
+            ];
+        }
+
+        // ─── Precompute simulation ───
+        // Reduce-scatter: every TPU starts with all 8 rows at 1/8 intensity.
+        // Partial sums converge toward each row's destination TPU via pipelined
+        // bidirectional ring. CW pipeline: 4 hops. CCW pipeline: 3 hops (skip last
+        // to avoid double-counting the diametrically opposite node).
+        const STEPS = 5;
+
+        // Pipelined chunk formulas: at hop h, node i sends this chunk in each direction
+        function cwChunk(h, i) { return (i + 4 - h + N) % N; }
+        function ccwChunk(h, i) { return (i - 3 + h + N) % N; }
+
+        // val[step][tpu][row] = accumulated 1/8ths (1..8)
+        const val = [];
+        val[0] = Array.from({ length: N }, () => new Array(N).fill(1));
+        for (let h = 0; h < STEPS - 1; h++) {
+            val[h + 1] = val[h].map(r => [...r]);
+            // CW: node i sends accumulated partial to (i+1)%N
+            for (let i = 0; i < N; i++) {
+                const row = cwChunk(h, i);
+                val[h + 1][(i + 1) % N][row] += val[h][i][row];
+                val[h + 1][i][row] = 0; // chunk leaves source
+            }
+            // CCW: skip last hop to avoid redundant delivery at distance N/2
+            if (h < STEPS - 2) {
+                for (let i = 0; i < N; i++) {
+                    const row = ccwChunk(h, i);
+                    val[h + 1][(i - 1 + N) % N][row] += val[h][i][row];
+                    val[h + 1][i][row] = 0; // chunk leaves source
+                }
+            }
+        }
+
+        // Transitions: flying blocks per hop, with intensity of value being sent
+        const trans = [];
+        for (let h = 0; h < STEPS - 1; h++) {
+            const mv = [];
+            for (let i = 0; i < N; i++) {
+                const row = cwChunk(h, i);
+                const v = val[h][i][row];
+                for (let c = 0; c < N; c++) {
+                    mv.push({ r: row, c, fr: i, to: (i + 1) % N, dir: 1, intensity: v });
+                }
+            }
+            if (h < STEPS - 2) {
+                for (let i = 0; i < N; i++) {
+                    const row = ccwChunk(h, i);
+                    const v = val[h][i][row];
+                    for (let c = 0; c < N; c++) {
+                        mv.push({ r: row, c, fr: i, to: (i - 1 + N) % N, dir: -1, intensity: v });
+                    }
+                }
+            }
+            trans.push(mv);
+        }
+
+        // Group moves by (from→to) for cluster drawing
+        function groupMoves(s) {
+            const g = {};
+            for (const m of trans[s]) {
+                const k = `${m.fr}_${m.to}`;
+                (g[k] ||= []).push(m);
+            }
+            return g;
+        }
+
+        // Link traffic: link i = edge tpu_i ↔ tpu_(i+1)%N, sum of both directions
+        const linkTraffic = [];
+        for (let s = 0; s < STEPS - 1; s++) {
+            const t = new Array(N).fill(0);
+            for (const m of trans[s]) {
+                if (m.dir === 1) t[m.fr]++;
+                else t[m.to]++;
+            }
+            linkTraffic.push(t);
+        }
+
+        // ─── Totals for finish screen ───
+        const totalMoved = trans.reduce((sum, t) => sum + t.length, 0);
+        const totalPerLink = linkTraffic.reduce((sum, t) => sum + t[0], 0);
+
+        // ─── Anim state ───
+        let curStep = 0;
+        let inTrans = false;
+        let tProg = 0;
+        let holdT = 0;
+        const HOLD_MS = 1800;
+        const TRANS_MS = 5000;
+        let playing = true;
+        let speed = 2.0;
+        let lastTS = 0;
+
+        // ─── Easing ───
+        function easeIO(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+        // ─── Drawing ───
+        function rr(x, y, w, h, r, fill, stroke, lw) {
+            ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+            if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+            if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || S; ctx.stroke(); }
+        }
+
+        function drawBlk(x, y, sz, color, alpha) {
+            ctx.save(); ctx.globalAlpha = alpha;
+            rr(x, y, sz, sz, 2.5 * S, color);
+            ctx.globalAlpha = alpha * 0.35;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(x + S, y + S, sz - 2 * S, 2 * S);
+            ctx.restore();
+        }
+
+        function arrowHead(x, y, nx, ny, sz) {
+            const px = -ny, py = nx;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x - nx * sz + px * sz * .45, y - ny * sz + py * sz * .45);
+            ctx.lineTo(x - nx * sz - px * sz * .45, y - ny * sz - py * sz * .45);
+            ctx.closePath(); ctx.fill();
+        }
+
+        // ─── Ring links + traffic ───
+        function drawLinks() {
+            for (let i = 0; i < N; i++) {
+                const j = (i + 1) % N;
+                const [ax, ay] = tpuXY(i);
+                const [bx, by] = tpuXY(j);
+                const dx = bx - ax, dy = by - ay;
+                const len = Math.hypot(dx, dy);
+                const nx = dx / len, ny = dy / len;
+                const margin = BOX / 2 + 8 * S;
+                const x1 = ax + nx * margin, y1 = ay + ny * margin;
+                const x2 = bx - nx * margin, y2 = by - ny * margin;
+
+                ctx.strokeStyle = '#d6d3d1';
+                ctx.lineWidth = 2.5 * S;
+                ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+
+                ctx.fillStyle = '#b8b3ae';
+                arrowHead(x2, y2, nx, ny, 5 * S);
+                arrowHead(x1, y1, -nx, -ny, 5 * S);
+
+                // Traffic pill
+                const hIdx = activeHopIdx();
+                if (hIdx >= 0 && hIdx < linkTraffic.length) {
+                    const count = linkTraffic[hIdx][i];
+                    if (count > 0) {
+                        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                        const ox = mx - CX, oy = my - CY;
+                        const ol = Math.hypot(ox, oy) || 1;
+                        const offD = 20 * S;
+                        const lx = mx + (ox / ol) * offD;
+                        const ly = my + (oy / ol) * offD;
+
+                        const fadeIn = inTrans ? Math.min(tProg * 5, 1) : 1;
+                        ctx.save(); ctx.globalAlpha = fadeIn;
+
+                        ctx.font = `600 ${14 * S}px "IBM Plex Mono", monospace`;
+                        const tw = ctx.measureText(count.toString()).width;
+                        const gap = 3 * S;
+                        const totalW = tw + gap + BLK;
+                        ctx.fillStyle = '#57534e';
+                        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+                        ctx.fillText(count.toString(), lx - totalW / 2, ly);
+                        drawBlk(lx - totalW / 2 + tw + gap, ly - BLK / 2, BLK, '#78716c', 0.85 * fadeIn);
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        // ─── Draw one TPU ───
+        function drawTPU(idx, blocks) {
+            const [tx, ty] = tpuXY(idx);
+            const bx = tx - BOX / 2, by = ty - BOX / 2;
+
+            rr(bx + 2 * S, by + 3 * S, BOX, BOX, 7 * S, 'rgba(0,0,0,0.06)');
+            rr(bx, by, BOX, BOX, 7 * S, '#f5f5f4', '#d6d3d1', 1.5 * S);
+
+            ctx.save();
+            ctx.beginPath(); ctx.roundRect(bx, by, BOX, BOX, 7 * S); ctx.clip();
+            ctx.strokeStyle = '#e7e5e4'; ctx.lineWidth = .6 * S;
+            for (let k = -BOX; k < BOX * 2; k += 5 * S) {
+                ctx.beginPath(); ctx.moveTo(bx + k, by); ctx.lineTo(bx + k + BOX, by + BOX); ctx.stroke();
+            }
+            ctx.restore();
+
+            const gx = tx - GRID / 2, gy = ty - GRID / 2;
+            ctx.strokeStyle = 'rgba(0,0,0,0.05)'; ctx.lineWidth = .5 * S;
+            for (let r = 0; r <= N; r++) {
+                ctx.beginPath(); ctx.moveTo(gx, gy + r * CELL); ctx.lineTo(gx + GRID, gy + r * CELL); ctx.stroke();
+            }
+            for (let c = 0; c <= N; c++) {
+                ctx.beginPath(); ctx.moveTo(gx + c * CELL, gy); ctx.lineTo(gx + c * CELL, gy + GRID); ctx.stroke();
+            }
+
+            for (const b of blocks) {
+                const [cx, cy] = cellXY(idx, b.r, b.c);
+                drawBlk(cx, cy, BLK, COLORS[b.r], b.alpha);
+            }
+
+            ctx.font = `600 ${16 * S}px "IBM Plex Mono", monospace`;
+            ctx.fillStyle = '#44403c'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+            ctx.fillText(idx.toString(), tx, by - 6 * S);
+        }
+
+        // ─── Flying clusters ───
+        function drawFlying() {
+            const et = easeIO(tProg);
+            const groups = groupMoves(curStep);
+
+            for (const key of Object.keys(groups)) {
+                const arr = groups[key];
+                const { fr, to } = arr[0];
+                const flyAlpha = arr[0].intensity / N;
+
+                for (let i = 0; i < arr.length; i++) {
+                    const m = arr[i];
+                    const [sx, sy] = cellXY(fr, m.r, m.c);
+                    const [ex, ey] = cellXY(to, m.r, m.c);
+                    const bx = sx + (ex - sx) * et;
+                    const by = sy + (ey - sy) * et;
+                    drawBlk(bx, by, FLY_BLK, COLORS[m.r], flyAlpha);
+                }
+            }
+        }
+
+        // ─── Header ───
+        function drawHeader() {
+            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+
+            if (curStep === 0 && !inTrans) {
+                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#1c1917';
+                ctx.fillText('Start', CX, CY - 10 * S);
+            } else if (curStep === STEPS - 1 && !inTrans) {
+                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#1c1917';
+                ctx.fillText('Finish', CX, CY - 24 * S);
+                ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
+                ctx.fillStyle = '#78716c';
+                ctx.fillText(`${totalMoved} blocks moved total`, CX, CY + 10 * S);
+                ctx.fillText(`${totalPerLink} per link`, CX, CY + 30 * S);
+            } else {
+                const hopIdx = inTrans ? curStep : curStep - 1;
+                const hopNum = hopIdx + 1;
+                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#1c1917';
+                ctx.fillText(`Hop ${hopNum} of ${STEPS - 1}`, CX, CY - 24 * S);
+                if (hopIdx >= 0 && hopIdx < trans.length) {
+                    const perLink = linkTraffic[hopIdx][0];
+                    const moving = trans[hopIdx].length;
+                    ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
+                    ctx.fillStyle = '#78716c';
+                    ctx.fillText(`${moving} blocks in flight`, CX, CY + 30 * S);
+                    ctx.fillText(`${perLink} blocks per link`, CX, CY + 50 * S);
+                }
+            }
+        }
+
+        // Helper: get the active hop index for link traffic display (or -1)
+        function activeHopIdx() {
+            if (curStep === 0 && !inTrans) return -1;
+            if (curStep === STEPS - 1 && !inTrans) return -1;
+            return inTrans ? curStep : curStep - 1;
+        }
+
+        // ─── Main loop ───
+        function tick(ts) {
+            const dt = lastTS ? (ts - lastTS) : 16;
+            lastTS = ts;
+
+            if (playing) {
+                if (!inTrans) {
+                    holdT += dt * speed;
+                    if (holdT >= HOLD_MS && curStep < STEPS - 1) {
+                        inTrans = true; tProg = 0; holdT = 0;
+                    } else if (curStep === STEPS - 1 && holdT >= HOLD_MS * 2.5) {
+                        curStep = 0; holdT = 0; inTrans = false; tProg = 0;
+                    }
+                } else {
+                    tProg += (dt * speed) / TRANS_MS;
+                    if (tProg >= 1) {
+                        tProg = 0; curStep++; inTrans = false; holdT = 0;
+                    }
+                }
+            }
+
+            ctx.clearRect(0, 0, CW, CH);
+            drawHeader();
+            drawLinks();
+
+            // Resident blocks: all rows at their current accumulated intensities
+            // Exclude rows currently in flight (they're shown as flying blocks)
+            const resident = Array.from({ length: N }, () => []);
+            const inFlight = Array.from({ length: N }, () => new Set());
+            if (inTrans) {
+                for (const m of trans[curStep]) inFlight[m.fr].add(m.r);
+            }
+            for (let tpu = 0; tpu < N; tpu++)
+                for (let row = 0; row < N; row++) {
+                    if (inTrans && inFlight[tpu].has(row)) continue;
+                    const v = val[curStep][tpu][row];
+                    if (v > 0) {
+                        const alpha = v / N;
+                        for (let c = 0; c < N; c++)
+                            resident[tpu].push({ r: row, c, alpha });
+                    }
+                }
+
+            for (let i = 0; i < N; i++) drawTPU(i, resident[i]);
+            if (inTrans) drawFlying();
+
+
+            requestAnimationFrame(tick);
+        }
+
+        // ─── Controls ───
+        const pb = document.getElementById('reduceScatterPlayBtn');
+        pb.onclick = () => {
+            playing = !playing;
+            pb.textContent = playing ? '⏸ Pause' : '▶ Play';
+            pb.classList.toggle('active', playing);
+        };
+
+        document.getElementById('reduceScatterResetBtn').onclick = () => {
+            curStep = 0; tProg = 0; inTrans = false; holdT = 0;
+            playing = true; pb.textContent = '⏸ Pause'; pb.classList.add('active');
+        };
+
+        requestAnimationFrame(tick);
+    })();
+</script>
