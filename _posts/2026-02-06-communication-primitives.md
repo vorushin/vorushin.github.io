@@ -67,6 +67,8 @@ It transposes the way the data is sharded. It takes a matrix sharded by its firs
 
 *AllToAll* costs 1/4 of the *AllGather* or *ReduceScatter* - even though the simple animation above has 10 blocks moved CW per link, and 6 blocks moved CCW, there is a simple optimization that turns it into a perfectly balanced scheme with 8 blocks moving CW and 8 blocks moving CCW.
 
+{% include all-to-all-ring-balanced.html %}
+
 *AllToAll* is its own counterpart for the **backprop**.
 
 
