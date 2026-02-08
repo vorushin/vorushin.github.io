@@ -3,7 +3,8 @@ layout: post-en
 title: "TPU communication primitives"
 lang: en
 permalink: /blog/tpu-communication-primitives
-published: false
+published: true
+hidden: true
 ---
 
 Training LLMs on TPUs/GPUs is often constrained not by the speed of the matrix multiplication unit (MXU), but either by data transfer from high bandwidth memory (HBM) to MXU, or by data transfer between different TPUs. A large part of optimizing training/inference programs consists of finding ways to overlap data transfer and matrix multiplication operations - transferring data that will be needed soon while systolic arrays in MXU are busy computing.
@@ -17,13 +18,13 @@ Long ago when data parallelism was all we needed, we mostly used **AllReduce** (
 
 ## AllGather
 
+{% include all-gather-ring.html %}
+
 - **Start**: $V$ bytes of a matrix are evenly sharded between $N$ TPUs - every TPU holds $\frac{V}{N}$ bytes
 - **Finish**: we replicate all shards on all TPUs - every TPU holds $V$ bytes
 - **Cost**: we move approximately $V$ bytes through every link in $\frac{N}{2}$ hops, evenly saturating links in both directions (except for the last hop)
 
-{% include all-gather-ring.html %}
-
-See the animation of running AllGather for an $8 \times 8$ block matrix, sharded 8 ways. We move 56 blocks of data through every link: $8 \times 4 = 32$ blocks in one direction and $8 \times 3 = 24$ blocks in the other direction. The latency in the bottleneck direction (CW on the animation above) is defined by the time it takes to move these 32 blocks in one direction. Having *block_size* as the size of every block in bytes, and $\frac{W_{bidir}}{2}$ as the throughput of the interconnect links in one direction we get the following formula (for the case of $N = 8$):
+The animation above shows AllGather for an $8 \times 8$ block matrix, sharded 8 ways. We move 56 blocks of data through every link: $8 \times 4 = 32$ blocks in one direction and $8 \times 3 = 24$ blocks in the other direction. The latency in the bottleneck direction (CW on the animation above) is defined by the time it takes to move these 32 blocks in one direction. Having *block_size* as the size of every block in bytes, and $\frac{W_{bidir}}{2}$ as the throughput of the interconnect links in one direction we get the following formula (for the case of $N = 8$):
 
 $$T = \frac{32 \times block\_size}{\frac{W_{bidir}}{2}} = \frac{64 \times block\_size}{W_{bidir}} = \frac{V}{W_{bidir}}$$ 
 
@@ -33,15 +34,15 @@ It's interesting that AllGather on GPUs where a switch-based topology is used lo
 
 ## ReduceScatter
 
-**Reduce** in the name of the operation means an operation of converting a list of data into a single value, same as the Python *functools.reduce* function. The operator used to combine the values is most often *sum* (add two numbers). JAX function is even called psum_scatter (parallel sum + scatter).
+**Reduce** in the name of the operation means an operation of reducing dimensionality of the data, same as the Python *functools.reduce* function. The Python function takes a list and a function that combines two elements together. For LLM training this combining operator is most often *sum* (add two numbers). The corresponding JAX function is called psum_scatter (parallel sum + scatter).
 
-**Scatter**: while we send the data from every TPU to every other TPU, we keep the resulting data in a sharded/scattered way - at the end of the operation different TPUs hold different parts of the reduced/summed data.
+**Scatter**: while we send the data from every TPU to every other TPU, the reduced/summed data ends up scattered/sharded - different TPUs hold different shards of the data.
+
+{% include reduce-scatter-ring.html %}
 
 - **Start**: Every TPU holds $V$ bytes of a matrix with partial results - they have to be reduced before becoming useful.
 - **Finish**: Every TPU holds a single shard of $\frac{V}{N}$ bytes with the reduced data.
 - **Cost**: we move approximately $V$ bytes through every link in $\frac{N}{2}$ hops, evenly saturating links in both directions (except for the last hop) - same as for AllGather.
-
-{% include reduce-scatter-ring.html %}
 
 It's easy to see that the communication cost of ReduceScatter is the same as for the AllGather (32 blocks or $\frac{V}{2}$ bytes move CW and 24 blocks or less than $\frac{V}{2}$ move CCW through every link).
 
@@ -59,15 +60,24 @@ Sometimes we can keep the data sharded and avoid running *AllGather* completely.
 
 ## AllToAll
 
-This operation is unrelated to *AllGather* and *ReduceScatter*.
+This operation is unrelated to *AllGather* and *ReduceScatter*. It's so important for modern MoE (mixtures-of-experts) implementations, that there are usually multiple implementations of it heavily tuned for the specific configurations (topologies) and generations of the accelerators used for training or inference.
 
 {% include all-to-all-ring.html %}
 
 It transposes the way the data is sharded. It takes a matrix sharded by its first dimension and produces a matrix sharded by its second dimension. It's used for MoE implementations where in the forward pass we have tokens sharded between the TPUs routed to all experts. *AllToAll* reshuffles them so that each expert collects all its assigned tokens. Experts are split between different TPUs - so called expert parallelism.
 
-*AllToAll* costs 1/4 of the *AllGather* or *ReduceScatter* - even though the simple animation above has 10 blocks moved CW per link, and 6 blocks moved CCW, there is a simple optimization that turns it into a perfectly balanced scheme with 8 blocks moving CW and 8 blocks moving CCW.
+*AllToAll* costs 1/4 of the *AllGather* or *ReduceScatter* - even though the simple animation above has 10 blocks moved CW per link, and 6 blocks moved CCW, there is a simple optimization that turns it into a perfectly balanced scheme with 8 blocks moving CW and 8 blocks moving CCW (see the hidden section below).
+
+<details>
+<summary>See the balanced AllToAll animation</summary>
 
 {% include all-to-all-ring-balanced.html %}
+
+</details>
+<br>
+In the switch-based case of *AllToAll* every node sends $\frac{N-1}{N^2} \approx \frac{1}{N}$ data and receives $\frac{N-1}{N^2} \approx \frac{1}{N}$ data. It's more efficient than the ring-based topologies for N > 4.
+
+### Back propagation
 
 *AllToAll* is its own counterpart for the **backprop**.
 

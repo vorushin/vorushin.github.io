@@ -35,7 +35,12 @@ body {
   font-size: 1.1rem;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 600;
   line-height: 1.3;
   margin-top: 2rem;
@@ -43,12 +48,29 @@ h1, h2, h3, h4, h5, h6 {
   color: #111827;
 }
 
-h1 { font-size: 1.85rem; }
-h2 { font-size: 1.5rem; }
-h3 { font-size: 1.3rem; }
-h4 { font-size: 1.15rem; }
-h5 { font-size: 1.05rem; }
-h6 { font-size: 1rem; }
+h1 {
+  font-size: 1.85rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+h4 {
+  font-size: 1.15rem;
+}
+
+h5 {
+  font-size: 1.05rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
 
 a {
   color: var(--primary-color);
@@ -65,7 +87,8 @@ p {
   margin-bottom: 1.5rem;
 }
 
-pre, code {
+pre,
+code {
   font-family: var(--font-mono);
   font-size: 0.95rem;
   background-color: var(--gray-lighter);
@@ -97,12 +120,14 @@ blockquote {
   color: var(--text-secondary);
 }
 
-ul, ol {
+ul,
+ol {
   margin: 0 0 1.5rem 1.5rem;
   padding: 0;
 }
 
-ul li, ol li {
+ul li,
+ol li {
   margin-bottom: 0.15rem;
 }
 
@@ -120,7 +145,7 @@ img {
 }
 
 .navbar {
-  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-md);
   padding: 1.25rem 0;
@@ -156,7 +181,8 @@ img {
   color: var(--primary-color);
 }
 
-.fa-brands, .fa-solid {
+.fa-brands,
+.fa-solid {
   font-size: 1.2rem;
 }
 
@@ -180,8 +206,13 @@ header.py-3::before {
 }
 
 @keyframes neural-pattern {
-  0% { transform: translateX(0) translateY(0); }
-  100% { transform: translateX(60px) translateY(60px); }
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+
+  100% {
+    transform: translateX(60px) translateY(60px);
+  }
 }
 
 header .lead {
@@ -195,7 +226,7 @@ header .lead {
 
 /* Posts List */
 .post-card {
-  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
   backdrop-filter: blur(10px);
   border: 1px solid var(--gray-light);
   border-radius: 1rem;
@@ -250,7 +281,8 @@ header .lead {
   margin-bottom: 0.5rem;
 }
 
-.post-excerpt, .post-content {
+.post-excerpt,
+.post-content {
   color: var(--text-secondary);
 }
 
@@ -308,7 +340,8 @@ header .lead {
   margin: 2rem auto;
 }
 
-.post-content h2, .post-content h3 {
+.post-content h2,
+.post-content h3 {
   margin-top: 2.5rem;
 }
 
@@ -364,12 +397,21 @@ header .lead {
   .container {
     padding: 0 1rem;
   }
-  
-  h1 { font-size: 1.6rem; }
-  h2 { font-size: 1.4rem; }
-  h3 { font-size: 1.2rem; }
-  
-  .post-card, .post {
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  .post-card,
+  .post {
     padding: 1.5rem;
   }
 }
@@ -394,8 +436,17 @@ header .lead {
 }
 
 @keyframes ai-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.9; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
 }
 
 .ml-tag {
@@ -453,9 +504,17 @@ pre::before {
   opacity: 0.1;
 }
 
+/* Ring diagram animations */
+.all-gather-viz,
+.reduce-scatter-viz,
+.all-to-all-viz,
+.all-to-all-balanced-viz {
+  max-width: 600px;
+}
+
 /* Neural network visualization effects */
 .neural-bg {
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
@@ -463,10 +522,13 @@ pre::before {
 }
 
 @keyframes neural-flow {
-  0%, 100% { 
+
+  0%,
+  100% {
     background-position: 0% 50%, 100% 20%, 40% 80%;
   }
-  50% { 
+
+  50% {
     background-position: 100% 50%, 0% 20%, 60% 20%;
   }
 }
@@ -509,33 +571,39 @@ blockquote::before {
     --gray-light: #334155;
     --gray-lighter: #1e293b;
   }
-  
+
   .navbar {
-    background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
     backdrop-filter: blur(10px);
   }
-  
-  .post-card, .post {
-    background: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%);
+
+  .post-card,
+  .post {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
     border-color: var(--gray-light);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
   }
-  
+
   .footer {
     background-color: #1e293b;
   }
-  
+
   code {
     background-color: #1e293b;
     color: #e2e8f0;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: #f1f5f9;
   }
-  
+
   .neural-bg {
-    background: 
+    background:
       radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
       radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);

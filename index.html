@@ -2,7 +2,7 @@
 layout: default
 ---
 <div class="posts">
-  {% assign en_posts = site.posts | where: "lang", "en" %}
+  {% assign en_posts = site.posts | where: "lang", "en" | where_exp: "post", "post.hidden != true" %}
   {% for post in en_posts %}
   <article class="post-card mb-5">
     <header class="post-header mb-3">
