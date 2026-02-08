@@ -155,20 +155,25 @@
             return g;
         }
 
-        // Link traffic: link i = edge tpu_i ↔ tpu_(i+1)%N, sum of both directions
-        const linkTraffic = [];
+        // Link traffic: link i = edge tpu_i ↔ tpu_(i+1)%N, split by direction
+        const linkTrafficCW = [];
+        const linkTrafficCCW = [];
         for (let s = 0; s < STEPS - 1; s++) {
-            const t = new Array(N).fill(0);
+            const cw = new Array(N).fill(0);
+            const ccw = new Array(N).fill(0);
             for (const m of trans[s]) {
-                if (m.dir === 1) t[m.fr]++;
-                else t[m.to]++;
+                if (m.dir === 1) cw[m.fr]++;
+                else ccw[m.to]++;
             }
-            linkTraffic.push(t);
+            linkTrafficCW.push(cw);
+            linkTrafficCCW.push(ccw);
         }
 
         // ─── Totals for finish screen ───
         const totalMoved = trans.reduce((sum, t) => sum + t.length, 0);
-        const totalPerLink = linkTraffic.reduce((sum, t) => sum + t[0], 0);
+        const totalPerLinkCW = linkTrafficCW.reduce((sum, t) => sum + t[0], 0);
+        const totalPerLinkCCW = linkTrafficCCW.reduce((sum, t) => sum + t[0], 0);
+        const totalPerLink = totalPerLinkCW + totalPerLinkCCW;
 
         // ─── Anim state ───
         let curStep = 0;
@@ -233,8 +238,10 @@
 
                 // Traffic pill — show during animation AND hold after
                 const hIdx = activeHopIdx();
-                if (hIdx >= 0 && hIdx < linkTraffic.length) {
-                    const count = linkTraffic[hIdx][i];
+                if (hIdx >= 0 && hIdx < linkTrafficCW.length) {
+                    const cwCount = linkTrafficCW[hIdx][i];
+                    const ccwCount = linkTrafficCCW[hIdx][i];
+                    const count = cwCount + ccwCount;
                     if (count > 0) {
                         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
                         const ox = mx - CX, oy = my - CY;
@@ -247,12 +254,13 @@
                         ctx.save(); ctx.globalAlpha = fadeIn;
 
                         ctx.font = `600 ${14 * S}px "IBM Plex Mono", monospace`;
-                        const tw = ctx.measureText(count.toString()).width;
+                        const label = `${cwCount} + ${ccwCount}`;
+                        const tw = ctx.measureText(label).width;
                         const gap = 3 * S;
                         const totalW = tw + gap + BLK;
                         ctx.fillStyle = '#57534e';
                         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-                        ctx.fillText(count.toString(), lx - totalW / 2, ly);
+                        ctx.fillText(label, lx - totalW / 2, ly);
                         drawBlk(lx - totalW / 2 + tw + gap, ly - BLK / 2, BLK, '#78716c', 0.85 * fadeIn);
                         ctx.restore();
                     }
@@ -332,7 +340,7 @@
                 ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
                 ctx.fillStyle = '#78716c';
                 ctx.fillText(`${totalMoved} blocks moved total`, CX, CY + 10 * S);
-                ctx.fillText(`${totalPerLink} per link`, CX, CY + 30 * S);
+                ctx.fillText(`${totalPerLinkCW} CW + ${totalPerLinkCCW} CCW = ${totalPerLink} per link`, CX, CY + 30 * S);
             } else {
                 // Active hop — show during both animation AND hold after
                 const hopIdx = inTrans ? curStep : curStep - 1; // index into trans[]
@@ -341,12 +349,13 @@
                 ctx.fillStyle = '#1c1917';
                 ctx.fillText(`Hop ${hopNum} of ${STEPS - 1}`, CX, CY - 24 * S);
                 if (hopIdx >= 0 && hopIdx < trans.length) {
-                    const perLink = linkTraffic[hopIdx][0];
+                    const cwPerLink = linkTrafficCW[hopIdx][0];
+                    const ccwPerLink = linkTrafficCCW[hopIdx][0];
                     const moving = trans[hopIdx].length;
                     ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
                     ctx.fillStyle = '#78716c';
                     ctx.fillText(`${moving} blocks in flight`, CX, CY + 30 * S);
-                    ctx.fillText(`${perLink} blocks per link`, CX, CY + 50 * S);
+                    ctx.fillText(`${cwPerLink} CW + ${ccwPerLink} CCW = ${cwPerLink + ccwPerLink} per link`, CX, CY + 50 * S);
                 }
             }
         }
