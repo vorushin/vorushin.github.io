@@ -34,15 +34,7 @@
     </div>
   </nav>
 
-  <div class="reading-progress"></div>
-
-  <header class="py-3 neural-bg">
-    <div class="container">
-      <p class="lead mb-0">Programming, AI, Machine Learning, and Life</p>
-    </div>
-  </header>
-
-  <main class="container py-4 neural-bg">
+  <main class="container py-4">
     {{ content }}
   </main>
 
@@ -50,7 +42,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6">
-          <p>© {{ site.time | date: '%Y' }} Roman Vorushin</p>
+          <p>&copy; {{ site.time | date: '%Y' }} Roman Vorushin</p>
         </div>
         <div class="col-md-6 text-md-end">
           <a href="https://x.com/vorushin"><i class="fa-brands fa-twitter me-3"></i></a>
@@ -63,16 +55,6 @@
 
   <!-- Bootstrap JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- Reading Progress Script -->
-  <script>
-    window.addEventListener('scroll', function () {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.querySelector('.reading-progress').style.width = scrolled + '%';
-    });
-  </script>
 </body>
 
 </html>
