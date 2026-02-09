@@ -339,8 +339,8 @@
                 ctx.fillText('Finish', CX, CY - 24 * S);
                 ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
                 ctx.fillStyle = '#78716c';
-                ctx.fillText(`${totalMoved} blocks moved total`, CX, CY + 10 * S);
-                ctx.fillText(`${totalPerLinkCW} CW + ${totalPerLinkCCW} CCW = ${totalPerLink} per link`, CX, CY + 30 * S);
+                ctx.fillText(`${totalMoved} blocks moved total`, CX, CY + 30 * S);
+                ctx.fillText(`${totalPerLinkCW} CW + ${totalPerLinkCCW} CCW = ${totalPerLink} per link`, CX, CY + 50 * S);
             } else {
                 // Active hop — show during both animation AND hold after
                 const hopIdx = inTrans ? curStep : curStep - 1; // index into trans[]
