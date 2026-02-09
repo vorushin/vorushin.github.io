@@ -1,6 +1,6 @@
 <style>
     .all-gather-viz {
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
         background: var(--bg, #fafaf9);
         color: var(--fg, #1c1917);
         width: 100%;
@@ -32,7 +32,7 @@
     }
 
     .all-gather-viz button {
-        font-family: 'IBM Plex Mono', monospace;
+        font-family: 'Roboto Mono', monospace;
         font-size: 0.78rem;
         font-weight: 500;
         padding: 0.4rem 0.85rem;
@@ -60,7 +60,14 @@
         border-color: #1c1917;
     }
 
+    .all-gather-viz .btn-label {
+        margin-left: 0.25rem;
+    }
 
+    @media (max-width: 540px) {
+        .all-gather-viz .btn-label { display: none; }
+        .all-gather-viz button { padding: 0.35rem 0.5rem; }
+    }
 
 </style>
 
@@ -68,8 +75,8 @@
     <div class="canvas-wrap">
         <canvas id="allGatherCanvas"></canvas>
         <div class="controls">
-            <button id="allGatherPlayBtn" class="active">⏸ Pause</button>
-            <button id="allGatherResetBtn">↺ Reset</button>
+            <button id="allGatherPlayBtn" class="active"><span class="btn-icon">⏸</span><span class="btn-label">Pause</span></button>
+            <button id="allGatherResetBtn"><span class="btn-icon">↺</span><span class="btn-label">Reset</span></button>
         </div>
     </div>
 </div>
@@ -269,7 +276,7 @@
                         const fadeIn = inTrans ? Math.min(tProg * 5, 1) : 1;
                         ctx.save(); ctx.globalAlpha = fadeIn;
 
-                        ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
+                        ctx.font = `600 ${17 * S}px "Space Grotesk", sans-serif`;
                         const label = `${cwCount} + ${ccwCount}`;
                         const tw = ctx.measureText(label).width;
                         const gap = 3 * S;
@@ -314,7 +321,7 @@
                 drawBlk(cx, cy, BLK, COLORS[b.r], 1);
             }
 
-            ctx.font = `600 ${16 * S}px "IBM Plex Mono", monospace`;
+            ctx.font = `600 ${16 * S}px "Space Grotesk", sans-serif`;
             ctx.fillStyle = '#44403c'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
             ctx.fillText(idx.toString(), tx, by - 6 * S);
         }
@@ -349,7 +356,7 @@
                 let totalWidth = 0;
                 const widths = [];
                 for (const seg of segments) {
-                    ctx.font = `${seg.bold ? 700 : 400} ${16 * S}px "IBM Plex Mono", monospace`;
+                    ctx.font = `${seg.bold ? 700 : 400} ${16 * S}px "Space Grotesk", sans-serif`;
                     const w = ctx.measureText(seg.text).width;
                     widths.push(w);
                     totalWidth += w;
@@ -358,7 +365,7 @@
                 ctx.textAlign = 'left';
                 ctx.fillStyle = '#78716c';
                 for (let i = 0; i < segments.length; i++) {
-                    ctx.font = `${segments[i].bold ? 700 : 400} ${16 * S}px "IBM Plex Mono", monospace`;
+                    ctx.font = `${segments[i].bold ? 700 : 400} ${16 * S}px "Space Grotesk", sans-serif`;
                     ctx.fillText(segments[i].text, x, y);
                     x += widths[i];
                 }
@@ -366,18 +373,18 @@
             }
 
             if (curStep === 0 && !inTrans) {
-                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#a8a29e';
+                ctx.font = `600 ${22 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#0d9488';
                 ctx.fillText('AllGather', CX, CY - 48 * S);
-                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#1c1917';
+                ctx.font = `400 ${20 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#78716c';
                 ctx.fillText('Start', CX, CY - 24 * S);
             } else if (curStep === STEPS - 1 && !inTrans) {
-                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#a8a29e';
+                ctx.font = `600 ${22 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#0d9488';
                 ctx.fillText('AllGather', CX, CY - 48 * S);
-                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#1c1917';
+                ctx.font = `400 ${20 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#78716c';
                 ctx.fillText('Finish', CX, CY - 24 * S);
                 drawStatsLine([
                     {text: `${totalMoved}`, bold: true},
@@ -394,11 +401,11 @@
             } else {
                 const hopIdx = inTrans ? curStep : curStep - 1;
                 const hopNum = hopIdx + 1;
-                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#a8a29e';
+                ctx.font = `600 ${22 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#0d9488';
                 ctx.fillText('AllGather', CX, CY - 48 * S);
-                ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
-                ctx.fillStyle = '#1c1917';
+                ctx.font = `400 ${20 * S}px "Space Grotesk", sans-serif`;
+                ctx.fillStyle = '#78716c';
                 ctx.fillText(`Hop ${hopNum} of ${STEPS - 1}`, CX, CY - 24 * S);
                 if (hopIdx >= 0 && hopIdx < trans.length) {
                     const cwPerLink = linkTrafficCW[hopIdx][0];
@@ -470,13 +477,14 @@
         const pb = document.getElementById('allGatherPlayBtn');
         pb.onclick = () => {
             playing = !playing;
-            pb.textContent = playing ? '⏸ Pause' : '▶ Play';
+            pb.querySelector('.btn-icon').textContent = playing ? '⏸' : '▶';
+            pb.querySelector('.btn-label').textContent = playing ? 'Pause' : 'Play';
             pb.classList.toggle('active', playing);
         };
 
         document.getElementById('allGatherResetBtn').onclick = () => {
             curStep = 0; tProg = 0; inTrans = false; holdT = 0;
-            playing = true; pb.textContent = '⏸ Pause'; pb.classList.add('active');
+            playing = true; pb.querySelector('.btn-icon').textContent = '⏸'; pb.querySelector('.btn-label').textContent = 'Pause'; pb.classList.add('active');
         };
 
         requestAnimationFrame(tick);
