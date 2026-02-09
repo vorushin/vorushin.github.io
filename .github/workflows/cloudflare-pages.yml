@@ -2,15 +2,14 @@ name: Deploy Jekyll site to Cloudflare Pages
 
 on:
   push:
-    branches: ["master"]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: "cloudflare-pages"
-  cancel-in-progress: false
+  group: "cloudflare-pages-${{ github.ref }}"
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
@@ -35,8 +34,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages (production)
+        if: github.ref == 'refs/heads/master'
         run: npx wrangler pages deploy _site --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Upload to Cloudflare Pages (preview)
+        if: github.ref != 'refs/heads/master'
+        run: npx wrangler versions upload _site --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }}
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
