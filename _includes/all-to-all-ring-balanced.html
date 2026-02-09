@@ -255,7 +255,7 @@
                         const fadeIn = inTrans ? Math.min(tProg * 5, 1) : 1;
                         ctx.save(); ctx.globalAlpha = fadeIn;
 
-                        ctx.font = `600 ${14 * S}px "IBM Plex Mono", monospace`;
+                        ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
                         const label = `${cwCount} + ${ccwCount}`;
                         const tw = ctx.measureText(label).width;
                         const gap = 3 * S;
@@ -331,22 +331,59 @@
         function drawHeader() {
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
 
+            function drawStatsLine(segments, y) {
+                let totalWidth = 0;
+                const widths = [];
+                for (const seg of segments) {
+                    ctx.font = `${seg.bold ? 700 : 400} ${16 * S}px "IBM Plex Mono", monospace`;
+                    const w = ctx.measureText(seg.text).width;
+                    widths.push(w);
+                    totalWidth += w;
+                }
+                let x = CX - totalWidth / 2;
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#78716c';
+                for (let i = 0; i < segments.length; i++) {
+                    ctx.font = `${segments[i].bold ? 700 : 400} ${16 * S}px "IBM Plex Mono", monospace`;
+                    ctx.fillText(segments[i].text, x, y);
+                    x += widths[i];
+                }
+                ctx.textAlign = 'center';
+            }
+
             if (curStep === 0 && !inTrans) {
+                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#a8a29e';
+                ctx.fillText('AllToAll', CX, CY - 48 * S);
                 ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
                 ctx.fillStyle = '#1c1917';
-                ctx.fillText('Start', CX, CY - 10 * S);
+                ctx.fillText('Start', CX, CY - 24 * S);
             } else if (curStep === STEPS - 1 && !inTrans) {
+                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#a8a29e';
+                ctx.fillText('AllToAll', CX, CY - 48 * S);
                 ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
                 ctx.fillStyle = '#1c1917';
                 ctx.fillText('Finish', CX, CY - 24 * S);
-                ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
-                ctx.fillStyle = '#78716c';
-                ctx.fillText(`${totalMoved} blocks moved total`, CX, CY + 30 * S);
-                ctx.fillText(`${totalPerLinkCW} CW + ${totalPerLinkCCW} CCW = ${totalPerLink} per link`, CX, CY + 50 * S);
+                drawStatsLine([
+                    {text: `${totalMoved}`, bold: true},
+                    {text: ` blocks moved total`, bold: false}
+                ], CY + 10 * S);
+                drawStatsLine([
+                    {text: `${totalPerLinkCW}`, bold: true},
+                    {text: ` CW + `, bold: false},
+                    {text: `${totalPerLinkCCW}`, bold: true},
+                    {text: ` CCW = `, bold: false},
+                    {text: `${totalPerLink}`, bold: true},
+                    {text: ` per link`, bold: false}
+                ], CY + 30 * S);
             } else {
                 // Active hop — show during both animation AND hold after
                 const hopIdx = inTrans ? curStep : curStep - 1; // index into trans[]
                 const hopNum = hopIdx + 1;
+                ctx.font = `600 ${18 * S}px "IBM Plex Sans", sans-serif`;
+                ctx.fillStyle = '#a8a29e';
+                ctx.fillText('AllToAll', CX, CY - 48 * S);
                 ctx.font = `700 ${26 * S}px "IBM Plex Sans", sans-serif`;
                 ctx.fillStyle = '#1c1917';
                 ctx.fillText(`Hop ${hopNum} of ${STEPS - 1}`, CX, CY - 24 * S);
@@ -354,10 +391,18 @@
                     const cwPerLink = linkTrafficCW[hopIdx][0];
                     const ccwPerLink = linkTrafficCCW[hopIdx][0];
                     const moving = trans[hopIdx].length;
-                    ctx.font = `600 ${17 * S}px "IBM Plex Mono", monospace`;
-                    ctx.fillStyle = '#78716c';
-                    ctx.fillText(`${moving} blocks in flight`, CX, CY + 30 * S);
-                    ctx.fillText(`${cwPerLink} CW + ${ccwPerLink} CCW = ${cwPerLink + ccwPerLink} per link`, CX, CY + 50 * S);
+                    drawStatsLine([
+                        {text: `${moving}`, bold: true},
+                        {text: ` blocks in flight`, bold: false}
+                    ], CY + 10 * S);
+                    drawStatsLine([
+                        {text: `${cwPerLink}`, bold: true},
+                        {text: ` CW + `, bold: false},
+                        {text: `${ccwPerLink}`, bold: true},
+                        {text: ` CCW = `, bold: false},
+                        {text: `${cwPerLink + ccwPerLink}`, bold: true},
+                        {text: ` per link`, bold: false}
+                    ], CY + 30 * S);
                 }
             }
         }
