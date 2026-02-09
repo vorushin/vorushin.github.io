@@ -1,20 +1,22 @@
 ---
 layout: default
 ---
-<article class="post">
-  <header class="post-header mb-4">
-    <h1 class="post-title">
-      <a href="{{ page.url }}" class="entry_title" rel="bookmark">{{ page.title }}</a>
-    </h1>
-    <div class="post-meta">
-      <time class="entry_date">{{ page.date | date: "%d.%m.%Y" }}</time>
+<div class="post-layout">
+  <aside class="toc-sidebar" id="toc-sidebar" aria-label="Table of contents">
+    <nav class="toc-nav"></nav>
+  </aside>
+  <article class="post">
+    <header class="post-header mb-4">
+      <h1 class="post-title">{{ page.title }}</h1>
+      <div class="post-meta">
+        <time class="entry_date">{{ page.date | date: "%d.%m.%Y" }}</time>
+      </div>
+    </header>
+    <div class="post-content">
+      {{ content }}
     </div>
-  </header>
-
-  <div class="post-content">
-    {{ content }}
-  </div>
-
-</article>
+  </article>
+</div>
+{% include toc.html %}
 
 {% include comments.html %}

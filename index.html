@@ -4,28 +4,11 @@ layout: default
 <div class="posts">
   {% assign en_posts = site.posts | where: "lang", "en" | where_exp: "post", "post.hidden != true" %}
   {% for post in en_posts %}
-  <article class="post-card mb-5">
-    <header class="post-header mb-3">
-      <h2 class="post-title">
-        <a href="{{ post.url }}" class="entry_title" rel="bookmark">{{ post.title }}</a>
-      </h2>
-      <div class="post-meta">
-        <time class="entry_date">{{ post.date | date: "%B %d, %Y" }}</time>
-      </div>
-    </header>
-
-    {% if post.content contains site.excerpt_separator %}
-    <div class="post-excerpt">
-      {{ post.excerpt }}
-      <div class="read-more mt-3">
-        <a href="{{ post.url }}" class="btn btn-outline-primary btn-sm">Read more &rarr;</a>
-      </div>
-    </div>
-    {% else %}
-    <div class="post-content">
-      {{ post.content }}
-    </div>
-    {% endif %}
+  <article class="post-card mb-3">
+    <time class="entry_date">{{ post.date | date: "%B %d, %Y" }}</time>
+    <h2 class="post-title">
+      <a href="{{ post.url }}" class="entry_title">{{ post.title }}</a>
+    </h2>
   </article>
   {% endfor %}
 
