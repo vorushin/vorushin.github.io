@@ -2,12 +2,12 @@ excerpt_separator: "<!--more-->"
 markdown: kramdown
 paginate: 20
 
-name: Roman Vorushin's Blog
+name: Roman Vorushin
 url: https://vorushin.github.io
 author: Roman Vorushin (roman.vorushin@gmail.com)
 
 # jekyll-seo-tag
-title: Roman Vorushin's Blog - AI, Machine Learning, and Life
+title: Roman Vorushin
 description: Blog about artificial intelligence, machine learning, LLM training, neural networks, and life. Research Engineer at Google DeepMind working on Gemini.
 twitter:
   username: vorushin
