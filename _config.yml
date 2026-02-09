@@ -25,8 +25,10 @@ lang: en
 plugins:
   - jekyll-seo-tag
   - jekyll-paginate
+  - jekyll-sitemap
 
 # Defaults
+# Posts default to lang: ru for legacy Russian archive; English posts override with lang: en
 defaults:
   - scope:
       path: ""

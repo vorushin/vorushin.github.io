@@ -56,10 +56,20 @@ Use `<!--more-->` separator for homepage excerpts.
 - Precomputed simulation states, then animated with `requestAnimationFrame`
 - Link traffic split into CW/CCW arrays; pills show "A + B" format; headers show CW/CCW breakdown
 - Finish stats Y positions must match Hop stats Y positions (both at `CY + 30 * S` and `CY + 50 * S`) to avoid visual jumps
-- Play/Pause and Reset controls
+- Play/Pause and Reset controls: buttons use `<span class="btn-icon">` + `<span class="btn-label">` structure; label hides on narrow viewports (<540px) leaving icon-only buttons
+- Header text: op name in teal `#0d9488` (22px semibold), state text in warm gray `#78716c` (20px regular)
 
 Include in posts via `{% include diagram-name.html %}`.
 
 ### Styling
 
-`css/main.css` — custom theme with CSS variables, dark mode support (`prefers-color-scheme: dark`), Bootstrap 5.3 for layout. Fonts: Inter (body), Roboto Mono (code). Canvas diagrams use IBM Plex Sans/Mono independently. Diagram containers have `max-width: 600px` set in main.css.
+`css/main.css` — custom theme with CSS variables, dark mode support (`prefers-color-scheme: dark`), Bootstrap 5.3 for layout. Fonts: Iowan Old Style BT/Georgia (body serif), Space Grotesk (UI sans — navbar, footer, dates, TOC, diagram canvas text), Roboto Mono (code, diagram buttons). Space Grotesk and Roboto Mono loaded from Google Fonts. Diagram containers have `max-width: 600px` set in main.css.
+
+### SEO & Metadata
+
+- `jekyll-seo-tag` generates `<title>`, Open Graph, and Twitter Card meta tags
+- `jekyll-sitemap` auto-generates `sitemap.xml`
+- `robots.txt` points to the sitemap
+- Default `og:image` set to `/apple-touch-icon.png` via front matter defaults in `_config.yml`
+- Favicons: `/img/favicon.ico`, `/favicon-32x32.png`, `/favicon-16x16.png`, `/apple-touch-icon.png`
+- `404.html` provides a custom not-found page for GitHub Pages
