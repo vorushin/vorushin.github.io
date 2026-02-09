@@ -4,11 +4,14 @@ paginate: 20
 
 name: Roman Vorushin
 url: https://vorushin.github.io
-author: Roman Vorushin (roman.vorushin@gmail.com)
+author:
+  name: Roman Vorushin
+  twitter: vorushin
 
 # jekyll-seo-tag
 title: Roman Vorushin
 description: Blog about artificial intelligence, machine learning, LLM training, neural networks, and life. Research Engineer at Google DeepMind working on Gemini.
+og_image: /apple-touch-icon.png
 twitter:
   username: vorushin
 social:
@@ -23,8 +26,12 @@ plugins:
   - jekyll-seo-tag
   - jekyll-paginate
 
-# Default language and layout for existing posts
+# Defaults
 defaults:
+  - scope:
+      path: ""
+    values:
+      image: /apple-touch-icon.png
   - scope:
       path: ""
       type: "posts"
