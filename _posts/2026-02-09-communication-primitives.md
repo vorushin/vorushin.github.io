@@ -7,12 +7,17 @@ permalink: /blog/tpu-gpu-collective-primitives
 
 Training LLMs on TPUs/GPUs is often constrained not by the speed of the matrix multiplication units (MXUs), but either by data transfer from high bandwidth memory (HBM) to MXU, or by data transfer between accelerators. A large part of optimizing training/inference programs consists of finding ways to overlap data transfer and matrix multiplication operations - transferring data that will be needed soon while systolic arrays in MXU (or tensor cores on GPUs) are busy computing.
 
-Moving data between accelerators is much slower than moving data between HBM and VMEM (or SMEM for GPUs). For example, for TPU v5p, HBM ↔ VMEM bandwidth is \\(2.8 \times 10^{12}\\) bytes/s, while bidirectional links between TPUs have bandwidth \\(9 \times 10^{10}\\) bytes/s (31× slower). This means we need to plan carefully **when** and **how** to move data between devices:
+Moving data between accelerators is much slower than moving data between HBM and VMEM[^smem]. For example, for TPU v5p, HBM ↔ VMEM bandwidth is \\(2.8 \times 10^{12}\\) bytes/s, while bidirectional links between TPUs have bandwidth \\(9 \times 10^{10}\\) bytes/s (31× slower). This means we need to plan carefully **when** and **how** to move data between devices:
 
 - **When**: ideally in advance, while MXUs are computing other data
-- **How**: minimize the amount of data moved while maximizing link utilization (moving a single byte between 2 TPU v5p takes the same time as moving 45KB, see [How To Scale Your Model](https://jax-ml.github.io/scaling-book/sharding/), "A note on ICI latency")
-<!--more-->
-Long ago when data parallelism was all we needed, we mostly used **AllReduce** (parallel sum operation), but nowadays we use three primitives: **AllGather**, **ReduceScatter**, and **AllToAll**. AllReduce can be replaced by a combination of ReduceScatter and AllGather.
+- **How**: minimize the amount of data moved while maximizing link utilization[^ici_latency]
+
+[^smem]: Or SMEM for GPUs.
+[^ici_latency]: Moving a single byte between 2 TPU v5p takes the same time as moving 45KB, see [How To Scale Your Model](https://jax-ml.github.io/scaling-book/sharding/), "A note on ICI latency".
+
+Long ago when data parallelism was all we needed, we mostly used **AllReduce**[^allreduce], but nowadays we use three primitives: **AllGather**, **ReduceScatter**, and **AllToAll**. AllReduce can be replaced by a combination of ReduceScatter and AllGather.
+
+[^allreduce]: Parallel sum operation.
 
 ## AllGather
 
@@ -32,7 +37,9 @@ It's interesting that AllGather on GPUs, where a switch-based topology is used, 
 
 ## ReduceScatter
 
-**Reduce** in the name means an operation of reducing dimensionality of the data (going from \\(N\\) to \\(N-1\\) dimensions), same as the Python *functools.reduce* function (going from a list to a scalar). The Python function takes a list and a function that combines two elements together. For LLM training this combining operator is most often *sum* (add two numbers). The corresponding JAX function is called psum_scatter (parallel sum + scatter).
+**Reduce** in the name means an operation of reducing dimensionality of the data (going from \\(N\\) to \\(N-1\\) dimensions), same as the Python *functools.reduce* function (going from a list to a scalar). The Python function takes a list and a function that combines two elements together. For LLM training this combining operator is most often *sum* (add two numbers). The corresponding JAX function is called psum_scatter[^psum_scatter].
+
+[^psum_scatter]: Parallel sum + scatter.
 
 **Scatter**: while we send the data from every TPU to every other TPU, the reduced/summed data ends up scattered/sharded - different TPUs hold different shards of the data.
 
