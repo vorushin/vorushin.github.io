@@ -1,0 +1,54 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var footnotesDiv = document.querySelector('div.footnotes');
+  if (!footnotesDiv) return;
+
+  var refs = document.querySelectorAll('sup[id^="fnref:"]');
+  var wide = window.matchMedia('(min-width: 1200px)');
+
+  refs.forEach(function(ref) {
+    var id = ref.id.replace('fnref:', '');
+    var footnote = document.getElementById('fn:' + id);
+    if (!footnote) return;
+
+    // Clone and strip backlink
+    var clone = footnote.cloneNode(true);
+    var backlink = clone.querySelector('.reversefootnote');
+    if (backlink) backlink.remove();
+
+    // Extract HTML, stripping outer <p> wrapper
+    var html = clone.innerHTML.trim();
+    html = html.replace(/^<p>/i, '').replace(/<\/p>\s*$/i, '');
+    html = html.replace(/<\/p>\s*<p>/gi, '<br><br>');
+
+    // Create sidenote
+    var sidenote = document.createElement('span');
+    sidenote.className = 'sidenote';
+    sidenote.innerHTML = '<sup class="sidenote-number">' + ref.textContent + '</sup> ' + html;
+
+    // Insert after <sup> and any trailing punctuation (e.g. the "." in "well[^1].")
+    // so that punctuation doesn't get orphaned when sidenote becomes display:block
+    var insertBefore = ref.nextSibling;
+    if (insertBefore && insertBefore.nodeType === 3 && /^[.,;:)\]]/.test(insertBefore.textContent)) {
+      if (insertBefore.textContent.length > 1) {
+        insertBefore.splitText(1);
+      }
+      insertBefore = insertBefore.nextSibling;
+    }
+    ref.parentNode.insertBefore(sidenote, insertBefore);
+
+    // Click handler: toggle on narrow screens, noop on wide
+    var link = ref.querySelector('a');
+    if (link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!wide.matches) {
+          sidenote.classList.toggle('sidenote-visible');
+        }
+      });
+    }
+  });
+
+  footnotesDiv.style.display = 'none';
+});
+</script>

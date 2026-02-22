@@ -106,6 +106,25 @@ ul li, ol li {
   margin-bottom: 0.15rem;
 }
 
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
 /* Images */
 img {
   max-width: 100%;
@@ -216,6 +235,90 @@ img {
   margin: 2rem auto;
 }
 
+.post-content details {
+  margin: 1.5rem 0;
+  padding: 0.75rem 1.25rem;
+  background-color: #fafaf8;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.post-content details summary {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.88rem;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.15rem 0;
+}
+
+.post-content details summary:hover {
+  color: var(--text-primary);
+}
+
+.post-content details[open] summary {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post-content details img {
+  margin: 1rem auto;
+}
+
+/* Figure captions */
+.post-content figure {
+  margin: 1.5rem 0;
+}
+
+.post-content figure img {
+  margin-bottom: 0;
+}
+
+.post-content figcaption {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Model output samples */
+.model-output {
+  margin: 1rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.model-prompt {
+  padding: 0.5rem 1rem;
+  background-color: var(--code-bg);
+  border-bottom: 1px solid var(--border-color);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.model-prompt::before {
+  content: 'Prompt: ';
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.model-completion {
+  padding: 0.65rem 1rem;
+  font-family: var(--font-serif);
+  color: var(--text-primary);
+}
+
 .post-content h2,
 .post-content h3 {
   margin-top: 2.5rem;
@@ -298,6 +401,57 @@ img {
 
 @media print { .toc-sidebar { display: none; } }
 
+/* Sidenotes */
+.sidenote {
+  display: none;
+  font-family: var(--font-sans);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.sidenote .sidenote-number {
+  font-weight: 600;
+  margin-right: 0.15em;
+}
+
+.sidenote a {
+  color: var(--text-secondary);
+}
+
+/* Narrow screens: footnote refs are clickable */
+sup[id^="fnref:"] a {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Narrow screens: toggled inline display */
+@media (max-width: 1199px) {
+  .sidenote.sidenote-visible {
+    display: block;
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0.75rem 1.5rem;
+  }
+}
+
+/* Wide screens: always visible in right margin */
+@media (min-width: 1200px) {
+  .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    width: 200px;
+    margin-right: calc(-200px - 1.5rem);
+    margin-left: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  sup[id^="fnref:"] a { cursor: default; }
+}
+
+@media print { .sidenote { display: block; font-size: 0.8rem; } }
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -310,6 +464,10 @@ img {
 
   img {
     opacity: 0.9;
+  }
+
+  .post-content details {
+    background-color: #1f1f1f;
   }
 }
 
