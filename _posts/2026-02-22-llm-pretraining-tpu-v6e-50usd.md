@@ -123,11 +123,11 @@ Nevertheless first versions of the training only reached 25% MXU usage. I pushed
 
 [^nanogpt_jax]: E.g., [The modded nanogpt speedrun, but in JAX and on TPUs](https://nor-blog.pages.dev/posts/2025-08-21-modded-nanogpt-jax/) reports 23% MFU on TPU v6e-8, constrained by HBM bandwidth.
 
-When I was waiting for a plane, I came up with the following idea: let Claude Code (via Claude Code Web) build [a Colab notebook with a thorough set of TPU performance tests](https://github.com/vorushin/tpuchat/blob/master/05_tpu_perf.ipynb), building the transformer block by block, and measure the MFU of different parts, in different sizes and in various combinations. Start from the pure matmuls, then, implement and profile individual components, then a single layer, multiple layers, forward and backward pass, the optimizer implementation, each phase independently runnable. Even though the first implementation had a lot of issues, it helped me to start seeing MXU usage north of 50% and I was eventually able to dissect the slow parts and replace them with the faster implementations.
+When I was waiting for a plane, I came up with the following idea: let Claude Code (via Claude Code Web) build [a Colab notebook with a thorough set of TPU performance tests](https://github.com/vorushin/tpuchat/blob/master/05_tpu_perf.ipynb), building the transformer block by block, and measure the MFU of different parts, in different sizes and in various combinations. Start from the pure matmuls, then, implement and profile individual components, then a single layer, multiple layers, forward and backward pass, the optimizer implementation, each phase independently runnable. Even though the first implementation had a lot of issues, it helped me to start seeing MFU north of 50% and I was eventually able to dissect the slow parts and replace them with the faster implementations.
 
 <figure>
 <img src="/img/tpu_ablations/tpu_perf.png" alt="05_tpu_perf notebook screenshot">
-<figcaption>That's how one of the cells in the beginning of the notebook looks like. Seeing high MXU usage was a big relief.</figcaption>
+<figcaption>That's how one of the cells in the beginning of the notebook looks like. Seeing high MFU usage was a big relief.</figcaption>
 </figure>
 
 Here are selected results from the benchmark, building up from atoms to the full training step:
