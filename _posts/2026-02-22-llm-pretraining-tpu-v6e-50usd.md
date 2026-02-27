@@ -70,7 +70,7 @@ TPU v6e does matmuls of 256*256 blocks - we need to make sure that our large ten
 [^dotgeneral]: [DotGeneral](https://openxla.org/xla/operation_semantics#dotgeneral) is a good start.
 [^mxu_output]: The MXU takes two bf16 tensors as an input and produces the output in fp32. Most often the fp32 result is not needed (it's defined by the *preferred_element_type* argument),  so it's converted into bf16 before it's written back to HBM.
 
-* Project on GitHub: <img src="https://github.githubassets.com/favicons/favicon.svg" width="16" height="16" style="display:inline; vertical-align:text-bottom; margin:0;"> <a href="https://github.com/vorushin/tpuchat">vorushin/tpuchat</a>.
+* Project on GitHub: {% include github-link.html repo="vorushin/tpuchat" %}.
 * The ablation notebook in Google Colab: <a href="https://colab.research.google.com/github/vorushin/tpuchat/blob/master/08_tpu_ablations.ipynb?flush_caches=true">08_tpu_ablations.ipynb</a>.
 
 <details>

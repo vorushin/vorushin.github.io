@@ -310,6 +310,17 @@ img {
   text-align: center;
 }
 
+/* GitHub-linked repos inline */
+.github-link {
+  white-space: nowrap;
+}
+
+.github-link img {
+  display: inline;
+  vertical-align: text-bottom;
+  margin: 0;
+}
+
 /* Model output samples */
 .model-output {
   margin: 1rem 0;
@@ -474,6 +485,19 @@ sup[id^="fnref:"] a {
 }
 
 @media print { .sidenote { display: block; font-size: 0.8rem; } }
+
+/* tl;dr block */
+.post-content .tldr {
+  border-left: 3px solid #0d9488;
+  padding: 0.5rem 1rem;
+  margin: 0 0 1.5rem 0;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+.post-content .tldr p {
+  margin: 0;
+}
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
