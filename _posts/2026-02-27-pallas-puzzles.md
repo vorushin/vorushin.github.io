@@ -9,9 +9,10 @@ permalink: /blog/pallas-puzzles
 **tl;dr.** {% include github-link.html repo="vorushin/pallas_puzzles" %} - JAX's kernel language puzzles
 </div>
 
-[Pallas](https://docs.jax.dev/en/latest/pallas/index.html) is JAX's kernel language for writing custom operations that run on TPU. Pallas for TPUs is what [Triton](https://triton-lang.org/) is for GPUs. The kernels are written to speed up model training and inference - the kernel languages provide low-level access to the hardware, allowing you to perform optimizations outside of the compiler's reach. Tri Dao[^tri_dao] made his name by developing efficient kernels, you've probably heard of FlashAttention[^flash].
+[Pallas](https://docs.jax.dev/en/latest/pallas/index.html) is JAX's kernel language for writing custom operations that run on TPU. Pallas for TPUs is what Triton[^triton] is for GPUs. The kernels are written to speed up model training and inference - the kernel languages provide low-level access to the hardware, allowing you to perform optimizations outside of the compiler's reach. Tri Dao[^tri_dao] made his name by developing efficient kernels, you've probably heard of FlashAttention[^flash].
 
-[^tri_dao]: [Tri Dao](https://tridao.me/) — I highly recommend reading his papers and digging into his code.
+[^triton]: [Triton](https://triton-lang.org/) — GPU kernel language created by Philippe Tillet, Harvard.
+[^tri_dao]: [Tri Dao](https://tridao.me/) — I highly recommend reading his papers and digging into his code. I don't know if it's a coincidence that TRIton and TRI Dao share the prefix.
 [^flash]: GitHub repo: [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) and [FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness](https://arxiv.org/abs/2205.14135) on arXiv.
 
 The efficiency gains don't come for free - the kernel implementations look complex and intimidating for many people. Kernels are optimized for specific hardware and have sophisticated tuning tools. There used to be an attitude that only experts touch Triton/Pallas kernels, but it's not true anymore in 2026[^heinlein] - new agentic coding tools allow you to run experiments requiring changes in the whole stack: from data preparation to modeling changes, to training and inference kernels, to post-training algos, to agentic harnesses around the model candidates. To be able to guide the agents in this full stack setup one has to know the fundamentals of the most important components, or be able to learn them quickly.
