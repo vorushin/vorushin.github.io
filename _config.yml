@@ -1,6 +1,5 @@
 excerpt_separator: "<!--more-->"
 markdown: kramdown
-paginate: 20
 
 name: Roman Vorushin
 url: https://vorushin.github.io
@@ -25,7 +24,6 @@ lang: en
 
 plugins:
   - jekyll-seo-tag
-  - jekyll-paginate
   - jekyll-sitemap
 
 # Defaults
