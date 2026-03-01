@@ -14,7 +14,7 @@
   overviewLi.className = 'toc-h2';
   var overviewA = document.createElement('a');
   overviewA.href = '#';
-  overviewA.textContent = 'Overview';
+  overviewA.textContent = document.documentElement.lang === 'en' ? 'Overview' : 'Начало';
   overviewLi.appendChild(overviewA);
   ul.appendChild(overviewLi);
 

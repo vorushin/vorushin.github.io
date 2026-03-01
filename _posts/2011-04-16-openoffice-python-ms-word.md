@@ -8,7 +8,7 @@ permalink: /blog/58-openoffice-python-ms-word
 У меня был очень позитивный опыт с библиотеками [xlrd](http://pypi.python.org/pypi/xlrd), [xlwt](http://pypi.python.org/pypi/xlwt). Первая читает документы Excel, а вторая - записывает. Но подобных библиотек для документов \*.doc я не нашел. Зато нашел возможность обращаться из Python к OpenOffice. Эту возможность я успешно использовал, успешно импортировал весь грамматический материал и даже наткнулся на интересную идею для нашего основного продукта - [инструмента проверки грамматики Grammarly](http://grammarly.com).
 <!--more-->
 
-### Установка OpenOffice и python-uno
+## Установка OpenOffice и python-uno
 
 Сначала я поставил OpenOffice под Mac OS X, но оказалось что python bindings там только для python версии 2.3. То же самое справедливо и для Windows. Благо у меня всегда под рукой VirtualBox, в котором установлена Ubuntu. Для чистоты эксперимента я прямо сейчас поставлю чистую Ubuntu 11.04, куда и поставлю все необходимые пакеты.
 
@@ -18,7 +18,7 @@ permalink: /blog/58-openoffice-python-ms-word
 
     libreoffice -accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
 
-### Работа с документами
+## Работа с документами
 
 Ставим ipython и git-core. Клонируем вспомогательные функции [python-uno-utils](https://gist.github.com/923032), которые я выложил в github gist. Запускаем ipython из папки с python-uno-utils.
 

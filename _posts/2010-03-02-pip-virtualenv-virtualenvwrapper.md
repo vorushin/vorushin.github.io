@@ -6,7 +6,7 @@ permalink: /blog/29-pip-virtualenv-virtualenvwrapper
 В мейл-конференции Python-Dev всерьез обсуждают [включение фукнциональности virtualenv в Python](http://www.mail-archive.com/python-dev@python.org/msg45750.html). Это очень удобный инструмент питониста, позволяющий легко работать на одной машине с разными версиями библиотек (например, с django 1.0.4 и django из транка), быстро передавать список зависимостей проекта другим разработчикам (а они смогут поставить все библиотеки одной командой), упрощают деплоймент.
 <!--more-->
 
-### Pip
+## Pip
 
 Утилита pip предназначена для установки питоновских библиотек из [PyPI](http://pypi.python.org), из архивного файла, из git-a, в общем - отовсюду.
 
@@ -17,7 +17,7 @@ permalink: /blog/29-pip-virtualenv-virtualenvwrapper
     pip install South==0.5 (установить конкретную версию)
     pip uninstall South
 
-### Virtualenv
+## Virtualenv
 
 Скрипт virtualenv позволяет создать изолированное рабочее окружение. Команда virtualenv tests --no-site-packages создает в текущей директории папку tests с подпапками bin, include, lib. В папке bin создаются линки на easy_install, pip и текущую версию интерпретатора python. Параметр --no-site-packages запрещает использовать уже установленные system-wide библиотеки. Чтобы *войти* в это изолированное окружение, нужно выполнить команду source tests/bin/activate. После активации окружения все команды pip воздействуют только на текущее окружение.
 
@@ -43,7 +43,7 @@ permalink: /blog/29-pip-virtualenv-virtualenvwrapper
 
     pip install -r requirements.txt
     
-### Virtualenvwrapper
+## Virtualenvwrapper
 
 Через какое-то время разработчики обленились и решили, что переходить в папку, где хранятся все окружения и делать там source env_name/bin/activate - это слишком долго. Они создали вспомогательные скрипты, которую позволяют сменить окружение одной командой. Одним из самых популярных стал набор скриптов virtualenvwrapper. Руководство по установке смотрите [на сайте разработчика virtualenvwrapper Doug Hellman](http://www.doughellmann.com/projects/virtualenvwrapper/).
 

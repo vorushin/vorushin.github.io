@@ -5,14 +5,14 @@ permalink: /blog/52-v-chem-polza-dokumentoorientirovannyh-bd-mongodb-c
 ---
 Первый use-case использования документоориентированных БД, который не дает мне покоя.
 
-### Relational Solution
+## Relational Solution
 
 * Use a relational database, with a normalized or semi-normalized schema.
 * When rendering a response, run a handful of queries and then aggregate the data for the object.
 * Cache the resultant aggregate object either on a TTL or do invalidation.
 * Return the cached copy of the aggregate object.
 
-### Document Store Solution
+## Document Store Solution
 * Use a document datastore, and embed sub-objects or child lists within their parents.
 * When rendering a response, retrieve the document by key and return it.
 
