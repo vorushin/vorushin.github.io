@@ -25,6 +25,7 @@ lang: en
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-last-modified-at
 
 # Defaults
 # Posts default to lang: ru for legacy Russian archive; English posts override with lang: en

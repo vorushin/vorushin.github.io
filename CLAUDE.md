@@ -68,8 +68,9 @@ Include in posts via `{% include diagram-name.html %}`.
 ### SEO & Metadata
 
 - `jekyll-seo-tag` generates `<title>`, Open Graph, and Twitter Card meta tags
-- `jekyll-sitemap` auto-generates `sitemap.xml`
+- `jekyll-sitemap` auto-generates `sitemap.xml`; `jekyll-last-modified-at` populates `<lastmod>` from git history
 - `robots.txt` points to the sitemap
 - Default `og:image` set to `/apple-touch-icon.png` via front matter defaults in `_config.yml`
 - Favicons: `/img/favicon.ico`, `/favicon-32x32.png`, `/favicon-16x16.png`, `/apple-touch-icon.png`
 - `404.html` provides a custom not-found page for GitHub Pages
+- CI checkout uses `fetch-depth: 0` (full git history) so `jekyll-last-modified-at` can read commit dates
