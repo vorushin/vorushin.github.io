@@ -499,6 +499,21 @@ sup[id^="fnref:"] a {
   margin: 0;
 }
 
+/* AI-generated content */
+.ai-response {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid #0d9488;
+  background: #f8fafa;
+  border-radius: 0 4px 4px 0;
+}
+
+@media (min-width: 1200px) {
+  .ai-response .sidenote {
+    margin-right: calc(-200px - 2.5rem);
+  }
+}
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -515,6 +530,10 @@ sup[id^="fnref:"] a {
 
   .post-content details {
     background-color: #1f1f1f;
+  }
+
+  .ai-response {
+    background: #1a2222;
   }
 }
 
