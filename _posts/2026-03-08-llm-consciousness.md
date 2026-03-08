@@ -5,7 +5,7 @@ lang: en
 permalink: /blog/llm-consciousness
 ---
 
-Yesterday Iana and I were walking through the evening hills, breathing fresh air, letting our son Robert work up his appetite before dinner, and talking. I brought up our "religions" - sets of beliefs that are hard to prove objectively, which are chosen as the best explanations of the world around us. We started from our Buddhism (Iana) and Popper/Dawkins/Deutsch (Roman)[^deutsch_et_al]-inspired hypotheses about the world and ended up discussing the nature of human consciousness.
+Yesterday Iana and I were walking through the evening hills, breathing fresh air, letting our son Robert work up his appetite before dinner, and talking. I brought up our "religions" - sets of beliefs that are hard to prove objectively, which are chosen as the best explanations of the world around us. We started from our Buddhism and Popper/Dawkins/Deutsch[^deutsch_et_al]-inspired hypotheses about the world and ended up discussing the nature of human consciousness.
 
 ## Consciousness as a meme/replicator
 
