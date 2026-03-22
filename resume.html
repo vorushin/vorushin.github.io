@@ -1,0 +1,396 @@
+---
+layout: default
+title: Resume
+description: "Research Engineer at Google DeepMind. 13+ years at Google, working on Gemini pre-training and
+post-training. Deep expertise in JAX, Pallas, TPUs, and distributed training at scale."
+permalink: /resume
+---
+
+<style>
+  /* ── Resume-specific styles, built on blog's CSS variables ── */
+  .resume {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 2.5rem 0 3rem;
+  }
+
+  .resume-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .resume-header h1 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 2.4rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
+    line-height: 1.15;
+  }
+
+  .resume-tagline {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.88rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+  }
+
+  .resume-contact {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 2;
+  }
+
+  .resume-contact a {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.2s ease;
+  }
+
+  .resume-contact a:hover {
+    text-decoration-color: var(--text-primary);
+  }
+
+  .resume-contact .sep {
+    display: inline-block;
+    width: 1.4em;
+    text-align: center;
+    color: var(--border-color);
+  }
+
+  /* ── Divider ── */
+  .resume-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 2rem 0;
+  }
+
+  .resume-divider::before,
+  .resume-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+  }
+
+  .resume-divider .diamond {
+    width: 5px;
+    height: 5px;
+    background: var(--text-secondary);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ── Summary ── */
+  .resume-summary {
+    font-size: 1.12rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 38rem;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+
+  /* ── Section headers ── */
+  .resume-section {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .resume-section h2 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .resume-section::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+  }
+
+  /* ── Experience entries ── */
+  .resume-entry {
+    margin-bottom: 2rem;
+  }
+
+  .resume-entry-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .resume-entry-role {
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+
+  .resume-entry-at {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+
+  .resume-entry-org {
+    font-size: 1.05rem;
+  }
+
+  .resume-entry-date {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .resume-entry ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .resume-entry li {
+    position: relative;
+    padding-left: 1.2rem;
+    margin-bottom: 0.45rem;
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+
+  .resume-entry li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border-color);
+  }
+
+  .resume-entry li strong {
+    font-weight: 600;
+  }
+
+  .resume-entry li .date-range {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 0.98rem;
+  }
+
+  /* ── Education ── */
+  .resume-education {
+    font-size: 1.08rem;
+    line-height: 1.85;
+  }
+
+  .resume-education .degree {
+    font-weight: 700;
+    font-size: 1.12rem;
+  }
+
+  .resume-education .school {
+    color: var(--text-secondary);
+  }
+
+  .resume-education .patents {
+    margin-top: 0.8rem;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .resume-education .courses {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* ── Footer dots ── */
+  .resume-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 3rem;
+  }
+
+  .resume-footer .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--border-color);
+  }
+
+  /* ── Print ── */
+  @media print {
+
+    .navbar,
+    .footer {
+      display: none;
+    }
+
+    .resume {
+      padding: 0;
+    }
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    .resume-header h1 {
+      font-size: 1.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    .resume-entry-header {
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .resume-entry-date {
+      margin-left: 0;
+    }
+  }
+</style>
+
+<div class="resume">
+  <div class="resume-header">
+    <h1>Roman Vorushin</h1>
+    <div class="resume-tagline">Research Engineer — More Intelligence per Compute Unit</div>
+    <div class="resume-contact">
+      Zurich, Switzerland<span class="sep">·</span>roman.vorushin@gmail.com<span class="sep">·</span>+41 77 426 32 71
+      <br>
+      <a href="https://www.linkedin.com/in/vorushin/">LinkedIn</a><span class="sep">·</span><a
+        href="https://vorushin.github.io">vorushin.github.io</a>
+    </div>
+  </div>
+
+  <div class="resume-divider">
+    <div class="diamond"></div>
+  </div>
+
+  <div class="resume-summary">
+    Research Engineer with 13+ years at Google/DeepMind. Currently on Gemini, working across pre-training and
+    post-training orgs. Deep expertise in JAX, Pallas, TPUs, and distributed training at scale. Getting more
+    intelligence and research signals per compute unit.
+  </div>
+
+  <div class="resume-section">
+    <h2>Experience</h2>
+  </div>
+
+  <div class="resume-entry">
+    <div class="resume-entry-header">
+      <span class="resume-entry-role">Research Engineer</span>
+      <span class="resume-entry-at">at</span>
+      <span class="resume-entry-org">Google DeepMind — Gemini</span>
+      <span class="resume-entry-date">2024 – Present</span>
+    </div>
+    <ul>
+      <li><strong>Post-training:</strong> Implemented and optimized post-training algorithms: SFT, PO, RL. Made
+        ablations cheap and fast.</li>
+      <li><strong>Pre-training bridge:</strong> Initiated and led a cross-org collaboration with the Large-Scale
+        Pretraining org&thinsp;—&thinsp;running experimental ladders and measuring how architecture and data variants
+        affect downstream post-SFT and post-RL quality.</li>
+      <li><strong>Infrastructure:</strong> JAX, Pallas, TPUs, training codebase from pre-training to post-training.</li>
+    </ul>
+  </div>
+
+  <div class="resume-entry">
+    <div class="resume-entry-header">
+      <span class="resume-entry-role">Software Engineer / Research Engineer</span>
+      <span class="resume-entry-at">at</span>
+      <span class="resume-entry-org">Google</span>
+      <span class="resume-entry-date">2012 – 2024</span>
+    </div>
+    <ul>
+      <li>Built adversarial detection systems using vision-language and multimodal LLMs. Moved into the RL group at
+        Bard/Gemini. <span class="date-range">(2021–2024)</span></li>
+      <li>Progressed through every generation of Google's training infrastructure: from training AlexNet variants on
+        CPUs (DistBelief) to GPUs (TensorFlow) to TPUs (JAX)&thinsp;—&thinsp;writing training codebases from scratch at
+        each transition. <span class="date-range">(2012–2021)</span></li>
+      <li>Designed planet-scale software systems at YouTube. Trained SOTA models for YouTube Content
+        ID.</li>
+    </ul>
+  </div>
+
+  <div class="resume-entry">
+    <div class="resume-entry-header">
+      <span class="resume-entry-role">Software Engineer</span>
+      <span class="resume-entry-at">at</span>
+      <span class="resume-entry-org">Grammarly</span>
+      <span class="resume-entry-date">2010 – 2012</span>
+    </div>
+    <ul>
+      <li>Hired as a Python expert. Developed core backend systems. Discovered a passion for ML/AI that redirected my
+        career trajectory.</li>
+    </ul>
+  </div>
+
+  <div class="resume-entry">
+    <div class="resume-entry-header">
+      <span class="resume-entry-role">Co-founder & CEO</span>
+      <span class="resume-entry-at">at</span>
+      <span class="resume-entry-org">Moodbox</span>
+      <span class="resume-entry-date">2007 – 2009</span>
+    </div>
+    <ul>
+      <li>Co-founded and launched a "visual Twitter" (covered by Mashable). Built the product, managed the team, and
+        handled fundraising.</li>
+    </ul>
+  </div>
+
+  <div class="resume-entry">
+    <div class="resume-entry-header">
+      <span class="resume-entry-role">Software Engineer / Team Lead</span>
+      <span class="resume-entry-at">at</span>
+      <span class="resume-entry-org">Kazkommertsbank</span>
+      <span class="resume-entry-date">2003 – 2007</span>
+    </div>
+    <ul>
+      <li>Led the Internet-banking engineering team. Built and shipped production financial systems.</li>
+    </ul>
+  </div>
+
+  <div class="resume-section">
+    <h2>Education & Publications</h2>
+  </div>
+
+  <div class="resume-education">
+    <span class="degree">Pavlodar State University</span><span class="school">&thinsp;—&thinsp;Electrical Engineering
+      and Automation (1997–2002). Graduated with highest honors (5.0 GPA).</span>
+
+    <div class="patents">3 patents and 3 defensive publications at Google.</div>
+
+    <div class="courses">Completed Stanford online ML (ml-class.org) and AI (ai-class.org) courses (2011), MIT Linear
+      Algebra (Gilbert Strang), Modern Robotics Course 1 (Northwestern/Coursera, 2025), and others.</div>
+  </div>
+
+  <div class="resume-footer">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+</div>
