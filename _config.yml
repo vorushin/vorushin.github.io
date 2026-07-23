@@ -40,3 +40,8 @@ defaults:
     values:
       lang: ru
       layout: post
+
+exclude:
+  - book_cats
+  - docs
+  - CLAUDE.md
