@@ -1,0 +1,242 @@
+/* Magic cats storybook — standalone page styles */
+:root {
+  --night: #1b2447;
+  --night-deep: #131a38;
+  --ink-light: #f3efe6;
+  --ink-dim: #c9c4b4;
+  --serif: 'Iowan Old Style BT', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --sans: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--ink-light);
+  font-family: var(--serif);
+  transition: background-color 1.2s ease, color 1.2s ease;
+}
+
+body[data-scene="day-yellow"] { background: #ecdd90; color: #3b331b; }
+body[data-scene="day-green"]  { background: #ccdf9e; color: #2c3a1a; }
+body[data-scene="dusk"]       { background: #8d7aa5; color: #f8f4fc; }
+body[data-scene="pale"]       { background: #e7f1f6; color: #2f5361; }
+
+/* ── Top bar ── */
+.mc-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  background: rgba(19, 26, 56, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-family: var(--sans);
+}
+
+.mc-home {
+  color: var(--ink-light);
+  text-decoration: none;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+.mc-home:hover, .mc-home:focus-visible { opacity: 1; text-decoration: underline; }
+
+.mc-langs { display: flex; gap: 0.4rem; }
+
+.mc-langs button {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-light);
+  background: transparent;
+  border: 1px solid rgba(243, 239, 230, 0.4);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.mc-langs button:hover { border-color: rgba(243, 239, 230, 0.9); }
+.mc-langs button:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+
+html[data-lang="en"] .mc-langs button[data-set-lang="en"],
+html[data-lang="de"] .mc-langs button[data-set-lang="de"],
+html[data-lang="ru"] .mc-langs button[data-set-lang="ru"] {
+  background: var(--ink-light);
+  color: var(--night-deep);
+  border-color: var(--ink-light);
+}
+
+/* ── Language visibility ── */
+html[data-lang="en"] [lang]:not([lang="en"]),
+html[data-lang="de"] [lang]:not([lang="de"]),
+html[data-lang="ru"] [lang]:not([lang="ru"]) { display: none !important; }
+
+/* ── Hero ── */
+.mc-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 6.5rem 1.25rem 3rem;
+  text-align: center;
+  background: linear-gradient(180deg, var(--night-deep) 0%, var(--night) 100%);
+}
+
+.mc-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1px 1px at 8% 12%, #fff9 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 28%, #fff7 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 31% 8%, #ffe9b0cc 50%, transparent 51%),
+    radial-gradient(1px 1px at 44% 34%, #fff8 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 15%, #fff6 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 66% 30%, #ffe9b0bb 50%, transparent 51%),
+    radial-gradient(1px 1px at 74% 9%, #fff8 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 24%, #fff7 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 92% 14%, #fff9 50%, transparent 51%),
+    radial-gradient(1px 1px at 15% 45%, #fff6 50%, transparent 51%),
+    radial-gradient(1px 1px at 38% 52%, #fff5 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 52% 44%, #ffe9b0aa 50%, transparent 51%),
+    radial-gradient(1px 1px at 69% 55%, #fff6 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 48%, #fff7 50%, transparent 51%),
+    radial-gradient(1px 1px at 5% 60%, #fff5 50%, transparent 51%);
+}
+.mc-anim .mc-stars { animation: mc-twinkle 5s ease-in-out infinite alternate; }
+@keyframes mc-twinkle {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+
+.mc-title {
+  position: relative;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 5.5vw, 2.6rem);
+  line-height: 1.25;
+  margin: 0 auto 0.75rem;
+  max-width: 24ch;
+}
+
+.mc-byline {
+  position: relative;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  margin: 0 auto 2.5rem;
+}
+
+.mc-cover { position: relative; margin: 0 auto; max-width: 26rem; }
+.mc-cover img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ── Story column ── */
+.mc-col {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.mc-section { padding: 3.5rem 0 1rem; }
+
+.mc-figure { margin: 0 auto 2rem; max-width: 30rem; }
+.mc-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.mc-section p {
+  font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+  line-height: 1.75;
+  margin: 0 0 1.4rem;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* ── Fade-in (JS + no reduced motion only) ── */
+.mc-anim .mc-section,
+.mc-anim .mc-cover,
+.mc-anim .mc-end,
+.mc-anim .mc-afterword {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.mc-anim .mc-in { opacity: 1; transform: none; }
+
+/* ── End mark ── */
+.mc-end {
+  text-align: center;
+  padding: 3rem 0 2rem;
+  font-size: 1.4rem;
+  color: var(--ink-dim);
+}
+.mc-end svg { display: block; margin: 0.75rem auto 0; opacity: 0.8; }
+
+/* ── Afterword ── */
+.mc-afterword {
+  border-top: 1px solid rgba(243, 239, 230, 0.2);
+  padding: 2.5rem 0 3rem;
+}
+.mc-afterword h2 {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0 0 1.25rem;
+}
+.mc-afterword p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0 0 1.25rem;
+}
+
+.mc-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+}
+.mc-photos img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.3);
+}
+@media (max-width: 480px) {
+  .mc-photos { grid-template-columns: 1fr; }
+}
+
+/* ── Footer ── */
+.mc-footer {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--ink-dim);
+  padding: 0 1.25rem 2.5rem;
+}
+.mc-footer a { color: inherit; }
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  body { transition: none; }
+  .mc-stars { animation: none; }
+  .mc-langs button { transition: none; }
+}

@@ -1,0 +1,64 @@
+---
+layout: book
+title: "Волшебные коты, разносящие сказки — a bedtime story in three languages"
+description: "A bedtime story in English, German and Russian: in one city, magical cats deliver fairy tales along the treetops. Written by Roman Vorushin, illustrated by Inessa Mechinskaya (2012)."
+permalink: /books/magic-cats
+image: /img/magic-cats/cover.jpg
+---
+{% assign book = site.data.magic_cats %}
+<nav class="mc-topbar">
+  <a class="mc-home" href="/">← vorushin.io</a>
+  <div class="mc-langs" role="group" aria-label="Language / Sprache / Язык">
+    <button type="button" data-set-lang="en" aria-pressed="true" aria-label="English">EN</button>
+    <button type="button" data-set-lang="de" aria-pressed="false" aria-label="Deutsch">DE</button>
+    <button type="button" data-set-lang="ru" aria-pressed="false" aria-label="Русский">RU</button>
+  </div>
+</nav>
+
+<header class="mc-hero" data-scene="night">
+  <div class="mc-stars" aria-hidden="true"></div>
+  <h1 class="mc-title">{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.title[l] }}</span>{% endfor %}</h1>
+  <p class="mc-byline">{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.byline[l] }}</span>{% endfor %}</p>
+  <figure class="mc-cover">
+    <img src="/img/magic-cats/cover.jpg" width="{{ book.meta.cover_w }}" height="{{ book.meta.cover_h }}"
+         alt="{{ book.meta.cover_alt.en }}"
+         {% for l in book.langs %}data-alt-{{ l }}="{{ book.meta.cover_alt[l] }}" {% endfor %}>
+  </figure>
+</header>
+
+<main class="mc-col">
+  {% for section in book.sections %}
+  <section class="mc-section" id="{{ section.id }}" data-scene="{{ section.scene }}">
+    <figure class="mc-figure">
+      <img src="/img/magic-cats/{{ section.image }}" width="{{ section.image_w }}" height="{{ section.image_h }}"
+           loading="lazy" alt="{{ section.alt.en }}"
+           {% for l in book.langs %}data-alt-{{ l }}="{{ section.alt[l] }}" {% endfor %}>
+    </figure>
+    {% for p in section.paragraphs %}{% for l in book.langs %}<p lang="{{ l }}">{{ p[l] }}</p>{% endfor %}{% endfor %}
+  </section>
+  {% endfor %}
+
+  <div class="mc-end" data-scene="night" aria-hidden="true">
+    ✵
+    <svg width="72" height="28" viewBox="0 0 72 28" fill="currentColor" aria-hidden="true">
+      <path d="M14 26c-3-6 0-12 5-13l1-5 4 4h6l4-4 1 5c5 1 8 7 5 13H14z" opacity="0.75"/>
+      <path d="M44 25c6 0 10 1 14 1 4 0 8-1 8-1" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/>
+    </svg>
+  </div>
+
+  <section class="mc-afterword" data-scene="night">
+    <h2>{% for l in book.langs %}<span lang="{{ l }}">{{ book.afterword.heading[l] }}</span>{% endfor %}</h2>
+    {% for p in book.afterword.paragraphs %}{% for l in book.langs %}<p lang="{{ l }}">{{ p[l] }}</p>{% endfor %}{% endfor %}
+    <div class="mc-photos">
+      {% for photo in book.afterword.photos %}
+      <img src="/img/magic-cats/{{ photo.file }}" width="{{ photo.w }}" height="{{ photo.h }}"
+           loading="lazy" alt="{{ photo.alt.en }}"
+           {% for l in book.langs %}data-alt-{{ l }}="{{ photo.alt[l] }}" {% endfor %}>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<footer class="mc-footer">
+  <span lang="en">© 2012–2026 Roman Vorushin · illustrations © Inessa Mechinskaya</span><span lang="de">© 2012–2026 Roman Vorushin · Illustrationen © Inessa Mechinskaya</span><span lang="ru">© 2012–2026 Роман Ворушин · иллюстрации © Инесса Мечинская</span>
+</footer>
