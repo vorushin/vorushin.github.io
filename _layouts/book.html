@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% seo %}
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/magic-cats.css">
+  <script>
+    (function () {
+      var m = location.search.match(/[?&]lang=(en|de|ru)\b/);
+      var lang = m ? m[1] : null;
+      if (!lang) { try { lang = localStorage.getItem('magic-cats-lang'); } catch (e) {} }
+      if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = null;
+      if (!lang) {
+        var nav = (navigator.language || 'en').toLowerCase();
+        lang = nav.indexOf('ru') === 0 ? 'ru' : nav.indexOf('de') === 0 ? 'de' : 'en';
+      }
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+    })();
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGT4F5JNH7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YGT4F5JNH7');
+  </script>
+</head>
+<body>
+{{ content }}
+<script>
+(function () {
+  function apply(lang) {
+    var root = document.documentElement;
+    root.setAttribute('data-lang', lang);
+    root.setAttribute('lang', lang);
+    try { localStorage.setItem('magic-cats-lang', lang); } catch (e) {}
+    document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-set-lang') === lang));
+    });
+    document.querySelectorAll('img[data-alt-' + lang + ']').forEach(function (img) {
+      img.alt = img.getAttribute('data-alt-' + lang);
+    });
+    var t = document.querySelector('.mc-title [lang="' + lang + '"]');
+    if (t) document.title = t.textContent.trim() + ' — Roman Vorushin';
+  }
+  document.querySelectorAll('[data-set-lang]').forEach(function (b) {
+    b.addEventListener('click', function () { apply(b.getAttribute('data-set-lang')); });
+  });
+  apply(document.documentElement.getAttribute('data-lang') || 'en');
+
+  var supportsIO = 'IntersectionObserver' in window;
+  var scenes = document.querySelectorAll('[data-scene]');
+  if (supportsIO && scenes.length) {
+    var sceneObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          document.body.setAttribute('data-scene', en.target.getAttribute('data-scene'));
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    scenes.forEach(function (s) { sceneObs.observe(s); });
+  }
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && supportsIO) {
+    document.documentElement.classList.add('mc-anim');
+    var fadeObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('mc-in'); fadeObs.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.mc-section, .mc-cover, .mc-end, .mc-afterword').forEach(function (el) {
+      fadeObs.observe(el);
+    });
+  }
+})();
+</script>
+</body>
+</html>
