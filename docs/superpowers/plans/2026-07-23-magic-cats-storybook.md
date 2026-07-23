@@ -32,7 +32,7 @@
 **Interfaces:**
 - Produces: `book_cats/` ignored by git; `book_cats/`, `docs/`, `CLAUDE.md` excluded from Jekyll output. Later tasks rely on `bundle exec jekyll build` not copying these into `_site/`.
 
-- [ ] **Step 1: Append to `.gitignore`** (final content):
+- [x] **Step 1: Append to `.gitignore`** (final content):
 
 ```
 Gemfile.lock
@@ -41,7 +41,7 @@ _site/
 book_cats/
 ```
 
-- [ ] **Step 2: Add `exclude` list to `_config.yml`** (append at end of file):
+- [x] **Step 2: Add `exclude` list to `_config.yml`** (append at end of file):
 
 ```yaml
 exclude:
@@ -50,17 +50,17 @@ exclude:
   - CLAUDE.md
 ```
 
-- [ ] **Step 3: Verify build excludes them**
+- [x] **Step 3: Verify build excludes them**
 
 Run: `bundle exec jekyll build && ls _site/ | grep -E 'book_cats|docs|CLAUDE' ; echo "exit=$?"`
 Expected: no matches, `exit=1` (grep found nothing). Build succeeds.
 
-- [ ] **Step 4: Verify git ignores book_cats**
+- [x] **Step 4: Verify git ignores book_cats**
 
 Run: `git status --short | grep book_cats ; echo "exit=$?"`
 Expected: no output, `exit=1`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .gitignore _config.yml
@@ -78,7 +78,7 @@ git commit -m "Exclude book sources and docs from git/site build"
 - Consumes: `book_cats/extracted/image1..6.png` (already extracted from the inline-pictures markdown), `book_cats/photos/DSCF2402.JPG` (two printed books), `DSCF2404.JPG` (front cover on grass), `DSCF2410.JPG` (moon-milk open spread), `DSCF2414.JPG` (back cover: moonbeam house).
 - Produces: the 10 contract filenames above. Also produces measured px dimensions for `cover.jpg` and `moon-milk.jpg` used in Task 3's YAML (`image_w`/`image_h`).
 
-- [ ] **Step 1: Copy the six PNGs under contract names**
+- [x] **Step 1: Copy the six PNGs under contract names**
 
 ```bash
 cd /Users/vorushin/Projects/vorushin.github.io
@@ -91,7 +91,7 @@ cp book_cats/extracted/image5.png img/magic-cats/night-garden.png
 cp book_cats/extracted/image6.png img/magic-cats/angel.png
 ```
 
-- [ ] **Step 2: Crop the front cover from DSCF2404 (iterate visually)**
+- [x] **Step 2: Crop the front cover from DSCF2404 (iterate visually)**
 
 Starting command (tune `-rotate` and `-crop` by viewing the result with the Read tool and adjusting until the book face fills the frame with no grass edges):
 
@@ -102,7 +102,7 @@ magick book_cats/photos/DSCF2404.JPG -rotate -1.5 -crop 880x860+365+150 +repage 
 
 Expected: `cover.jpg` shows the full front cover (night city, pink house, title lettering), edges straight, no grass visible. Iterate until true.
 
-- [ ] **Step 3: Crop the moon-milk art from DSCF2414 (iterate visually)**
+- [x] **Step 3: Crop the moon-milk art from DSCF2414 (iterate visually)**
 
 ```bash
 magick book_cats/photos/DSCF2414.JPG -rotate -1 -crop 820x830+440+160 +repage \
@@ -111,21 +111,21 @@ magick book_cats/photos/DSCF2414.JPG -rotate -1 -crop 820x830+440+160 +repage \
 
 Expected: `moon-milk.jpg` shows the moonbeam pouring into the little house's window, apple tree at right, no grass. Iterate until true.
 
-- [ ] **Step 4: Downscale the two afterword photos**
+- [x] **Step 4: Downscale the two afterword photos**
 
 ```bash
 magick book_cats/photos/DSCF2402.JPG -resize 1200x -quality 82 img/magic-cats/printed-books.jpg
 magick book_cats/photos/DSCF2410.JPG -resize 1200x -quality 82 img/magic-cats/printed-spread.jpg
 ```
 
-- [ ] **Step 5: Measure final dimensions (needed for Task 3 YAML)**
+- [x] **Step 5: Measure final dimensions (needed for Task 3 YAML)**
 
 Run: `sips -g pixelWidth -g pixelHeight img/magic-cats/*.jpg img/magic-cats/*.png`
 Expected known PNG dims: candle 450×545, summer-tree 536×536, tree-library 500×500, lavender-calf 620×602, night-garden 560×560, angel 550×550; afterword photos 1200×900. Record cover.jpg and moon-milk.jpg dims for Task 3.
 
-- [ ] **Step 6: Visual check of all 10 with the Read tool** — each image correct content, orientation, colors.
+- [x] **Step 6: Visual check of all 10 with the Read tool** — each image correct content, orientation, colors.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add img/magic-cats
@@ -143,7 +143,7 @@ git commit -m "Add processed illustrations for magic cats storybook"
 - Consumes: cover/moon-milk dims from Task 2.
 - Produces: `site.data.magic_cats` with keys `langs` (array), `meta.title.{en,de,ru}`, `meta.byline.{...}`, `meta.cover_alt.{...}`, `sections[]` (`id`, `image`, `image_w`, `image_h`, `scene`, `alt.{...}`, `paragraphs[].{en,de,ru}`), `afterword` (`heading.{...}`, `paragraphs[].{...}`, `photos[].{file,w,h,alt.{...}}`). Task 5's Liquid iterates exactly these keys.
 
-- [ ] **Step 1: Write the file.** Complete content (cover/moon-milk `image_w/h` from Task 2 measurements — values below assume 880×860 and 820×830; replace with measured):
+- [x] **Step 1: Write the file.** Complete content (cover/moon-milk `image_w/h` from Task 2 measurements — values below assume 880×860 and 820×830; replace with measured):
 
 ```yaml
 langs: [en, de, ru]
@@ -496,12 +496,12 @@ afterword:
         ru: "Раскрытая книжка на летней траве"
 ```
 
-- [ ] **Step 2: Verify YAML parses**
+- [x] **Step 2: Verify YAML parses**
 
 Run: `ruby -ryaml -e 'd = YAML.load_file("_data/magic_cats.yml"); puts d["sections"].length; puts d["sections"].map { |s| s["paragraphs"].length }.sum'`
 Expected: `7` and `9` (nine story paragraphs across seven sections).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add _data/magic_cats.yml
@@ -520,7 +520,7 @@ git commit -m "Add trilingual story content for magic cats storybook"
 - Consumes: nothing from other tasks (standalone).
 - Produces: layout `book` (used by Task 5's front matter); CSS classes `mc-topbar`, `mc-home`, `mc-langs`, `mc-hero`, `mc-stars`, `mc-title`, `mc-byline`, `mc-cover`, `mc-col`, `mc-section`, `mc-figure`, `mc-end`, `mc-afterword`, `mc-photos`, `mc-footer`; language visibility via `html[data-lang]`; scene backgrounds via `body[data-scene]` (`night`, `day-yellow`, `day-green`, `dusk`, `pale`); fade-in classes `mc-anim`/`mc-in`; JS binds `[data-set-lang]` buttons and `[data-scene]` sections and swaps `img[data-alt-*]` alt text.
 
-- [ ] **Step 1: Write `_layouts/book.html`:**
+- [x] **Step 1: Write `_layouts/book.html`:**
 
 ```html
 <!DOCTYPE html>
@@ -612,7 +612,7 @@ git commit -m "Add trilingual story content for magic cats storybook"
 </html>
 ```
 
-- [ ] **Step 2: Write `css/magic-cats.css`:**
+- [x] **Step 2: Write `css/magic-cats.css`:**
 
 ```css
 /* Magic cats storybook — standalone page styles */
@@ -862,12 +862,12 @@ html[data-lang="ru"] [lang]:not([lang="ru"]) { display: none !important; }
 }
 ```
 
-- [ ] **Step 3: Verify build with layout present but unused**
+- [x] **Step 3: Verify build with layout present but unused**
 
 Run: `bundle exec jekyll build`
 Expected: build succeeds (layout unused is fine); `_site/css/magic-cats.css` exists.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add _layouts/book.html css/magic-cats.css
@@ -885,7 +885,7 @@ git commit -m "Add standalone book layout and storybook stylesheet"
 - Consumes: layout `book` (Task 4), `site.data.magic_cats` (Task 3), images (Task 2).
 - Produces: `/books/magic-cats` in `_site`.
 
-- [ ] **Step 1: Write the page:**
+- [x] **Step 1: Write the page:**
 
 ```html
 ---
@@ -955,7 +955,7 @@ image: /img/magic-cats/cover.jpg
 </footer>
 ```
 
-- [ ] **Step 2: Build and run output checks**
+- [x] **Step 2: Build and run output checks**
 
 Run: `bundle exec jekyll build && f=_site/books/magic-cats.html || f=_site/books/magic-cats/index.html; ls -la _site/books/`
 Then:
@@ -971,7 +971,7 @@ grep -c 'data-set-lang' "$f"                    # expect 3
 
 Expected: counts as annotated; og:image contains `/img/magic-cats/cover.jpg`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add books/magic-cats.html
@@ -988,29 +988,29 @@ git commit -m "Add magic cats storybook page"
 **Interfaces:**
 - Consumes: everything above; local server.
 
-- [ ] **Step 1: Serve locally**
+- [x] **Step 1: Serve locally**
 
 Run: `bundle exec jekyll serve --detach` (or in background) → http://localhost:4000/books/magic-cats
 
-- [ ] **Step 2: Chrome checks** (claude-in-chrome tools; take screenshots):
+- [x] **Step 2: Chrome checks** (claude-in-chrome tools; take screenshots):
   - Page loads; hero shows title, byline, cover; stars visible.
   - Click DE → all visible text German, pill state changes, `<title>` changes; reload → DE persists (localStorage).
   - Visit `?lang=ru` → Russian wins over stored DE.
   - Scroll through: scene background shifts night → yellow → night → green → dusk → night → pale → night; fade-ins fire once; images load lazily.
   - Resize to 390×844 (portrait) and 844×390 (landscape): column readable, topbar not overlapping title, photos grid collapses on narrow.
   - No console errors.
-- [ ] **Step 3: No-JS check**
+- [x] **Step 3: No-JS check**
 
 Run: `curl -s http://localhost:4000/books/magic-cats | grep -o 'data-lang="en"' | head -1`
 Expected: `data-lang="en"` static default (EN readable without JS).
 
-- [ ] **Step 4: Fix anything found, re-check, commit fixes**
+- [x] **Step 4: Fix anything found, re-check, commit fixes**
 
 ```bash
 git add -A && git commit -m "Polish storybook page after browser verification"
 ```
 
-- [ ] **Step 5: Final report to Roman** — summary + screenshots; remind that pushing to master deploys, translations await his review on the local server (or he pushes when happy).
+- [x] **Step 5: Final report to Roman** — summary + screenshots; remind that pushing to master deploys, translations await his review on the local server (or he pushes when happy).
 
 ---
 
