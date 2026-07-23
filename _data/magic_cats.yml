@@ -1,0 +1,348 @@
+langs: [en, de, ru]
+
+meta:
+  title:
+    en: "The Magical Cats Who Deliver Fairy Tales"
+    de: "Die Zauberkatzen, die Märchen bringen"
+    ru: "Волшебные коты, разносящие сказки"
+  byline:
+    en: "written by Roman Vorushin · illustrated by Inessa Mechinskaya"
+    de: "geschrieben von Roman Vorushin · illustriert von Inessa Mechinskaya"
+    ru: "текст — Роман Ворушин · иллюстрации — Инесса Мечинская"
+  cover_alt:
+    en: "Book cover: a night city with a pink house, glowing windows and trees"
+    de: "Buchumschlag: eine nächtliche Stadt mit einem rosa Haus, leuchtenden Fenstern und Bäumen"
+    ru: "Обложка книги: ночной город, розовый дом со светящимися окнами и деревья"
+  cover_w: 804
+  cover_h: 816
+
+sections:
+  - id: candle
+    image: candle.png
+    image_w: 450
+    image_h: 545
+    scene: night
+    alt:
+      en: "A candle glowing on a windowsill against the starry night"
+      de: "Eine Kerze leuchtet auf dem Fensterbrett vor dem Sternenhimmel"
+      ru: "Свеча на подоконнике на фоне звёздной ночи"
+    paragraphs:
+      - en: >-
+          In one city, the evening tales are delivered by magical cats. There, just like here,
+          little ones are tucked into bed by papas and mamas, grandmas and grandpas, or big
+          brothers and sisters. While the children are still small, everyone sings them songs
+          and tells them the tales they once read themselves. But as the children grow, the
+          remembered tales run out — and new ones have to come from somewhere, because little
+          ones so love a bedtime story! Here, we usually lie down very, very quietly, close our
+          eyes and wait for a story to come to Papa. But in that city, the stories are brought
+          by cats.
+        de: >-
+          In einer Stadt werden die Abendmärchen von Zauberkatzen ausgetragen. Dort werden die
+          Kleinen genau wie bei uns von Papa oder Mama, Oma oder Opa oder den großen
+          Geschwistern ins Bett gebracht. Solange die Kinder noch klein sind, singt man ihnen
+          Lieder vor und erzählt Märchen, die man selbst einmal gelesen hat. Doch wenn die
+          Kinder größer werden, gehen die gelesenen Märchen irgendwann aus — und neue müssen
+          irgendwoher kommen, denn die Kleinen hören vor dem Einschlafen doch so gern
+          Geschichten! Wir legen uns meist ganz, ganz leise hin, schließen die Augen und warten,
+          bis eine Geschichte zu Papa kommt. In dieser Stadt aber bringen die Katzen die Märchen.
+        ru: >-
+          В одном городе вечерние сказки разносят волшебные коты. Там также, как и у нас,
+          малышей укладывают спать папы или мамы, бабушки или дедушки, или старшие
+          братья-сестры. Когда детки еще маленькие, им поют песенки и рассказывают сказки,
+          которые когда-то прочитали. Но когда детки подрастают, то прочитанные сказочки уже
+          заканчиваются и нужно их откуда-то брать, ведь малыши так любят слушать сказки перед
+          сном! Мы обычно ложимся тихо-тихо, закрываем глазки и ждем, когда сказка придет к
+          папе. А в этом городе сказки разносят коты.
+
+  - id: summer-tree
+    image: summer-tree.png
+    image_w: 536
+    image_h: 536
+    scene: day-yellow
+    alt:
+      en: "A sunny tree by a house, a grey cat sitting above the window"
+      de: "Ein sonniger Baum an einem Haus, über dem Fenster sitzt eine graue Katze"
+      ru: "Солнечное дерево у дома, над окном сидит серый кот"
+    paragraphs:
+      - en: >-
+          Nobody knows where the cats live. People have only noticed that they walk along the
+          treetops. That is why the city is full of trees. Before anyone builds a house, they
+          first grow trees around it, making sure they link up with the other chains of trees.
+          After all, nobody wants to live in a house without fairy tales.
+        de: >-
+          Niemand weiß, wo die Katzen wohnen. Man hat nur bemerkt, dass sie über die Baumwipfel
+          laufen. Deshalb gibt es in dieser Stadt sehr viele Bäume. Bevor man irgendwo ein Haus
+          baut, pflanzt man dort zuerst Bäume und achtet darauf, dass sie sich mit den anderen
+          Baumketten verbinden. Denn niemand will in einem Haus ohne Märchen wohnen.
+        ru: >-
+          Никто не знает, где они живут. Заметили только, что коты ходят по вершинам деревьев.
+          Поэтому в этом городе очень много деревьев. Прежде чем строить где-то дом, там сначала
+          растят деревья, стараясь чтобы они соединились с другими цепочками деревьев. Ведь
+          никто не хочет жить в доме без сказок.
+      - en: >-
+          The cats carry the tales in their teeth, each one wrapped in a little white sheet.
+          Kittens help too: when they are old enough, they first walk beside their papa-cat or
+          mama-cat — learning the way, learning how to slip in through a window. Then they begin
+          to help carry. Papa carries two big tales, while the kitten puffs along with one tiny
+          tale in its teeth. Later it carries a bigger tale, then two at once — and one day it
+          delivers the tales all on its own.
+        de: >-
+          Die Katzen tragen die Märchen im Maul, jedes in ein kleines weißes Laken gewickelt.
+          Die Kätzchen helfen mit: Wenn sie groß genug sind, laufen sie zuerst neben Katzenpapa
+          oder Katzenmama her — sie merken sich den Weg und lernen, durchs Fenster
+          hereinzukommen. Dann helfen sie beim Tragen. Papa trägt zwei große Märchen, und das
+          Kätzchen schnauft und müht sich mit einem winzigen Märchen im Maul. Später trägt es
+          ein größeres Märchen, dann gleich zwei — und eines Tages trägt es die Märchen ganz
+          allein aus.
+        ru: >-
+          Коты носят сказки в зубах. Сказки завернуты в маленькие белые простынки. Котам
+          помогают котята - когда они подрастают, то сначала ходят с папой-котом или
+          мамой-кошкой рядышком - запоминают дорогу, учатся заходить в окно. Потом уже помогают
+          таскать сказки. Папа несет две большие сказки, а котенок пыхтит-старается с маленькой
+          сказочкой в зубах. Потом уже таскает сказку побольше, потом целых две, а потом уже
+          разносит сказочки без папы.
+
+  - id: moon-milk
+    image: moon-milk.jpg
+    image_w: 738
+    image_h: 796
+    scene: night
+    alt:
+      en: "A moonbeam pours through the window of a little house"
+      de: "Ein Mondstrahl fällt durch das Fenster eines Häuschens"
+      ru: "Лунный луч льётся в окно домика"
+    paragraphs:
+      - en: >-
+          Everyone is glad to see the cats, and everyone puts out treats. These magical cats
+          don't eat mice or little birds — for them, people gather moon milk. On nights of the
+          full moon, when the moon shines its very brightest, people set out white saucers under
+          the moonlight. The moon pours its light into them, and early in the morning, before
+          the sun rises, the saucers are brought in and kept in a dark room. In the evening,
+          just before bed, you put the saucer of moon milk on the windowsill. Then the cat, once
+          it has handed over its little bundle with a tale, pads over to the saucer and drinks.
+          When a cat comes with its kitten, the kitten usually gets to the milk first — and papa
+          or mama laps up whatever is left.
+        de: >-
+          Über die Katzen freut man sich sehr und bewirtet sie. Diese Zauberkatzen fressen keine
+          Mäuse und keine Vögelchen — für sie sammelt man Mondmilch. Bei Vollmond, wenn der Mond
+          ganz hell scheint, stellen die Leute weiße Untertassen ins Mondlicht. Der Mond gießt
+          sein Licht hinein, und früh am Morgen, noch vor Sonnenaufgang, holt man die Tellerchen
+          herein und stellt sie in ein dunkles Zimmer. Am Abend, kurz vor dem Schlafengehen,
+          stellt man die Untertasse mit der Mondmilch aufs Fensterbrett. Wenn die Katze dann ihr
+          Bündelchen mit dem Märchen abgegeben hat, geht sie zur Untertasse und trinkt die
+          Mondmilch. Kommt eine Katze mit ihrem Kätzchen, trinkt das Kätzchen meist zuerst — und
+          Papa oder Mama schlecken auf, was übrig bleibt.
+        ru: >-
+          Котам очень рады и их угощают. Эти волшебные коты не едят мышек или птичек. Специально
+          для них собирают лунное молоко. В полнолуние, когда луна светит ярко-ярко, люди
+          выносят белые блюдечки и ставят под лунный свет. Луна льет туда свой свет, а рано
+          утром, еще до восхода солнца, тарелочки нужно забрать и поставить в темную комнату. А
+          вечером, перед тем как лечь в постель, блюдечко с лунным молоком нужно поставить на
+          подоконник. Тогда кот, после того как отдаст узелок со сказкой, подойдет к блюдечку и
+          будет пить лунное молоко. Обычно, когда кот ходит вместе с котенком, то котенок
+          успевает попить молочко раньше, а уж папа или мама доедают то, что остается.
+
+  - id: tree-library
+    image: tree-library.png
+    image_w: 500
+    image_h: 500
+    scene: day-green
+    alt:
+      en: "Two big trees with a hammock, a reading boy and bags of books hanging from the branches"
+      de: "Zwei große Bäume mit Hängematte, einem lesenden Jungen und Büchertaschen an den Ästen"
+      ru: "Два больших дерева: гамак, читающий мальчик и сумки с книгами на ветках"
+    paragraphs:
+      - en: >-
+          In that city, people dearly love their trees. On the main tree streets the old trees
+          have grown enormously tall and wide. People love to hang hammocks there and doze
+          sweetly in them, and in some trees they set up little libraries — bags of books hung
+          from the branches, just right for reading once you have climbed up. All kinds of
+          beautiful birds live in the trees, and since the magical cats never hunt them, they
+          live very happily. They love to flutter down to the people reading in the branches,
+          who feed them biscuits and bread.
+        de: >-
+          In dieser Stadt liebt man die Bäume sehr. In den großen Baumstraßen sind die alten
+          Bäume mit den Jahren riesig hoch und mächtig breit geworden. Man hängt dort gern
+          Hängematten auf und schläft süß darin, und in manchen Bäumen sind kleine Bibliotheken
+          eingerichtet — Taschen voller Bücher hängen an den Ästen, gerade recht zum Lesen, wenn
+          man hinaufgeklettert ist. In den Bäumen wohnen allerlei schöne Vögel. Weil die
+          Zauberkatzen nicht auf sie jagen, geht es ihnen prächtig. Sie fliegen gern zu den
+          Menschen hinüber, die in den Bäumen lesen, und die füttern sie mit Keksen und Brot.
+        ru: >-
+          В этом городе очень любят деревья. А поскольку на главных деревьевых улицах старым
+          деревьям много лет, то они успели вырости высоченными и широченными. На них любят
+          вешать гамаки и сладко там спать, а на некоторых деревьях устраивают библиотеки -
+          развешивают сумки с книгами, которые удобно читать, забравшись на ветку. На деревьях
+          живут разные красивые птицы. Поскольку волшебные коты на них не охотятся, им очень
+          хорошо живется. Они любят подлетать к людям, читающим на деревьях, и те кормят их
+          печеньем или хлебом.
+
+  - id: lavender-calf
+    image: lavender-calf.png
+    image_w: 620
+    image_h: 602
+    scene: dusk
+    alt:
+      en: "A white calf standing in tall lavender grass under the stars"
+      de: "Ein weißes Kälbchen im hohen lavendelfarbenen Gras unter Sternen"
+      ru: "Белый телёнок в высокой сиреневой траве под звёздами"
+    paragraphs:
+      - en: >-
+          And when the children grow up, the magical cats bring the tales straight to them. So
+          the children learn to read the tales and tell them on their own. And they learn to
+          make up their own — or rather, they learn to see them, to notice them. For the magical
+          worlds of fairy tales are always all around us; you only need to learn to notice them.
+          And whoever discovers those worlds begins to dream of them. A child falls asleep, and
+          the tale comes into their dream — or really, the child steps right into the tale. It
+          is so wonderful that many children come to love sleeping very much. Daytime is lovely,
+          of course — you can be with Papa and Mama, learn new things, and play with your
+          brothers and sisters and the other kids on the playground. But at night you can step
+          into a whole new magical fairy-tale world!
+        de: >-
+          Und wenn die Kinder größer werden, bringen die Zauberkatzen die Märchen ihnen selbst.
+          So lernen die Kinder, die Märchen selbst zu lesen und zu erzählen. Und sie lernen,
+          sich eigene auszudenken. Genauer gesagt: Sie lernen, sie zu sehen, sie zu bemerken.
+          Denn die zauberhaften Märchenwelten sind immer um uns herum — man muss nur lernen, sie
+          zu bemerken. Und wer diese Welten entdeckt, dem erscheinen sie im Traum. Das Kind
+          schläft ein, und das Märchen kommt zu ihm in den Traum — eigentlich gerät das Kind
+          selbst mitten ins Märchen hinein. Und das ist so wunderbar, dass viele das Schlafen
+          richtig lieb gewinnen. Der Tag ist natürlich herrlich — man kann mit Papa und Mama
+          zusammen sein, Neues entdecken und mit den Geschwistern und den anderen Kindern auf
+          dem Spielplatz toben. Aber nachts — nachts kann man in eine ganz neue zauberhafte
+          Märchenwelt geraten!
+        ru: >-
+          А когда дети подрастают, то волшебные коты приносят сказки им самим. И малыши учатся
+          читать и рассказывать сказки сами. И учатся их придумывать. Точнее даже, учатся их
+          видеть, замечать. Ведь волшебные миры сказок всегда вокруг нас, нужно только
+          научиться их замечать. И те, кто открывает эти миры, тому они начинают сниться. Малыш
+          засыпает, а сказка приходит к нему во сне, точнее он сам попадает в сказку. И это так
+          замечательно, что многие начинают очень любить спать. Днем конечно очень здорово -
+          можно дружить с папой и мамой, изучать что-то новое, играть с братиками-сестричками и
+          другими детками на площадке. Но ведь ночью можно попасть в совершенно новый волшебный
+          сказочный мир!
+
+  - id: night-garden
+    image: night-garden.png
+    image_w: 560
+    image_h: 560
+    scene: night
+    alt:
+      en: "A starry night over a garden, a cat asleep in the grass, chalk-drawn clouds in the sky"
+      de: "Sternennacht über einem Garten, eine Katze schläft im Gras, Kreidewolken am Himmel"
+      ru: "Звёздная ночь над садом, в траве спит кот, в небе — нарисованные мелом облака"
+    paragraphs:
+      - en: >-
+          You might dream of a world covered entirely by water, where people live in tall,
+          round towers. Tall — because the towers must be dug deep into the ground under the
+          water, so the waves can't sweep them away. Round — so the wind can't knock them over.
+          Ropes are stretched between the towers, and you can ride from tower to tower: in one
+          tower the rope is fastened higher, in the other lower, so you glide along nice and
+          fast. Everyone has a special belt you lay over the rope to go rolling off. That is how
+          people visit their friends, get to school, or simply go out for a ride.
+        de: >-
+          Vielleicht träumt man von einer Welt, die ganz von Wasser bedeckt ist und in der die
+          Menschen in riesig hohen, runden Türmen wohnen. Hoch — weil man die Türme tief unter
+          dem Wasser im Boden vergraben muss, damit die Wellen sie nicht fortreißen. Rund —
+          damit der Wind sie nicht umwirft. Zwischen den Türmen sind Seile gespannt, an denen
+          man von Turm zu Turm fahren kann. In dem einen Turm ist das Seil höher befestigt, im
+          anderen tiefer, und darum saust man schön schnell hinüber. Jeder hat einen besonderen
+          Gurt, den man übers Seil legt und losrollt. So besucht man Freunde, fährt zur Schule
+          oder einfach spazieren.
+        ru: >-
+          Может присниться мир, в котором все покрыто водой, а люди живут в высоченных круглых
+          башнях. Высоченных - потому что их нужно глубоко закапывать в землю под водой, чтобы
+          их не сносило волнами. Круглых - чтобы их не валил ветер. А между башнями натянуты
+          веревки, по которым можно переезжать с башни на башню. В одной башне веревка
+          закреплена выше, а в другой - ниже, и поэтому по ней можно быстро ехать. У каждого
+          есть специальный ремень, который можно положить на веревку и катиться. Так ходят в
+          гости, в школу и просто гуляют.
+      - en: >-
+          And someone might dream of a world where people live on the clouds. Life there is
+          never boring — you always have to move somewhere new when your cloud rains itself out.
+          That is why everyone loves the neighborhoods with the sea and the mountains, where the
+          clouds wander back and forth all day: in the morning from the sea to the shore, in the
+          evening from the shore back out to sea. And the views there are wonderful!
+        de: >-
+          Und mancher träumt von einer Welt, in der die Menschen auf Wolken wohnen. Langweilig
+          ist das Leben dort nie: Man muss immer wieder umziehen, wenn sich die eigene Wolke
+          abgeregnet hat. Darum liebt man dort die Gegenden mit Meer und Bergen, wo die Wolken
+          den ganzen Tag hin und her wandern — morgens vom Meer ans Ufer und abends vom Ufer
+          aufs Meer hinaus. Und die Aussicht dort ist herrlich!
+        ru: >-
+          А кому-то снится мир, где люди живут на облаках. Это нескучная жизнь, нужно постоянно
+          куда-то переезжать, когда облака выливаются дождем. Поэтому там любят районы, где
+          есть море и горы, ведь там облака постоянно гуляют туда-сюда: утром с моря на берег, а
+          вечером с берега на море. Да и виды там прекрасные!
+
+  - id: angel
+    image: angel.png
+    image_w: 550
+    image_h: 550
+    scene: pale
+    alt:
+      en: "An angel with cloud-blue hair, eyes closed, a little bird beside them"
+      de: "Ein Engel mit wolkenblauem Haar, die Augen geschlossen, daneben ein Vögelchen"
+      ru: "Ангел с облачно-голубыми волосами и птичка рядом"
+    paragraphs:
+      - en: >-
+          And I have also heard that some children dream of the world of the magical cats
+          themselves. There the cats walk on their hind legs, live in little houses, and know
+          how to talk. And they have a library — no, not really a library, a magical garden of
+          fairy tales. Tales grow there on magical trees. Some tales grow for hundreds of years
+          and are picked only on the most special occasions; others are picked the moment they
+          ripen. Gardener cats walk the garden tending the trees — and the most experienced of
+          them can even dream up entirely new ones.
+        de: >-
+          Und ich habe auch gehört, dass manche Kinder von der Welt der Zauberkatzen selbst
+          träumen. Dort gehen die Katzen auf den Hinterbeinen, wohnen in kleinen Häusern und
+          können sprechen. Und sie haben eine Bibliothek — nein, eigentlich keine Bibliothek,
+          sondern einen zauberhaften Märchengarten. Dort wachsen die Märchen auf Zauberbäumen.
+          Manche Märchen wachsen Hunderte von Jahren und werden nur zu ganz besonderen Anlässen
+          gepflückt; andere pflückt man, sobald sie reif sind. Katzengärtner gehen dort umher
+          und pflegen die Bäume — und die erfahrensten können sich sogar ganz neue Bäume
+          ausdenken.
+        ru: >-
+          А еще я слышал, что некоторым деткам снится мир волшебных котов. Они там ходят на
+          задних лапах, живут в домиках и умеют разговаривать. А еще у них есть библиотека,
+          вернее даже не библиотека, а волшебный сад сказок. Там на волшебных деревьях растут
+          сказки. Некоторые сказки растут сотни лет и их срывают в самых особенных случаях, а
+          некоторые срывают как только они поспеют. Там ходят коты-садовники, которые ухаживают
+          за деревьями, а самые опытные могут даже придумывать новые деревья.
+
+afterword:
+  heading:
+    en: "About this book"
+    de: "Über dieses Buch"
+    ru: "Об этой книжке"
+  paragraphs:
+    - en: >-
+        I wrote this story in 2012 as a bedtime tale for our family. My wife asked our friend
+        Inessa Mechinskaya to illustrate it, and together they printed a tiny edition — some ten
+        or twenty copies — for family and friends. Many years later, the little book found its
+        way onto this page, so the magical cats could carry it a little further.
+      de: >-
+        Diese Geschichte habe ich 2012 als Gutenachtgeschichte für unsere Familie geschrieben.
+        Meine Frau bat unsere Freundin Inessa Mechinskaya, sie zu illustrieren, und zusammen
+        druckten sie eine winzige Auflage — etwa zehn bis zwanzig Exemplare — für Familie und
+        Freunde. Viele Jahre später hat das Büchlein seinen Weg auf diese Seite gefunden, damit
+        die Zauberkatzen es noch ein Stückchen weitertragen können.
+      ru: >-
+        Эту историю я написал в 2012 году — как вечернюю сказку для нашей семьи. Моя жена
+        попросила нашу подругу Инессу Мечинскую нарисовать иллюстрации, и вместе они напечатали
+        крошечный тираж — экземпляров десять-двадцать — для родных и друзей. Много лет спустя
+        книжка добралась и до этой страницы — чтобы волшебные коты разнесли её немного дальше.
+  photos:
+    - file: printed-books.jpg
+      w: 1200
+      h: 900
+      alt:
+        en: "Two printed copies of the book on a table"
+        de: "Zwei gedruckte Exemplare des Buches auf einem Tisch"
+        ru: "Два печатных экземпляра книжки на столе"
+    - file: printed-spread.jpg
+      w: 1200
+      h: 900
+      alt:
+        en: "The printed book lying open on summer grass"
+        de: "Das aufgeschlagene Buch im Sommergras"
+        ru: "Раскрытая книжка на летней траве"
