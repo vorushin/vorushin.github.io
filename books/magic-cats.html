@@ -19,6 +19,7 @@ image: /img/magic-cats/cover.jpg
   <div class="mc-stars" aria-hidden="true"></div>
   <h1 class="mc-title">{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.title[l] }}</span>{% endfor %}</h1>
   <p class="mc-byline">{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.byline[l] }}</span>{% endfor %}</p>
+  <p class="mc-play-link"><a href="/books/magic-cats/play">✨ <span lang="en">Play the story</span><span lang="de">Spiel die Geschichte</span><span lang="ru">Сыграть в сказку</span></a></p>
   <figure class="mc-cover">
     <img src="/img/magic-cats/cover.jpg" width="{{ book.meta.cover_w }}" height="{{ book.meta.cover_h }}"
          alt="{{ book.meta.cover_alt.en }}"
@@ -45,6 +46,8 @@ image: /img/magic-cats/cover.jpg
       <path d="M44 25c6 0 10 1 14 1 4 0 8-1 8-1" stroke="currentColor" stroke-width="1" fill="none" opacity="0.35"/>
     </svg>
   </div>
+
+  <p class="mc-play-link"><a href="/books/magic-cats/play">✨ <span lang="en">Play the story</span><span lang="de">Spiel die Geschichte</span><span lang="ru">Сыграть в сказку</span></a></p>
 
   <section class="mc-afterword" data-scene="night">
     <h2>{% for l in book.langs %}<span lang="{{ l }}">{{ book.afterword.heading[l] }}</span>{% endfor %}</h2>

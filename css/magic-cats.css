@@ -141,6 +141,16 @@ html[data-lang="ru"] [lang]:not([lang="ru"]) { display: none !important; }
   box-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
 }
 
+/* ── Play link ── */
+.mc-play-link { position: relative; text-align: center; font-family: var(--sans); margin: 0 0 2rem; }
+.mc-play-link a {
+  display: inline-block; color: #ffd76e; text-decoration: none;
+  border: 1px solid rgba(255, 215, 110, 0.5); border-radius: 999px;
+  padding: 0.45rem 1.3rem; font-size: 0.95rem;
+}
+.mc-play-link a:hover, .mc-play-link a:focus-visible { background: rgba(255, 215, 110, 0.12); }
+body[data-scene="day-yellow"] .mc-play-link a, body[data-scene="day-green"] .mc-play-link a { color: inherit; border-color: currentColor; }
+
 /* ── Story column ── */
 .mc-col {
   max-width: 40rem;

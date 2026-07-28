@@ -1,0 +1,103 @@
+/* Magic cats play page — The Delivery Round */
+html, body { height: 100%; }
+body.mcp-body { overflow: hidden; overscroll-behavior: none; }
+
+.mcp-stage {
+  position: fixed;
+  inset: 0;
+  touch-action: manipulation;
+  background: linear-gradient(180deg, #131a38 0%, #1b2447 100%);
+}
+#mcp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.mcp-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(141, 122, 165, 0.55), rgba(141, 122, 165, 0.15));
+  opacity: 0; transition: opacity 1.2s ease; pointer-events: none;
+}
+.mcp-veil.mcp-on { opacity: 1; }
+
+/* Top bar: reuses .mc-topbar/.mc-home/.mc-langs from magic-cats.css */
+.mcp-progress { display: flex; gap: 0.3rem; align-items: center; }
+.mcp-progress span {
+  width: 10px; height: 10px; border-radius: 3px;
+  background: rgba(243, 239, 230, 0.28); display: inline-block;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+.mcp-progress span.mcp-done {
+  background: #ffd76e; box-shadow: 0 0 6px rgba(255, 215, 110, 0.8);
+}
+
+.mcp-sound {
+  font-size: 0.95rem; line-height: 1;
+  background: transparent; border: 1px solid rgba(243, 239, 230, 0.4);
+  border-radius: 999px; padding: 0.25rem 0.55rem; cursor: pointer; color: #f3efe6;
+}
+.mcp-sound:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+
+/* Story card */
+.mcp-card {
+  position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 8%);
+  width: min(40rem, calc(100% - 1.5rem));
+  max-height: 60vh; overflow-y: auto;
+  background: rgba(19, 26, 56, 0.94);
+  border: 1px solid rgba(243, 239, 230, 0.18);
+  border-radius: 14px 14px 0 0;
+  padding: 1.1rem 1.3rem 0.9rem;
+  color: #f3efe6;
+  font-family: 'Iowan Old Style BT', 'Iowan Old Style', Georgia, serif;
+  opacity: 0; transition: opacity 0.45s ease, transform 0.45s ease;
+  z-index: 5;
+}
+.mcp-card.mcp-in { opacity: 1; transform: translate(-50%, 0); }
+.mcp-card p { font-size: clamp(1rem, 2.4vw, 1.15rem); line-height: 1.65; margin: 0 0 1rem; hyphens: auto; -webkit-hyphens: auto; }
+.mcp-card .mcp-next {
+  display: block; margin: 0.2rem auto 0.1rem;
+  font-size: 1.3rem; color: #ffd76e; background: transparent;
+  border: 1px solid rgba(255, 215, 110, 0.5); border-radius: 999px;
+  padding: 0.3rem 1.4rem; cursor: pointer;
+}
+.mcp-card .mcp-next:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+.mcp-card .mcp-btnrow { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.4rem; }
+.mcp-card .mcp-btn, .mcp-card a.mcp-btn {
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500;
+  color: #131a38; background: #ffd76e; border: none; border-radius: 999px;
+  padding: 0.5rem 1.4rem; cursor: pointer; text-decoration: none; display: inline-block;
+}
+.mcp-card .mcp-btn.mcp-ghost, .mcp-card a.mcp-btn.mcp-ghost { background: transparent; color: #f3efe6; border: 1px solid rgba(243, 239, 230, 0.5); }
+.mcp-card .mcp-btn:focus-visible, .mcp-card a.mcp-btn:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+@media (max-height: 480px) { .mcp-card { max-height: 50vh; } }
+
+/* Start / finale overlay */
+.mcp-overlay {
+  position: absolute; inset: 0; z-index: 6;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 1.5rem;
+  background: rgba(19, 26, 56, 0.82);
+  color: #f3efe6;
+  font-family: 'Iowan Old Style BT', 'Iowan Old Style', Georgia, serif;
+  opacity: 1; transition: opacity 0.5s ease;
+}
+.mcp-overlay[hidden] { display: none; }
+.mcp-overlay h1 { font-size: clamp(1.5rem, 5vw, 2.3rem); line-height: 1.25; margin: 0 0 0.6rem; max-width: 22ch; }
+.mcp-overlay p { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; color: #c9c4b4; max-width: 34ch; margin: 0 0 1.4rem; }
+.mcp-overlay .mcp-btn {
+  font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 500;
+  color: #131a38; background: #ffd76e; border: none; border-radius: 999px;
+  padding: 0.6rem 1.8rem; margin: 0.25rem; cursor: pointer;
+}
+.mcp-overlay .mcp-btn.mcp-ghost { background: transparent; color: #f3efe6; border: 1px solid rgba(243, 239, 230, 0.5); }
+.mcp-overlay .mcp-btn:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+
+.mcp-hint {
+  position: absolute; top: 4.2rem; left: 50%; transform: translateX(-50%);
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #ffd76e;
+  background: rgba(19, 26, 56, 0.8); border-radius: 999px; padding: 0.35rem 1rem;
+  z-index: 4; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+  white-space: nowrap;
+}
+.mcp-hint.mcp-on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mcp-card, .mcp-overlay, .mcp-veil, .mcp-progress span { transition: none; }
+}

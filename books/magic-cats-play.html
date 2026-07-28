@@ -1,0 +1,60 @@
+---
+layout: book
+title: "Play: Волшебные коты, разносящие сказки — an interactive bedtime story"
+description: "Help the magic cat deliver seven fairy tales through the night city — a gentle interactive version of the trilingual bedtime story, for phones and computers."
+permalink: /books/magic-cats/play
+extra_css: /css/magic-cats-play.css
+image: /img/magic-cats/cover.jpg
+---
+{% assign book = site.data.magic_cats %}
+<div class="mcp-stage" id="mcp-stage">
+  <canvas id="mcp-canvas"></canvas>
+  <div class="mcp-veil" id="mcp-veil" aria-hidden="true"></div>
+
+  <nav class="mc-topbar">
+    <a class="mc-home" href="/books/magic-cats">← <span lang="en">book</span><span lang="de">Buch</span><span lang="ru">книжка</span></a>
+    <div class="mcp-progress" id="mcp-progress" aria-hidden="true"></div>
+    <div class="mc-langs" role="group" aria-label="Language / Sprache / Язык">
+      <button type="button" data-set-lang="en" aria-pressed="true" aria-label="English">EN</button>
+      <button type="button" data-set-lang="de" aria-pressed="false" aria-label="Deutsch">DE</button>
+      <button type="button" data-set-lang="ru" aria-pressed="false" aria-label="Русский">RU</button>
+    </div>
+    <button type="button" class="mcp-sound" id="mcp-sound" aria-pressed="false" title="Sound">🔕</button>
+  </nav>
+
+  <div class="mcp-hint" id="mcp-hint" role="status">
+    <span lang="en">Tap the moon!</span><span lang="de">Tippe auf den Mond!</span><span lang="ru">Нажми на луну!</span>
+  </div>
+
+  <div class="mcp-card" id="mcp-card" hidden aria-live="polite"></div>
+
+  <div class="mcp-overlay" id="mcp-start">
+    <h1>{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.title[l] }}</span>{% endfor %}</h1>
+    <p>
+      <span lang="en">Tap the glowing star and help the cat deliver the tales.</span>
+      <span lang="de">Tippe auf den leuchtenden Stern und hilf der Katze, die Märchen auszutragen.</span>
+      <span lang="ru">Нажимай на светящуюся звёздочку и помоги коту разнести сказки.</span>
+    </p>
+    <div>
+      <button type="button" class="mcp-btn" id="mcp-begin">
+        <span lang="en">Begin</span><span lang="de">Los geht's</span><span lang="ru">Начать</span>
+      </button>
+      <button type="button" class="mcp-btn mcp-ghost" id="mcp-continue" hidden>
+        <span lang="en">Continue</span><span lang="de">Weiter</span><span lang="ru">Продолжить</span>
+      </button>
+    </div>
+    <noscript><p><a href="/books/magic-cats" style="color:#ffd76e">JavaScript is off — read the book instead / Lies das Buch / Читать книжку</a></p></noscript>
+  </div>
+
+  <div hidden>
+    {% for section in book.sections %}
+    <div class="mcp-tpl" id="mcp-tpl-{{ section.id }}">
+      {% for p in section.paragraphs %}{% for l in book.langs %}<p lang="{{ l }}">{{ p[l] }}</p>{% endfor %}{% endfor %}
+    </div>
+    {% endfor %}
+    <div class="mcp-tpl" id="mcp-tpl-finale">
+      <p><span lang="en">All the tales are delivered. Good night!</span><span lang="de">Alle Märchen sind ausgetragen. Gute Nacht!</span><span lang="ru">Все сказки разнесены. Спокойной ночи!</span></p>
+    </div>
+  </div>
+</div>
+<!-- GAME_SCRIPT -->
