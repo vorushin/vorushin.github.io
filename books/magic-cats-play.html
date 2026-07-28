@@ -57,4 +57,402 @@ image: /img/magic-cats/cover.jpg
     </div>
   </div>
 </div>
-<!-- GAME_SCRIPT -->
+<script>
+(function () {
+  'use strict';
+  document.body.classList.add('mcp-body');
+
+  var canvas = document.getElementById('mcp-canvas');
+  var ctx = canvas.getContext('2d');
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var PAL = {
+    skyTop: '#131a38', skyBot: '#1b2447', outline: '#2a2136',
+    pink: '#e8b7d5', pinkRoof: '#d99cc4', blue: '#7f9bd0', brick: '#8a4a3a', brickRoof: '#6e3a2e',
+    gable: '#eef2f7', winDark: '#4a2340', winLit: '#ffe27a', winFrame: '#3a2b45',
+    trunk: '#7a5a33', crownA: '#3f7d3a', crownB: '#5ba04f',
+    grass: '#233b2c', grassDab: '#2f5040', path: '#c9bf72',
+    cat: '#3a2b45', kitten: '#8a8496', bundle: '#f6f2e8',
+    moon: '#f4ecc2', moonGlow: 'rgba(244, 236, 194, 0.16)', star: '#fff6d8',
+    beacon: '#ffd76e', saucer: '#eef2f7', beam: 'rgba(244, 236, 194, 0.32)',
+    bagYellow: '#e5c95c', bagRed: '#c96a5a', bird: '#c94f42', chalk: 'rgba(235, 240, 255, 0.4)'
+  };
+
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ── Canvas sizing: logical height is always 600 world units ── */
+  var W = 0, H = 0, DPR = 1, S = 1;      // css width/height, pixel ratio, world scale
+  var GROUND = 520, DESIGN_H = 600;
+  function sizeCanvas() {
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+    S = H / DESIGN_H;
+    ctx.setTransform(DPR * S, 0, 0, DPR * S, 0, 0);   // 1 unit = 1 world unit
+  }
+  function viewW() { return W / S; }
+  window.addEventListener('resize', sizeCanvas);
+
+  /* ── World ── */
+  var SECTIONS = ['candle', 'summer-tree', 'moon-milk', 'tree-library', 'lavender-calf', 'night-garden', 'angel'];
+  var HOUSE0 = 1050, GAP = 620;
+  var VARIANTS = [0, 1, 2, 1, 0, 1, 0];          // moon-milk gets the brick house, finale a tall pink one
+  var WINDOW_Y = [280, 305, 335];                 // per variant
+  var WORLD = buildWorld();
+
+  function buildWorld() {
+    var stops = [], trees = [], i, r;
+    var leadIn = [260, 470, 680];
+    for (i = 0; i < leadIn.length; i++) {
+      r = rng(101 + i * 17);
+      trees.push(makeTree(leadIn[i], r, -1));
+    }
+    for (i = 0; i < 7; i++) {
+      var houseX = HOUSE0 + i * GAP;
+      var variant = VARIANTS[i];
+      var prevX = i === 0 ? leadIn[leadIn.length - 1] : HOUSE0 + (i - 1) * GAP;
+      var span = houseX - prevX;
+      var n = Math.max(1, Math.min(3, Math.round((span - 240) / 190))), k;
+      var stopTrees = [];
+      for (k = 1; k <= n; k++) {
+        r = rng(1000 + i * 31 + k * 7);
+        var tx = prevX + span * k / (n + 1) + (r() - 0.5) * 34;
+        var tree = makeTree(tx, r, i);
+        trees.push(tree); stopTrees.push(tree);
+      }
+      stops.push({
+        id: SECTIONS[i], houseX: houseX, variant: variant,
+        windowY: WINDOW_Y[variant], sillY: WINDOW_Y[variant] + 16,
+        trees: stopTrees, delivered: false
+      });
+    }
+    return { stops: stops, trees: trees, width: HOUSE0 + 6 * GAP + 500, leadIn: leadIn };
+  }
+  function makeTree(x, r, nearStop) {
+    var cr = 44 + r() * 16;
+    var crownY = 336 + (r() - 0.5) * 26;
+    return {
+      x: x, crownY: crownY, r: cr, topY: crownY - cr * 0.72,
+      eye: r() < 0.28, lean: (r() - 0.5) * 0.06, seed: Math.floor(r() * 1e6), nearStop: nearStop
+    };
+  }
+
+  /* ── Stars (parallax 0.15, tiled over 2400) ── */
+  var STARS = (function () {
+    var r = rng(777), a = [], i;
+    for (i = 0; i < 85; i++) {
+      a.push({ x: r() * 2400, y: 24 + r() * 280, r: 0.8 + r() * 1.1, ph: r() * 6.28, sp: 0.6 + r() * 1.2 });
+    }
+    return a;
+  })();
+
+  var MOON = { x: 100, y: 95, r: 40 };            // screen-anchored (world scale units)
+
+  /* ── Actors ── */
+  var cat = { x: 300, y: 0, dir: 1, squash: 0, carrying: true, curled: false, visible: true };
+  var kitten = { x: 0, y: 0, dir: 1, squash: 0, carrying: false, curled: false, visible: false };
+  cat.y = WORLD.trees[0].topY;
+
+  var cam = { x: 0 };
+  function camTarget() {
+    var t = cat.x - viewW() * 0.38;
+    return Math.max(0, Math.min(WORLD.width - viewW(), t));
+  }
+  cam.x = camTarget();
+
+  /* ── Wobbly drawing helpers ── */
+  function wobblyPath(pts, seed) {
+    var r = rng(seed), i, j = [];
+    for (i = 0; i < pts.length; i++) j.push([pts[i][0] + (r() - 0.5) * 5, pts[i][1] + (r() - 0.5) * 5]);
+    ctx.beginPath();
+    ctx.moveTo(j[0][0], j[0][1]);
+    for (i = 1; i <= j.length; i++) {
+      var a = j[i % j.length], p = j[i - 1];
+      var mx = (p[0] + a[0]) / 2 + (r() - 0.5) * 4, my = (p[1] + a[1]) / 2 + (r() - 0.5) * 4;
+      ctx.quadraticCurveTo(mx, my, a[0], a[1]);
+    }
+    ctx.closePath();
+  }
+  function outline() { ctx.strokeStyle = PAL.outline; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke(); }
+
+  /* ── Scene pieces ── */
+  function drawSky() {
+    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, PAL.skyTop); g.addColorStop(1, PAL.skyBot);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+  }
+  function drawStars(t) {
+    var i, s, sx;
+    ctx.fillStyle = PAL.star;
+    for (i = 0; i < STARS.length; i++) {
+      s = STARS[i];
+      sx = ((s.x - cam.x * 0.15) % 2400 + 2400) % 2400;
+      if (sx > viewW() + 20) continue;
+      var alpha = REDUCED ? 0.7 : 0.35 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
+      ctx.globalAlpha = alpha;
+      ctx.beginPath(); ctx.arc(sx, s.y, s.r, 0, 6.28); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawMoon(pulseOn, t) {
+    ctx.save();
+    var glow = ctx.createRadialGradient(MOON.x, MOON.y, MOON.r * 0.6, MOON.x, MOON.y, MOON.r * 2.6);
+    glow.addColorStop(0, 'rgba(244, 236, 194, 0.28)');
+    glow.addColorStop(1, 'rgba(244, 236, 194, 0)');
+    ctx.beginPath(); ctx.arc(MOON.x, MOON.y, MOON.r * 2.6, 0, 6.28);
+    ctx.fillStyle = glow; ctx.fill();
+    ctx.beginPath(); ctx.arc(MOON.x, MOON.y, MOON.r, 0, 6.28);
+    ctx.fillStyle = PAL.moon; ctx.fill();
+    ctx.globalAlpha = 0.13; ctx.fillStyle = '#b7a86e';
+    ctx.beginPath(); ctx.arc(MOON.x - 14, MOON.y - 6, 8, 0, 6.28); ctx.fill();
+    ctx.beginPath(); ctx.arc(MOON.x + 10, MOON.y + 14, 5, 0, 6.28); ctx.fill();
+    ctx.globalAlpha = 1;
+    if (pulseOn) {
+      var p = REDUCED ? 1 : 1 + 0.06 * Math.sin(t * 4);
+      ctx.beginPath(); ctx.arc(MOON.x, MOON.y, (MOON.r + 10) * p, 0, 6.28);
+      ctx.strokeStyle = PAL.beacon; ctx.lineWidth = 2.5; ctx.setLineDash([7, 7]); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
+  }
+  function drawGround() {
+    var x0 = cam.x - 40, x1 = cam.x + viewW() + 40, i;
+    ctx.fillStyle = PAL.grass;
+    ctx.fillRect(x0, GROUND, x1 - x0, DESIGN_H - GROUND + 40);
+    var start = Math.floor(x0 / 46) * 46;
+    for (i = start; i < x1; i += 46) {
+      var r = rng(i * 13 + 5);
+      ctx.fillStyle = PAL.grassDab;
+      ctx.globalAlpha = 0.5 + r() * 0.4;
+      ctx.beginPath();
+      ctx.ellipse(i + r() * 30, GROUND + 8 + r() * 46, 10 + r() * 12, 4 + r() * 4, 0, 0, 6.28);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function drawHouse(stop, t, isTarget) {
+    var x = stop.houseX, v = stop.variant;
+    var w = v === 0 ? 150 : v === 1 ? 172 : 150;
+    var h = v === 0 ? 285 : v === 1 ? 235 : 200;
+    var top = GROUND - h;
+    var bodyCol = v === 0 ? PAL.pink : v === 1 ? PAL.blue : PAL.brick;
+    ctx.save();
+    /* body */
+    wobblyPath([[x - w / 2, GROUND + 4], [x - w / 2, top], [x + w / 2, top], [x + w / 2, GROUND + 4]], stop.houseX | 0);
+    ctx.fillStyle = bodyCol; ctx.fill(); outline();
+    /* roof */
+    if (v === 1) {   /* white snow-gable like the cover's blue house */
+      wobblyPath([[x - w / 2 - 10, top + 2], [x - w / 2 + 14, top - 44], [x + w / 2 - 20, top - 52], [x + w / 2 + 10, top + 2]], stop.houseX + 7);
+      ctx.fillStyle = PAL.gable; ctx.fill(); outline();
+    } else {
+      wobblyPath([[x - w / 2 - 12, top + 2], [x, top - 52], [x + w / 2 + 12, top + 2]], stop.houseX + 7);
+      ctx.fillStyle = v === 0 ? PAL.pinkRoof : PAL.brickRoof; ctx.fill(); outline();
+      /* chimney on the brick house */
+      if (v === 2) {
+        wobblyPath([[x + 26, top - 18], [x + 26, top - 44], [x + 46, top - 44], [x + 46, top - 12]], stop.houseX + 11);
+        ctx.fillStyle = PAL.brickRoof; ctx.fill(); outline();
+      }
+    }
+    /* dark arched windows (decor) */
+    var r = rng(stop.houseX + 23), i;
+    var rows = v === 0 ? 3 : 2;
+    for (i = 0; i < rows; i++) {
+      var wy = top + 46 + i * (h - 80) / rows;
+      drawArchWindow(x - w / 4 - 6, wy, 15, 24, false, stop, t);
+      if (r() > 0.3) drawArchWindow(x + w / 4 + 6, wy, 15, 24, false, stop, t);
+    }
+    /* the lit stop window */
+    drawArchWindow(x, stop.windowY, 19, 30, true, stop, t, isTarget);
+    ctx.restore();
+  }
+  function drawArchWindow(x, y, rw, rh, lit, stop, t, isTarget) {
+    ctx.beginPath();
+    ctx.moveTo(x - rw, y + rh / 2);
+    ctx.lineTo(x - rw, y - rh / 4);
+    ctx.quadraticCurveTo(x, y - rh, x + rw, y - rh / 4);
+    ctx.lineTo(x + rw, y + rh / 2);
+    ctx.closePath();
+    if (lit) {
+      var on = stop.delivered || isTarget;
+      if (on && !REDUCED) {
+        ctx.save(); ctx.shadowColor = PAL.winLit; ctx.shadowBlur = stop.delivered ? 26 : 14;
+        ctx.fillStyle = PAL.winLit; ctx.fill(); ctx.restore();
+      } else {
+        ctx.fillStyle = on ? PAL.winLit : '#8f7f4e'; ctx.fill();
+      }
+      ctx.strokeStyle = PAL.winFrame; ctx.lineWidth = 3; ctx.stroke();
+      /* sill */
+      ctx.fillStyle = PAL.gable;
+      ctx.fillRect(x - rw - 5, y + rh / 2, rw * 2 + 10, 5);
+      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.strokeRect(x - rw - 5, y + rh / 2, rw * 2 + 10, 5);
+    } else {
+      ctx.fillStyle = PAL.winDark; ctx.fill();
+      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+  }
+  function drawTree(tree, t) {
+    var x = tree.x;
+    ctx.save();
+    ctx.translate(x, GROUND); ctx.rotate(tree.lean); ctx.translate(-x, -GROUND);
+    /* trunk */
+    wobblyPath([[x - 10, GROUND + 4], [x - 7, tree.crownY + 10], [x + 7, tree.crownY + 10], [x + 10, GROUND + 4]], tree.seed);
+    ctx.fillStyle = PAL.trunk; ctx.fill(); outline();
+    /* eye-knot */
+    if (tree.eye) {
+      var ey = GROUND - (GROUND - tree.crownY) * 0.45;
+      ctx.beginPath(); ctx.arc(x, ey, 9, 0, 6.28); ctx.fillStyle = '#241a12'; ctx.fill();
+      ctx.fillStyle = '#f3efe6';
+      ctx.beginPath(); ctx.arc(x - 3, ey - 1, 1.8, 0, 6.28); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 3, ey - 1, 1.8, 0, 6.28); ctx.fill();
+    }
+    /* crown: blob silhouette — stroke all blobs first, then fill over (keeps only the outer outline) */
+    var r = rng(tree.seed + 1), i;
+    var blobs = [];
+    for (i = 0; i < 4; i++) {
+      var a = i / 4 * 6.28 + r();
+      blobs.push([x + Math.cos(a) * tree.r * 0.42, tree.crownY + Math.sin(a) * tree.r * 0.3, tree.r * (0.55 + r() * 0.2)]);
+    }
+    ctx.strokeStyle = PAL.outline; ctx.lineWidth = 5;
+    for (i = 0; i < blobs.length; i++) {
+      ctx.beginPath(); ctx.arc(blobs[i][0], blobs[i][1], blobs[i][2], 0, 6.28); ctx.stroke();
+    }
+    ctx.fillStyle = PAL.crownA;
+    for (i = 0; i < blobs.length; i++) {
+      ctx.beginPath(); ctx.arc(blobs[i][0], blobs[i][1], blobs[i][2], 0, 6.28); ctx.fill();
+    }
+    /* lighter mottling, inset so it never touches the outline */
+    ctx.fillStyle = PAL.crownB;
+    for (i = 0; i < blobs.length; i += 2) {
+      ctx.beginPath(); ctx.arc(blobs[i][0] - 4, blobs[i][1] - 5, blobs[i][2] * 0.55, 0, 6.28); ctx.fill();
+    }
+    ctx.restore();
+  }
+  function drawCatBody(c, t, col, sc) {
+    if (!c.visible) return;
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.scale(sc * c.dir, sc * (1 + c.squash));
+    ctx.lineJoin = 'round';
+    if (c.curled) {
+      ctx.beginPath(); ctx.arc(0, -10, 16 + 0.5 * Math.sin(t * 1.4), 0, 6.28);
+      ctx.fillStyle = col; ctx.fill();
+      ctx.beginPath(); ctx.arc(10, -14, 9, 0, 6.28); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(14, -22); ctx.lineTo(17, -30); ctx.lineTo(20, -22); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(6, -22); ctx.lineTo(9, -31); ctx.lineTo(12, -22); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(0, -6, 18, 0.6, 2.4); ctx.stroke();
+    } else {
+      /* tail */
+      ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-20, -8);
+      ctx.quadraticCurveTo(-34, -20 + (REDUCED ? 0 : 5 * Math.sin(t * 3 + c.x)), -30, -34 + (REDUCED ? 0 : 3 * Math.sin(t * 3.7 + c.x)));
+      ctx.stroke();
+      /* body */
+      ctx.beginPath(); ctx.ellipse(0, -12, 23, 12, 0, 0, 6.28); ctx.fillStyle = col; ctx.fill();
+      /* legs */
+      ctx.fillRect(-16, -6, 5, 7); ctx.fillRect(-6, -6, 5, 7); ctx.fillRect(4, -6, 5, 7); ctx.fillRect(12, -6, 5, 7);
+      /* head */
+      ctx.beginPath(); ctx.arc(20, -22, 11, 0, 6.28); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(12, -30); ctx.lineTo(14, -40); ctx.lineTo(19, -31); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(22, -31); ctx.lineTo(26, -40); ctx.lineTo(28, -30); ctx.closePath(); ctx.fill();
+      /* closed happy eyes */
+      ctx.strokeStyle = '#f3efe6'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(17, -23, 2.6, 3.4, 6.0); ctx.stroke();
+      ctx.beginPath(); ctx.arc(24, -23, 2.6, 3.4, 6.0); ctx.stroke();
+      /* bundle in teeth */
+      if (c.carrying) {
+        ctx.beginPath(); ctx.arc(31, -16, c === kitten ? 4.5 : 7, 0, 6.28);
+        ctx.fillStyle = PAL.bundle; ctx.fill();
+        ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(31, -22, 2.2, 0, 6.28); ctx.fillStyle = PAL.bundle; ctx.fill(); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+  function drawBeacon(wx, wy, t) {
+    var p = REDUCED ? 1 : 1 + 0.15 * Math.sin(t * 4);
+    var R = 13 * p, r2 = R * 0.45, i;
+    ctx.save();
+    ctx.translate(wx, wy);
+    if (!REDUCED) ctx.rotate(0.15 * Math.sin(t * 1.3));
+    ctx.beginPath();
+    for (i = 0; i < 10; i++) {
+      var rad = i % 2 ? r2 : R, a = i / 10 * 6.28 - 1.57;
+      ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+    }
+    ctx.closePath();
+    ctx.shadowColor = PAL.beacon; ctx.shadowBlur = REDUCED ? 0 : 18;
+    ctx.fillStyle = PAL.beacon; ctx.fill();
+    ctx.restore();
+  }
+
+  /* ── Frame composition (game systems fill these in later parts) ── */
+  var beaconPos = function () { var s = WORLD.stops[0]; return { x: s.houseX, y: s.windowY - 46 }; };
+  var moonPulse = function () { return false; };
+  var drawEffects = function (t) {};
+  var updateGame = function (dt, t) {};
+
+  function drawFrame(t) {
+    drawSky();
+    drawStars(t);
+    drawMoon(moonPulse(), t);
+    ctx.save();
+    ctx.translate(-cam.x, 0);
+    drawGround();
+    var i;
+    for (i = 0; i < WORLD.stops.length; i++) {
+      var st = WORLD.stops[i];
+      if (st.houseX + 200 < cam.x || st.houseX - 200 > cam.x + viewW()) continue;
+      drawHouse(st, t, false);
+    }
+    for (i = 0; i < WORLD.trees.length; i++) {
+      var tr = WORLD.trees[i];
+      if (tr.x + 120 < cam.x || tr.x - 120 > cam.x + viewW()) continue;
+      drawTree(tr, t);
+    }
+    drawEffects(t);
+    var b = beaconPos();
+    if (b) drawBeacon(b.x, b.y, t);
+    drawCatBody(kitten, t, PAL.kitten, 0.62);
+    drawCatBody(cat, t, PAL.cat, 1);
+    ctx.restore();
+  }
+
+  /* ── Loop ── */
+  var running = true, lastTs = 0;
+  function frame(ts) {
+    if (!running) { lastTs = 0; return; }
+    var t = ts / 1000, dt = lastTs ? Math.min(0.05, t - lastTs) : 0.016;
+    lastTs = t;
+    updateGame(dt, t);
+    cam.x += (camTarget() - cam.x) * (REDUCED ? 1 : Math.min(1, dt * 5));
+    drawFrame(t);
+    requestAnimationFrame(frame);
+  }
+  function setRunning(on) {
+    if (on === running) return;
+    running = on;
+    if (on) requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', function () {
+    setRunning(!document.hidden && !overlayOpen());
+  });
+  var overlayOpen = function () {
+    return !document.getElementById('mcp-start').hidden || !document.getElementById('mcp-card').hidden;
+  };
+
+  if (location.search.indexOf('debugscene') > -1) document.getElementById('mcp-start').hidden = true;
+
+  sizeCanvas();
+  requestAnimationFrame(frame);
+})();
+</script>
