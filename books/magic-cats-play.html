@@ -162,7 +162,8 @@ image: /img/magic-cats/cover.jpg
 
   var cam = { x: 0 };
   function camTarget() {
-    var t = cat.x - viewW() * 0.38;
+    var frac = viewW() < 430 ? 0.22 : 0.38;   /* narrow portrait: keep more road ahead visible */
+    var t = cat.x - viewW() * frac;
     return Math.max(0, Math.min(WORLD.width - viewW(), t));
   }
   cam.x = camTarget();
@@ -711,7 +712,9 @@ image: /img/magic-cats/cover.jpg
   function beaconPos() {
     if ((state === 'idle' || state === 'start') && stopIndex < 7) {
       var tgt = nextTarget();
-      return { x: tgt.x, y: tgt.sill ? WORLD.stops[stopIndex].windowY - 40 : tgt.y - 34 };
+      /* keep the star on screen even on narrow viewports — tapping it still advances */
+      var bx = Math.min(tgt.x, cam.x + viewW() - 26);
+      return { x: bx, y: tgt.sill ? WORLD.stops[stopIndex].windowY - 40 : tgt.y - 34 };
     }
     return null;
   }
