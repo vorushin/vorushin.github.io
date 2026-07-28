@@ -395,11 +395,305 @@ image: /img/magic-cats/cover.jpg
     ctx.restore();
   }
 
-  /* ── Frame composition (game systems fill these in later parts) ── */
-  var beaconPos = function () { var s = WORLD.stops[0]; return { x: s.houseX, y: s.windowY - 46 }; };
-  var moonPulse = function () { return false; };
-  var drawEffects = function (t) {};
-  var updateGame = function (dt, t) {};
+  /* ══════════ Game state ══════════ */
+  var state = 'start';
+  var stopIndex = 0;
+  var clock = 0;
+  var hops = [], kittenQueue = [];
+  var pending = [];                          // {at, fn} on the game clock
+  var deliverFx = null;                      // {t0, stop}
+  var cardEl = document.getElementById('mcp-card');
+  var startOv = document.getElementById('mcp-start');
+  var beginBtn = document.getElementById('mcp-begin');
+  var contBtn = document.getElementById('mcp-continue');
+  var hintEl = document.getElementById('mcp-hint');
+  var progressEl = document.getElementById('mcp-progress');
+  var soundBtn = document.getElementById('mcp-sound');
+  var LS_STOP = 'magic-cats-play-stop', LS_SOUND = 'magic-cats-play-sound';
+
+  (function buildDots() {
+    for (var i = 0; i < 7; i++) progressEl.appendChild(document.createElement('span'));
+  })();
+  function updateDots() {
+    var kids = progressEl.children, i;
+    for (i = 0; i < kids.length; i++) kids[i].className = i < stopIndex ? 'mcp-done' : '';
+  }
+  function saveProgress() { try { localStorage.setItem(LS_STOP, String(stopIndex)); } catch (e) {} }
+  function savedProgress() {
+    try { var v = parseInt(localStorage.getItem(LS_STOP), 10); return v >= 1 && v <= 6 ? v : 0; } catch (e) { return 0; }
+  }
+
+  function setupAt(fromStop) {
+    var i;
+    stopIndex = fromStop;
+    for (i = 0; i < 7; i++) WORLD.stops[i].delivered = i < fromStop;
+    cat.curled = false; cat.carrying = true; cat.dir = 1; cat.squash = 0; cat.visible = true;
+    kitten.curled = false; kitten.carrying = fromStop >= 3; kitten.visible = fromStop >= 2;
+    var tr = fromStop === 0 ? WORLD.trees[0] : lastTreeOf(WORLD.stops[fromStop - 1]);
+    cat.x = tr.x; cat.y = tr.topY;
+    if (kitten.visible) { kitten.x = cat.x - 40; kitten.y = cat.y + 3; kitten.dir = 1; }
+    hops = []; kittenQueue = []; pending = []; deliverFx = null;
+    cam.x = camTarget();
+    updateDots();
+  }
+  function lastTreeOf(stop) { return stop.trees[stop.trees.length - 1]; }
+
+  /* ── Movement ── */
+  function hopSegments(fromX, fromY, points, startAt, dur) {
+    var segs = [], px = fromX, py = fromY, i;
+    for (i = 0; i < points.length; i++) {
+      segs.push({ x0: px, y0: py, x1: points[i][0], y1: points[i][1], t0: startAt + i * dur, dur: dur });
+      px = points[i][0]; py = points[i][1];
+    }
+    return segs;
+  }
+  function stepHops(actor, segs, t) {
+    if (!segs.length) return true;
+    var last = segs[segs.length - 1];
+    if (t >= last.t0 + last.dur) {
+      actor.x = last.x1; actor.y = last.y1; actor.squash = 0;
+      return true;
+    }
+    for (var i = 0; i < segs.length; i++) {
+      var s = segs[i];
+      if (t < s.t0) break;
+      if (t <= s.t0 + s.dur) {
+        var p = (t - s.t0) / s.dur;
+        actor.x = s.x0 + (s.x1 - s.x0) * p;
+        actor.y = s.y0 + (s.y1 - s.y0) * p - (REDUCED ? 0 : 46 * Math.sin(Math.PI * p));
+        actor.dir = s.x1 >= s.x0 ? 1 : -1;
+        actor.squash = REDUCED ? 0 : -0.12 * Math.sin(Math.PI * p);
+        return false;
+      }
+    }
+    return false;
+  }
+  function nextTarget() {
+    if (stopIndex >= 7) return null;
+    var stop = WORLD.stops[stopIndex], i, tr;
+    for (i = 0; i < WORLD.trees.length; i++) {
+      tr = WORLD.trees[i];
+      if (tr.x > cat.x + 30 && tr.x < stop.houseX - 60) {
+        return { x: tr.x, y: tr.topY, sill: false };
+      }
+    }
+    return { x: stop.houseX - 14, y: stop.windowY + 15, sill: true };
+  }
+  function advance() {
+    if (state !== 'idle' || stopIndex >= 7) return;
+    var tgt = nextTarget();
+    var dur = REDUCED ? 0.16 : 0.38;
+    if (kitten.visible) {
+      kittenQueue = hopSegments(kitten.x, kitten.y, [[cat.x - 40, cat.y + 3]], clock + 0.16, dur);
+    }
+    hops = hopSegments(cat.x, cat.y, [[tgt.x, tgt.y]], clock, dur);
+    hops.sill = tgt.sill;
+    state = 'walking';
+  }
+  function schedule(delay, fn) { pending.push({ at: clock + delay, fn: fn }); }
+
+  /* ── Arrival & delivery ── */
+  function arrive() {
+    var stop = WORLD.stops[stopIndex];
+    if (stop.id === 'moon-milk' && !stop.delivered) { moonGateStart(stop); return; }
+    startDeliver(stop);
+  }
+  function startDeliver(stop) {
+    state = 'delivering';
+    cat.carrying = false;
+    deliverFx = { t0: clock, stop: stop };
+    schedule(0.8, function () {
+      stop.delivered = true;
+      deliverFx = null;
+      openCard(stop.id);
+    });
+  }
+  function moonGateStart(stop) { startDeliver(stop); }   // replaced by the real gate in the set-piece pass
+  function moonTap() {}
+
+  /* ── Cards ── */
+  function openCard(id) {
+    var tpl = document.getElementById('mcp-tpl-' + id);
+    cardEl.innerHTML = tpl.innerHTML;
+    if (id === 'finale') {
+      var row = document.createElement('div');
+      row.className = 'mcp-btnrow';
+      row.innerHTML = '<button type="button" class="mcp-btn" id="mcp-again">' +
+        '<span lang="en">Play again</span><span lang="de">Noch einmal</span><span lang="ru">Ещё раз</span></button>' +
+        '<a class="mcp-btn mcp-ghost" href="/books/magic-cats">' +
+        '<span lang="en">Read the book</span><span lang="de">Das Buch lesen</span><span lang="ru">Читать книжку</span></a>';
+      cardEl.appendChild(row);
+    } else {
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'mcp-next'; btn.textContent = '✵';
+      btn.setAttribute('aria-label', 'Continue · Weiter · Дальше');
+      btn.addEventListener('click', dismissCard);
+      cardEl.appendChild(btn);
+    }
+    cardEl.hidden = false;
+    requestAnimationFrame(function () { cardEl.classList.add('mcp-in'); });
+    state = 'card';
+    updateRunning();
+    var b = cardEl.querySelector('.mcp-next');
+    if (b) b.focus({ preventScroll: true });
+  }
+  function dismissCard() {
+    if (state !== 'card') return;
+    cardEl.classList.remove('mcp-in');
+    setTimeout(function () { cardEl.hidden = true; updateRunning(); }, 320);
+    afterCard();
+  }
+  cardEl.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('#mcp-again')) {
+      cardEl.classList.remove('mcp-in'); cardEl.hidden = true;
+      setupAt(0); saveProgress();
+      state = 'idle';
+      updateRunning();
+    }
+  });
+  function afterCard() {
+    stopIndex++;
+    saveProgress(); updateDots();
+    if (stopIndex >= 7) { beginFinale(); return; }
+    returnToTree();
+  }
+  function returnToTree() {
+    var stop = WORLD.stops[stopIndex - 1];
+    var tr = lastTreeOf(stop);
+    hops = hopSegments(cat.x, cat.y, [[tr.x, tr.topY]], clock, REDUCED ? 0.16 : 0.38);
+    state = 'returning';
+  }
+  function afterReturn() {
+    cat.dir = 1;
+    cat.carrying = true;
+    if (stopIndex === 2 && !kitten.visible) {
+      kitten.visible = true; kitten.dir = 1; kitten.carrying = false;
+      kitten.x = cat.x - 320; kitten.y = cat.y + 3;
+      kittenQueue = hopSegments(kitten.x, kitten.y,
+        [[cat.x - 160, cat.y + 3], [cat.x - 40, cat.y + 3]], clock + 0.1, REDUCED ? 0.16 : 0.4);
+      state = 'joining';
+      return;
+    }
+    if (stopIndex === 3) kitten.carrying = true;
+    state = 'idle';
+  }
+
+  /* ── Finale ── */
+  function beginFinale() {
+    var hx = WORLD.stops[6].houseX;
+    state = 'finale';
+    cat.carrying = false; kitten.carrying = false;
+    var dur = REDUCED ? 0.2 : 0.42;
+    hops = hopSegments(cat.x, cat.y, [[hx - 44, 248], [hx - 6, 198]], clock, dur);
+    if (kitten.visible) {
+      kittenQueue = hopSegments(kitten.x, kitten.y, [[hx - 70, 262], [hx - 36, 224]], clock + 0.35, dur);
+    }
+    schedule(dur * 2 + 0.5, function () { cat.curled = true; kitten.curled = true; });
+    schedule(dur * 2 + 1.6, function () { openCard('finale'); });
+  }
+
+  /* ── Frame hooks ── */
+  function beaconPos() {
+    if ((state === 'idle' || state === 'start') && stopIndex < 7) {
+      var tgt = nextTarget();
+      return { x: tgt.x, y: tgt.sill ? WORLD.stops[stopIndex].windowY - 40 : tgt.y - 34 };
+    }
+    return null;
+  }
+  function moonPulse() { return state === 'moonGate'; }
+  function drawEffects(t) {
+    if (deliverFx) {
+      var p = Math.min(1, (clock - deliverFx.t0) / 0.6);
+      if (p < 1) {
+        var s = deliverFx.stop;
+        var x0 = cat.x + 31 * cat.dir, y0 = cat.y - 16;
+        var x1 = s.houseX, y1 = s.windowY - 2;
+        var bx = x0 + (x1 - x0) * p, by = y0 + (y1 - y0) * p - 22 * Math.sin(Math.PI * p);
+        ctx.beginPath(); ctx.arc(bx, by, 7, 0, 6.28);
+        ctx.fillStyle = PAL.bundle; ctx.fill();
+        ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.stroke();
+      }
+    }
+  }
+  function updateGame(dt) {
+    clock += dt;
+    for (var i = pending.length - 1; i >= 0; i--) {
+      if (clock >= pending[i].at) { var fn = pending[i].fn; pending.splice(i, 1); fn(); }
+    }
+    if (state === 'walking' || state === 'returning' || state === 'finale') {
+      var done = stepHops(cat, hops, clock);
+      if (kitten.visible && kittenQueue.length && stepHops(kitten, kittenQueue, clock)) kittenQueue = [];
+      if (done && hops.length) {
+        var wasSill = hops.sill;
+        hops = [];
+        if (state === 'walking') { if (wasSill) arrive(); else state = 'idle'; }
+        else if (state === 'returning') afterReturn();
+      }
+    } else if (state === 'joining') {
+      if (stepHops(kitten, kittenQueue, clock)) { kittenQueue = []; state = 'idle'; }
+    } else if (kitten.visible && kittenQueue.length) {
+      if (stepHops(kitten, kittenQueue, clock)) kittenQueue = [];
+    }
+  }
+
+  /* ── Input ── */
+  canvas.addEventListener('pointerdown', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    var lx = (e.clientX - rect.left) / S, ly = (e.clientY - rect.top) / S;
+    var wx = lx + cam.x;
+    if (state === 'card') { dismissCard(); return; }
+    if (state === 'moonGate') {
+      if (Math.hypot(lx - MOON.x, ly - MOON.y) < MOON.r + 18) moonTap();
+      return;
+    }
+    if (state === 'idle' && wx > cat.x - 80) advance();
+  });
+  window.addEventListener('keydown', function (e) {
+    if (e.key !== ' ' && e.key !== 'ArrowRight' && e.key !== 'Enter') return;
+    if (!startOv.hidden) return;
+    if (state === 'card') { e.preventDefault(); dismissCard(); }
+    else if (state === 'idle') { e.preventDefault(); advance(); }
+    else if (state === 'moonGate') { e.preventDefault(); moonTap(); }
+  });
+
+  /* ── Sound toggle (synth cues arrive with the set-piece pass) ── */
+  var soundOn = false;
+  try { soundOn = localStorage.getItem(LS_SOUND) === '1'; } catch (e) {}
+  function renderSound() {
+    soundBtn.textContent = soundOn ? '🔔' : '🔕';
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+  }
+  soundBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem(LS_SOUND, soundOn ? '1' : '0'); } catch (e) {}
+    renderSound();
+  });
+  renderSound();
+
+  /* ── Start overlay ── */
+  var saved = savedProgress();
+  if (saved) contBtn.hidden = false;
+  setupAt(saved);
+  beginBtn.addEventListener('click', function () { startPlay(0); });
+  contBtn.addEventListener('click', function () { startPlay(saved); });
+  function startPlay(from) {
+    setupAt(from);
+    saveProgress();
+    startOv.hidden = true;
+    state = 'idle';
+    updateRunning();
+  }
+
+  /* ── Debug/test hook (read-only + imperative fallbacks) ── */
+  window.__mcp = {
+    state: function () { return state; },
+    stop: function () { return stopIndex; },
+    beaconXY: function () { var b = beaconPos(); return b ? { x: (b.x - cam.x) * S, y: b.y * S } : null; },
+    moonXY: function () { return { x: MOON.x * S, y: MOON.y * S }; },
+    advance: function () { advance(); },
+    dismissCard: function () { dismissCard(); },
+    moonTap: function () { moonTap(); }
+  };
 
   function drawFrame(t) {
     drawSky();
@@ -412,7 +706,7 @@ image: /img/magic-cats/cover.jpg
     for (i = 0; i < WORLD.stops.length; i++) {
       var st = WORLD.stops[i];
       if (st.houseX + 200 < cam.x || st.houseX - 200 > cam.x + viewW()) continue;
-      drawHouse(st, t, false);
+      drawHouse(st, t, (state === 'idle' || state === 'walking') && i === stopIndex);
     }
     for (i = 0; i < WORLD.trees.length; i++) {
       var tr = WORLD.trees[i];
@@ -443,12 +737,8 @@ image: /img/magic-cats/cover.jpg
     running = on;
     if (on) requestAnimationFrame(frame);
   }
-  document.addEventListener('visibilitychange', function () {
-    setRunning(!document.hidden && !overlayOpen());
-  });
-  var overlayOpen = function () {
-    return !document.getElementById('mcp-start').hidden || !document.getElementById('mcp-card').hidden;
-  };
+  function updateRunning() { setRunning(!document.hidden && cardEl.hidden); }
+  document.addEventListener('visibilitychange', updateRunning);
 
   if (location.search.indexOf('debugscene') > -1) document.getElementById('mcp-start').hidden = true;
 
