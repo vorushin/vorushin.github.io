@@ -40,14 +40,14 @@
 **Interfaces:**
 - Produces: all DOM ids/classes from Contracts; trilingual UI strings; Liquid-rendered card templates. Task 2+ inserts `<script>` where the placeholder comment sits.
 
-- [ ] **Step 1: Add hook to `_layouts/book.html`** — after the magic-cats.css link:
+- [x] **Step 1: Add hook to `_layouts/book.html`** — after the magic-cats.css link:
 
 ```html
   <link rel="stylesheet" href="/css/magic-cats.css">
   {% if page.extra_css %}<link rel="stylesheet" href="{{ page.extra_css }}">{% endif %}
 ```
 
-- [ ] **Step 2: Create `css/magic-cats-play.css`:**
+- [x] **Step 2: Create `css/magic-cats-play.css`:**
 
 ```css
 /* Magic cats play page — The Delivery Round */
@@ -146,7 +146,7 @@ body.mcp-body { overflow: hidden; overscroll-behavior: none; }
 }
 ```
 
-- [ ] **Step 3: Create `books/magic-cats-play.html`** (script placeholder at end):
+- [x] **Step 3: Create `books/magic-cats-play.html`** (script placeholder at end):
 
 ```html
 ---
@@ -211,7 +211,7 @@ image: /img/magic-cats/cover.jpg
 <!-- GAME_SCRIPT -->
 ```
 
-- [ ] **Step 4: Add play buttons to `books/magic-cats.html`.** In the hero after `.mc-byline`:
+- [x] **Step 4: Add play buttons to `books/magic-cats.html`.** In the hero after `.mc-byline`:
 
 ```html
   <p class="mc-play-link"><a href="/books/magic-cats/play">✨ <span lang="en">Play the story</span><span lang="de">Spiel die Geschichte</span><span lang="ru">Сыграть в сказку</span></a></p>
@@ -233,12 +233,12 @@ body[data-scene="day-yellow"] .mc-play-link a, body[data-scene="day-green"] .mc-
 
 (hero one sits before `.mc-cover`; end one after `.mc-end`, margin handled by the class).
 
-- [ ] **Step 5: Build + verify shell**
+- [x] **Step 5: Build + verify shell**
 
 Run: `bundle exec jekyll build && f=_site/books/magic-cats/play/index.html; ls -la _site/books/magic-cats/ ; grep -c 'mcp-tpl-' $f; grep -c 'magic-cats-play.css' $f; grep -c 'mc-play-link' _site/books/magic-cats.html`
 Expected: play output exists (as `play/index.html` or `play.html` — use whichever exists), 8 templates (7 sections + finale), 1 css link, 2 play links.
 
-- [ ] **Step 6: Commit** `git add -A && git commit -m "Add static shell for magic cats play page"`
+- [x] **Step 6: Commit** `git add -A && git commit -m "Add static shell for magic cats play page"`
 
 ---
 
@@ -261,7 +261,7 @@ Key implementation notes (write real code following these):
 - Beacon: 5-point star path at target, pulse `1+0.15*sin(t*4)` (static if REDUCED), color `#ffd76e`, glow shadowBlur 18.
 - Parallax: stars ×0.15, moon ×0 (fixed), world ×1.
 
-- [ ] **Step 1: Write the script** (structure):
+- [x] **Step 1: Write the script** (structure):
 
 ```js
 (function () {
@@ -283,9 +283,9 @@ Key implementation notes (write real code following these):
 
 (Complete drawing code is authored in this step directly in the file; iterate visually via screenshots — take `Bash` + puppeteer screenshot after implementing, adjust shapes until the scene reads as the book's naive style. Load the **frontend-design skill** before this step's art pass.)
 
-- [ ] **Step 2: Screenshot check** — puppeteer: goto page, click `#mcp-begin`… not wired yet, so for this task temporarily auto-hide overlay via `?debugscene=1` query handling (`if (location.search.indexOf('debugscene')>-1) document.getElementById('mcp-start').hidden = true;`). Screenshot 1280×900 and 390×844; verify: gradient sky, moon top-left, stars, ≥3 house variants visible when panning `cam.x`, cat visible on tree, beacon pulsing.
+- [x] **Step 2: Screenshot check** — puppeteer: goto page, click `#mcp-begin`… not wired yet, so for this task temporarily auto-hide overlay via `?debugscene=1` query handling (`if (location.search.indexOf('debugscene')>-1) document.getElementById('mcp-start').hidden = true;`). Screenshot 1280×900 and 390×844; verify: gradient sky, moon top-left, stars, ≥3 house variants visible when panning `cam.x`, cat visible on tree, beacon pulsing.
 
-- [ ] **Step 3: Commit** `git add books/magic-cats-play.html && git commit -m "Render the night city scene for play page"`
+- [x] **Step 3: Commit** `git add books/magic-cats-play.html && git commit -m "Render the night city scene for play page"`
 
 ---
 
@@ -305,9 +305,9 @@ Implementation notes:
 - Continue button shows when saved stop ∈ [1,6]; also "start over" ghost btn (`#mcp-begin` doubles as start-over when continue shown — set its label spans to Start-over variant… simpler: keep both buttons, `#mcp-begin` always restarts from 0).
 - `aria-live` card announces text (already `aria-live="polite"` on container).
 
-- [ ] **Step 1: Implement** (following notes; full code in file).
-- [ ] **Step 2: Puppeteer drive-through** — script clicks Begin, then loops: reads `window.__mcp.state()`; when `idle` dispatches real `pointerdown` at `beaconXY()`; when `card` clicks `.mcp-next`; asserts stops reach 7 and finale card contains "Good night" (EN); asserts `localStorage['magic-cats-play-stop']` increments; zero console errors. (Moon gate not yet present.)
-- [ ] **Step 3: Commit** `git commit -am "Playable delivery round: state machine, cards, progress"`
+- [x] **Step 1: Implement** (following notes; full code in file).
+- [x] **Step 2: Puppeteer drive-through** — script clicks Begin, then loops: reads `window.__mcp.state()`; when `idle` dispatches real `pointerdown` at `beaconXY()`; when `card` clicks `.mcp-next`; asserts stops reach 7 and finale card contains "Good night" (EN); asserts `localStorage['magic-cats-play-stop']` increments; zero console errors. (Moon gate not yet present.)
+- [x] **Step 3: Commit** `git commit -am "Playable delivery round: state machine, cards, progress"`
 
 ---
 
@@ -327,9 +327,9 @@ Implementation notes:
 - Audio object: `ensureCtx()` on first gesture; `bell()` triangle 880→660 Hz 0.35s; `purr()` two low sines 110/130 Hz amp-mod 0.5s; `chirp()` 1400→1800 Hz 90ms; `chime()` 660/990 Hz pair. Toggle `#mcp-sound` flips `🔕/🔔`, aria-pressed, persists `magic-cats-play-sound`; default off.
 - Finale scene: sky slowly deepens (lerp sky colors by 10%), stars brighten; cats curled on roof with breathing scale `1+0.02 sin(t)`.
 
-- [ ] **Step 1: Implement all set pieces + audio.**
-- [ ] **Step 2: Extend puppeteer drive-through**: at stop 3 assert `state==='moonGate'`, dispatch pointerdown at `moonXY()`, assert progresses; enable sound toggle → assert `aria-pressed` + localStorage; full round to finale; screenshots at every stop (desktop + 390×844) — visually review each against the naive style; reduced-motion pass (`page.emulateMediaFeatures`) completes a full round.
-- [ ] **Step 3: Commit** `git commit -am "Set pieces, audio and finale for play page"`
+- [x] **Step 1: Implement all set pieces + audio.**
+- [x] **Step 2: Extend puppeteer drive-through**: at stop 3 assert `state==='moonGate'`, dispatch pointerdown at `moonXY()`, assert progresses; enable sound toggle → assert `aria-pressed` + localStorage; full round to finale; screenshots at every stop (desktop + 390×844) — visually review each against the naive style; reduced-motion pass (`page.emulateMediaFeatures`) completes a full round.
+- [x] **Step 3: Commit** `git commit -am "Set pieces, audio and finale for play page"`
 
 ---
 
@@ -338,11 +338,11 @@ Implementation notes:
 **Files:**
 - Possibly modify: all task files (fixes only)
 
-- [ ] **Step 1: Language mid-game test** — puppeteer: play to stop 2 card, click DE pill → assert visible card text is German ("Zauberkatzen" present in visible paragraphs), HUD spans switch; reload → Continue offered, language persists (shared `magic-cats-lang`).
-- [ ] **Step 2: Perf sanity** — dev run logs average `drawFrame` ms over 300 frames (temporary `?debugperf=1` console.log); expect < 8ms desktop headless; remove nothing (log stays behind query flag).
-- [ ] **Step 3: Full build checks** — `bundle exec jekyll build`; play page + updated book page in `_site`; grep: 2 play links on book page; play page has 8 templates, no `Mechinskaya`-era strings (name = Inese Mecinska via shared YAML — automatic).
-- [ ] **Step 4: Visual review** — final screenshot set (start overlay, mid-walk, moon gate with beam, card open EN/RU, constellation, finale) sent to Roman.
-- [ ] **Step 5: Merge** — `git checkout master && git merge --no-ff magic-cats-play`, final build on master. No push (Roman's call).
+- [x] **Step 1: Language mid-game test** — puppeteer: play to stop 2 card, click DE pill → assert visible card text is German ("Zauberkatzen" present in visible paragraphs), HUD spans switch; reload → Continue offered, language persists (shared `magic-cats-lang`).
+- [x] **Step 2: Perf sanity** — dev run logs average `drawFrame` ms over 300 frames (temporary `?debugperf=1` console.log); expect < 8ms desktop headless; remove nothing (log stays behind query flag).
+- [x] **Step 3: Full build checks** — `bundle exec jekyll build`; play page + updated book page in `_site`; grep: 2 play links on book page; play page has 8 templates, no `Mechinskaya`-era strings (name = Inese Mecinska via shared YAML — automatic).
+- [x] **Step 4: Visual review** — final screenshot set (start overlay, mid-walk, moon gate with beam, card open EN/RU, constellation, finale) sent to Roman.
+- [x] **Step 5: Merge** — `git checkout master && git merge --no-ff magic-cats-play`, final build on master. No push (Roman's call).
 
 ## Self-Review Notes
 
