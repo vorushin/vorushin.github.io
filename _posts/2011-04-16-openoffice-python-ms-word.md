@@ -39,9 +39,9 @@ permalink: /blog/58-openoffice-python-ms-word
 
 Открываем документ hello.doc, который я создал специально для этой статьи. Видим как появляется новое окно LibreOffice с этим документом.
 
-    In [3]: doc = open_document('http://dl.dropbox.com/u/318944/python-uno/hello.doc')
+    In [3]: doc = open_document('https://vorushin.github.io/files/hello.doc')
 
-![Screenshot - opened document](http://dl.dropbox.com/u/318944/python-uno/scr1.png)
+![Screenshot - opened document](/img/old-blog/python-uno/scr1.png)
 
 Документ состоит из параграфов:
 

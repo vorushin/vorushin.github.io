@@ -3,7 +3,7 @@ layout: post
 title: Django Forms
 permalink: /blog/12-django-forms
 ---
-<a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!"><img src="http://dl.dropbox.com/u/318944/badge.png" width="210" height="65" alt="pony powered"></a>
+<a href="http://djangopony.com/" class="ponybadge" title="Magic! Ponies! Django! Whee!"><img src="/img/old-blog/badge.png" width="210" height="65" alt="pony powered"></a>
 
 В джанге многое сразу покорило мое сердце - [прекрасные модели](http://docs.djangoproject.com/en/dev/topics/db/models/#topics-db-models), [мощный URLconf](http://docs.djangoproject.com/en/dev/topics/http/urls/#topics-http-urls), [красивые шаблоны](http://docs.djangoproject.com/en/dev/topics/templates/#topics-templates). Но вот джанго-формы открылись для меня во всей красе лишь недавно. Я быстро научился верстать и обрабатывать формы руками, поэтому не было надобности вникать в довольно большой посвященный им раздел документации ([10 разделов!](http://docs.djangoproject.com/en/dev/#forms)). В новом большом django-проекте я пишу код уже не один, а с отличными разработчиками - [Димой Смолиным](http://dimsmol.livejournal.com/) и [Толиком Востряковым](http://magic-tolik.livejournal.com), которые и помогли мне быстрее "вьехать" в суть джанго-форм.
 <!--more-->

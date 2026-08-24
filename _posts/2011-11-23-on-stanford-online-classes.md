@@ -18,7 +18,7 @@ permalink: /blog/69-on-stanford-online-classes
 
 ## Математика
 
-<img src="http://dl.dropbox.com/u/318944/vorushin.ru/math_notation.png" style="float: right; margin-left: 10px;">
+<img src="/img/old-blog/math_notation.png" style="float: right; margin-left: 10px;">
 
 В школе я учился в математическом классе. В университете тоже было много математики, правда специфической не для computer science, а для инженера-электрика. Тем не менее некоторые компьютерные статьи (papers) и книги я не читал, потому что было некомфортно разбираться с китайской (ну хорошо, греческой) грамотой сумм, произведений, векторов, матриц и вероятностей.
 
@@ -62,7 +62,7 @@ permalink: /blog/69-on-stanford-online-classes
 
 #### Специальный формат для онлайн-студентов
 
-<img src="http://dl.dropbox.com/u/318944/vorushin.ru/khan_academy_basic_probability.jpg" style="float: right; margin-right: 10px;">
+<img src="/img/old-blog/khan_academy_basic_probability.jpg" style="float: right; margin-right: 10px;">
 
 Ближе к началу AI появился список лекций из [Khan Academy](http://www.khanacademy.org/), которых достаточно для математической основы курса. Я начал смотреть эти короткие (10-15 минут) лекции и ... был изумлен. Все выводы были понятны, мне совсем не было скучно, обе темы я изучил за три дня вместо двух-трех недель, которые я запланировал для прохождения курса MIT.
 
@@ -76,7 +76,7 @@ permalink: /blog/69-on-stanford-online-classes
 
 #### Групповая динамика и временнАя структура
 
-<img src="http://dl.dropbox.com/u/318944/vorushin.ru/child_driven_educations.jpg" style="float: right; margin-right: 10px;">
+<img src="/img/old-blog/child_driven_educations.jpg" style="float: right; margin-right: 10px;">
 
 Я обнаружил еще две особенные черты этих классов, которые помогают мне учиться.
 

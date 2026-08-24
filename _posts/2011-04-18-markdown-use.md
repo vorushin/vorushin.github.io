@@ -14,7 +14,7 @@ permalink: /blog/59-markdown-use
 
 Даже эту статью я пишу в разметке markdown (proofpic ниже).
 
-![Proofpic](http://dl.dropbox.com/u/318944/markdown/src1.png)
+![Proofpic](/img/old-blog/markdown/src1.png)
 
 ## Рабочий пример
 
@@ -24,7 +24,7 @@ permalink: /blog/59-markdown-use
 
 Вот скриншот части MS Word-документа с этой карточкой:
 
-![Грамматическая карточка в формате Word](http://dl.dropbox.com/u/318944/markdown/word.png)
+![Грамматическая карточка в формате Word](/img/old-blog/markdown/word.png)
 
 #### Markdown
 
@@ -164,7 +164,7 @@ ReplaceMarkerTags преобразует теги `<ok>, <error>` и убира�
 
 MarkupField заменяет в админке обычную textarea на [редактор markitup](http://markitup.jaysalvat.com/), который по умолчанию выглядит вот так:
 
-![default markitup widget](http://dl.dropbox.com/u/318944/markdown/adm1.png)
+![default markitup widget](/img/old-blog/markdown/adm1.png)
 
 Настройка внешнего вида производится через markitup sets. Я скопировал идущий в поставке set 'markdown', сделал в фотошопе красивые кнопки для цитат-примеров и тегов ok/error. Какие показывать кнопки указываем в set.js:
 
@@ -225,7 +225,7 @@ MarkupField заменяет в админке обычную textarea на [р�
 
 Вот так выглядит доработанный редактор в админке:
 
-![markitup with custom set and preview template](http://dl.dropbox.com/u/318944/markdown/adm2.png)
+![markitup with custom set and preview template](/img/old-blog/markdown/adm2.png)
 
 ## Мои личные выводы
 
