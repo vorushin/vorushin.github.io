@@ -1,978 +1,171 @@
 ---
-layout: book
-title: "Play: Волшебные коты, разносящие сказки — an interactive bedtime story"
-description: "Help the magic cat deliver seven fairy tales through the night city — a gentle interactive version of the trilingual bedtime story, for phones and computers."
+layout: null
+title: "Play: The Magic Cats Who Deliver Fairy Tales — an interactive bedtime story"
+description: "Walk the treetops with the magic cats: light the candle, grow the trees, pour moon milk, ride the ropes between the towers and pick a tale in the garden. A bedtime story to play, in English, German and Russian."
 permalink: /books/magic-cats/play
-extra_css: /css/magic-cats-play.css
-image: /img/magic-cats/cover.jpg
+image: /img/magic-cats/play-card.jpg
 ---
-{% assign book = site.data.magic_cats %}
+{%- assign book = site.data.magic_cats -%}
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1038">
+  <meta name="color-scheme" content="dark">
+  {% seo %}
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="stylesheet" href="/css/magic-cats-fonts.css">
+  <link rel="stylesheet" href="/css/magic-cats-play.css">
+  {%- comment %} the shell and the title scene, fetched side by side instead of one import after another; the title's
+      own modules only when the game starts on the title (a ?scene= link skips it, and WebKit warns about unused preloads) {% endcomment %}
+  {%- assign mods = "main,util,view,input,audio,story,scene,paint,actors" | split: "," %}
+  {% for m in mods %}<link rel="modulepreload" href="/js/magic-cats/{{ m }}.js">
+  {% endfor -%}
+  <script>
+    if (!/[?&]scene=/.test(location.search)) ['props', 'leap', 'street', 'scenes/title'].forEach(function (m) {
+      var l = document.createElement('link'); l.rel = 'modulepreload'; l.href = '/js/magic-cats/' + m + '.js'; document.head.appendChild(l);
+    });
+  </script>
+  <script>
+    (function () {
+      var m = location.search.match(/[?&]lang=(en|de|ru)\b/);
+      var lang = m ? m[1] : null;
+      if (!lang) { try { lang = localStorage.getItem('magic-cats-lang'); } catch (e) {} }
+      if (lang !== 'en' && lang !== 'de' && lang !== 'ru') lang = null;
+      if (!lang) {
+        var nav = (navigator.language || 'en').toLowerCase();
+        lang = nav.indexOf('ru') === 0 ? 'ru' : nav.indexOf('de') === 0 ? 'de' : 'en';
+      }
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+    })();
+  </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YGT4F5JNH7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-YGT4F5JNH7');
+  </script>
+</head>
+<body class="mcp-body">
 <div class="mcp-stage" id="mcp-stage">
   <canvas id="mcp-canvas"></canvas>
-  <div class="mcp-veil" id="mcp-veil" aria-hidden="true"></div>
+  <div class="mcp-grain" id="mcp-grain" aria-hidden="true"></div>
+  <div class="mcp-vignette" aria-hidden="true"></div>
 
-  <nav class="mc-topbar">
-    <a class="mc-home" href="/books/magic-cats">← <span lang="en">book</span><span lang="de">Buch</span><span lang="ru">книжка</span></a>
-    <div class="mcp-progress" id="mcp-progress" aria-hidden="true"></div>
-    <div class="mc-langs" role="group" aria-label="Language / Sprache / Язык">
-      <button type="button" data-set-lang="en" aria-pressed="true" aria-label="English">EN</button>
-      <button type="button" data-set-lang="de" aria-pressed="false" aria-label="Deutsch">DE</button>
-      <button type="button" data-set-lang="ru" aria-pressed="false" aria-label="Русский">RU</button>
+  <nav class="mcp-top" id="mcp-top">
+    <a class="mcp-ic" id="mcp-back" href="/books/magic-cats" aria-label="Read the book · Das Buch lesen · Читать книжку" title="Read the book · Das Buch lesen · Читать книжку">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.2C9.8 4.6 6.6 4.2 3.4 5v13.2c3.2-.8 6.4-.4 8.6 1.2 2.2-1.6 5.4-2 8.6-1.2V5c-3.2-.8-6.4-.4-8.6 1.2zm0 0v13.2"/></svg>
+    </a>
+    <button type="button" class="mcp-ic" id="mcp-home" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5M6 10v9.5h4.2V14h3.6v5.5H18V10"/></svg>
+    </button>
+    <ol class="mcp-stars" id="mcp-stars"></ol>
+    <div class="mcp-flies" id="mcp-flies" hidden aria-hidden="true"><i></i><span id="mcp-flies-n">0</span></div>
+    <div class="mcp-langs" role="group" aria-label="Language / Sprache / Язык">
+      <button type="button" data-set-lang="en" aria-pressed="true" aria-label="English" lang="en">EN</button>
+      <button type="button" data-set-lang="de" aria-pressed="false" aria-label="Deutsch" lang="de">DE</button>
+      <button type="button" data-set-lang="ru" aria-pressed="false" aria-label="Русский" lang="ru">RU</button>
     </div>
-    <button type="button" class="mcp-sound" id="mcp-sound" aria-pressed="false" title="Sound">🔕</button>
+    <button type="button" class="mcp-ic" id="mcp-full" hidden aria-label="Full screen · Vollbild · На весь экран" title="Full screen · Vollbild · На весь экран">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 9.5v-5h5M14.5 4.5h5v5M19.5 14.5v5h-5M9.5 19.5h-5v-5"/></svg>
+    </button>
+    <button type="button" class="mcp-ic" id="mcp-sound" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5V6.2l9.5-2v11.3"/><ellipse cx="6.6" cy="17.6" rx="2.6" ry="2.1"/><ellipse cx="16.1" cy="15.6" rx="2.6" ry="2.1"/><path class="mcp-mute" d="M4 4l16 16"/></svg>
+    </button>
   </nav>
 
-  <div class="mcp-hint" id="mcp-hint" role="status">
-    <span lang="en">Tap the moon!</span><span lang="de">Tippe auf den Mond!</span><span lang="ru">Нажми на луну!</span>
+  <button type="button" class="mcp-auto" id="mcp-auto" aria-pressed="false" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path class="mcp-auto-play" d="M9 6.6v10.8l8.6-5.4z"/><path class="mcp-auto-pause" d="M8.6 6.8v10.4M15.4 6.8v10.4"/></svg>
+  </button>
+  <div class="mcp-hint" id="mcp-hint" role="status"></div>
+  <div class="mcp-caption" id="mcp-caption" hidden>
+    <div class="mcp-paper" id="mcp-paper" aria-live="polite"><p id="mcp-text"></p><span class="mcp-more" id="mcp-more" aria-hidden="true"></span></div>
+    <button type="button" class="mcp-speak" id="mcp-speak" aria-pressed="false" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.6h3.4L12 5.8v12.4L7.4 14.4H4z"/><path class="mcp-wave" d="M15.2 9.2c1.5 1.6 1.5 4 0 5.6"/><path class="mcp-wave" d="M17.9 6.8c2.9 3 2.9 7.4 0 10.4"/></svg>
+    </button>
   </div>
 
-  <div class="mcp-card" id="mcp-card" hidden aria-live="polite"></div>
-
-  <div class="mcp-overlay" id="mcp-start">
+  <div class="mcp-title" id="mcp-title" hidden>
     <h1>{% for l in book.langs %}<span lang="{{ l }}">{{ book.meta.title[l] }}</span>{% endfor %}</h1>
-    <p>
-      <span lang="en">Tap the glowing star and help the cat deliver the tales.</span>
-      <span lang="de">Tippe auf den leuchtenden Stern und hilf der Katze, die Märchen auszutragen.</span>
-      <span lang="ru">Нажимай на светящуюся звёздочку и помоги коту разнести сказки.</span>
-    </p>
-    <div>
-      <button type="button" class="mcp-btn" id="mcp-begin">
-        <span lang="en">Begin</span><span lang="de">Los geht's</span><span lang="ru">Начать</span>
-      </button>
-      <button type="button" class="mcp-btn mcp-ghost" id="mcp-continue" hidden>
+    <p class="mcp-byline">{% for l in book.langs %}{% assign parts = book.meta.byline[l] | split: " · " %}<span lang="{{ l }}">{% for part in parts %}<span class="mcp-byline-part">{{ part }}</span>{% endfor %}</span>{% endfor %}</p>
+    <div class="mcp-actions">
+      <button type="button" class="mcp-btn" id="mcp-resume" hidden>
         <span lang="en">Continue</span><span lang="de">Weiter</span><span lang="ru">Продолжить</span>
       </button>
+      <button type="button" class="mcp-btn" id="mcp-begin">
+        <span class="mcp-lbl-begin"><span lang="en">Begin</span><span lang="de">Los geht’s</span><span lang="ru">Начать</span></span>
+        <span class="mcp-lbl-restart"><span lang="en">Start over</span><span lang="de">Von vorn</span><span lang="ru">Сначала</span></span>
+      </button>
     </div>
-    <noscript><p><a href="/books/magic-cats" style="color:#ffd76e">JavaScript is off — read the book instead / Lies das Buch / Читать книжку</a></p></noscript>
+    <button type="button" class="mcp-watch" id="mcp-watch">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10 8.3v7.4l6-3.7z"/></svg>
+      <span lang="en">or simply watch the story</span><span lang="de">oder einfach zuschauen</span><span lang="ru">или просто посмотреть сказку</span>
+    </button>
+    <button type="button" class="mcp-watch mcp-readme" id="mcp-readme" aria-pressed="false" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.6h3.4L12 5.8v12.4L7.4 14.4H4z"/><path class="mcp-wave" d="M15.2 9.2c1.5 1.6 1.5 4 0 5.6"/><path class="mcp-wave" d="M17.9 6.8c2.9 3 2.9 7.4 0 10.4"/></svg>
+      <span lang="en">read it to me</span><span lang="de">lies es mir vor</span><span lang="ru">почитай мне вслух</span>
+    </button>
+    <p class="mcp-intro" id="mcp-intro">
+      <span lang="en">A bedtime story to play. Touch, hold and drag — the cats will show you how.</span>
+      <span lang="de">Eine Gutenachtgeschichte zum Spielen. Tippen, halten, ziehen — die Katzen zeigen dir, wie.</span>
+      <span lang="ru">Сказка на ночь, в которую можно играть. Нажимай, держи, тяни — коты покажут как.</span>
+    </p>
+    <p class="mcp-intro" id="mcp-replay" hidden>
+      <span lang="en">Every lit window is a tale you have already played. Touch one to play it again.</span>
+      <span lang="de">Jedes helle Fenster ist ein Märchen, das du schon gespielt hast. Tippe eins an, um es noch einmal zu spielen.</span>
+      <span lang="ru">Каждое светлое окошко — уже сыгранная сказка. Нажми на любое, чтобы сыграть её ещё раз.</span>
+    </p>
   </div>
 
-  <div hidden>
-    {% for section in book.sections %}
-    <div class="mcp-tpl" id="mcp-tpl-{{ section.id }}">
-      {% for p in section.paragraphs %}{% for l in book.langs %}<p lang="{{ l }}">{{ p[l] }}</p>{% endfor %}{% endfor %}
-    </div>
-    {% endfor %}
-    <div class="mcp-tpl" id="mcp-tpl-finale">
-      <p><span lang="en">All the tales are delivered. Good night!</span><span lang="de">Alle Märchen sind ausgetragen. Gute Nacht!</span><span lang="ru">Все сказки разнесены. Спокойной ночи!</span></p>
+  <div class="mcp-end" id="mcp-end" hidden>
+    <div class="mcp-end-card" role="dialog" aria-modal="true" aria-labelledby="mcp-end-h">
+      <h2 id="mcp-end-h"><span lang="en">Good night</span><span lang="de">Gute Nacht</span><span lang="ru">Спокойной ночи</span></h2>
+      <p><span lang="en">All the tales are delivered.</span><span lang="de">Alle Märchen sind ausgetragen.</span><span lang="ru">Все сказки разнесены.</span></p>
+      <p class="mcp-end-tree" id="mcp-end-tree" hidden><span lang="en">And your tree has taken root in town — go and see.</span><span lang="de">Und dein Baum ist in der Stadt angewachsen — schau ihn dir an.</span><span lang="ru">А твоё дерево прижилось в городе — загляни к нему.</span></p>
+      <div class="mcp-actions">
+        <a class="mcp-btn" href="/books/magic-cats"><span lang="en">Read the book</span><span lang="de">Das Buch lesen</span><span lang="ru">Читать книжку</span></a>
+        <button type="button" class="mcp-btn mcp-ghost" id="mcp-again"><span lang="en">Play again</span><span lang="de">Noch einmal</span><span lang="ru">Ещё раз</span></button>
+      </div>
     </div>
   </div>
+
+  <div class="mcp-fade mcp-on" id="mcp-fade">
+    <div class="mcp-chapter" id="mcp-chapter">
+      <div class="mcp-chapter-dots" id="mcp-chapter-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p class="mcp-chapter-name" id="mcp-chapter-name"></p>
+      <svg class="mcp-chapter-line" viewBox="0 0 320 40" focusable="false" aria-hidden="true"><path pathLength="1" d="M8 24C36 8 66 34 100 21s56-15 84-3 52 14 78 0c18-10 38-7 38 4 0 9-16 11-20 3-3-7 8-10 11-4"/></svg>
+      <button type="button" class="mcp-btn mcp-ghost mcp-night" id="mcp-night" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 3.5a8.5 8.5 0 1 0 6 14.3A9 9 0 0 1 14.5 3.5z"/></svg>
+        <span lang="en">Good night for now</span><span lang="de">Gute Nacht für heute</span><span lang="ru">На сегодня — спокойной ночи</span>
+      </button>
+    </div>
+  </div>
+  <div id="mcp-safe" aria-hidden="true"></div>
+  <noscript>
+    <p class="mcp-noscript"><a href="/books/magic-cats">This game needs JavaScript — read the book instead · Das Spiel braucht JavaScript — lies das Buch · Для игры нужен JavaScript — читайте книжку</a></p>
+  </noscript>
 </div>
-<script>
-(function () {
-  'use strict';
-  document.body.classList.add('mcp-body');
-
-  var canvas = document.getElementById('mcp-canvas');
-  var ctx = canvas.getContext('2d');
-  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  var PAL = {
-    skyTop: '#131a38', skyBot: '#1b2447', outline: '#2a2136',
-    pink: '#e8b7d5', pinkRoof: '#d99cc4', blue: '#7f9bd0', brick: '#8a4a3a', brickRoof: '#6e3a2e',
-    gable: '#eef2f7', winDark: '#4a2340', winLit: '#ffe27a', winFrame: '#3a2b45',
-    trunk: '#7a5a33', crownA: '#3f7d3a', crownB: '#5ba04f',
-    grass: '#233b2c', grassDab: '#2f5040', path: '#c9bf72',
-    cat: '#3a2b45', kitten: '#8a8496', bundle: '#f6f2e8',
-    moon: '#f4ecc2', moonGlow: 'rgba(244, 236, 194, 0.16)', star: '#fff6d8',
-    beacon: '#ffd76e', saucer: '#eef2f7', beam: 'rgba(244, 236, 194, 0.32)',
-    bagYellow: '#e5c95c', bagRed: '#c96a5a', bird: '#c94f42', chalk: 'rgba(235, 240, 255, 0.4)'
-  };
-
-  function rng(seed) {
-    return function () {
-      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  /* ── Canvas sizing: logical height is always 600 world units ── */
-  var W = 0, H = 0, DPR = 1, S = 1;      // css width/height, pixel ratio, world scale
-  var GROUND = 520, DESIGN_H = 600;
-  function sizeCanvas() {
-    W = canvas.clientWidth; H = canvas.clientHeight;
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
-    S = H / DESIGN_H;
-    ctx.setTransform(DPR * S, 0, 0, DPR * S, 0, 0);   // 1 unit = 1 world unit
-  }
-  function viewW() { return W / S; }
-  window.addEventListener('resize', sizeCanvas);
-
-  /* ── World ── */
-  var SECTIONS = ['candle', 'summer-tree', 'moon-milk', 'tree-library', 'lavender-calf', 'night-garden', 'angel'];
-  var HOUSE0 = 1050, GAP = 620;
-  var VARIANTS = [0, 1, 2, 1, 0, 1, 0];          // moon-milk gets the brick house, finale a tall pink one
-  var WINDOW_Y = [280, 305, 335];                 // per variant
-  var WORLD = buildWorld();
-
-  function buildWorld() {
-    var stops = [], trees = [], i, r;
-    var leadIn = [260, 470, 680];
-    for (i = 0; i < leadIn.length; i++) {
-      r = rng(101 + i * 17);
-      trees.push(makeTree(leadIn[i], r, -1));
-    }
-    for (i = 0; i < 7; i++) {
-      var houseX = HOUSE0 + i * GAP;
-      var variant = VARIANTS[i];
-      var prevX = i === 0 ? leadIn[leadIn.length - 1] : HOUSE0 + (i - 1) * GAP;
-      var span = houseX - prevX;
-      var n = Math.max(1, Math.min(3, Math.round((span - 240) / 190))), k;
-      var stopTrees = [];
-      for (k = 1; k <= n; k++) {
-        r = rng(1000 + i * 31 + k * 7);
-        var tx = prevX + span * k / (n + 1) + (r() - 0.5) * 34;
-        var tree = makeTree(tx, r, i);
-        trees.push(tree); stopTrees.push(tree);
-      }
-      stops.push({
-        id: SECTIONS[i], houseX: houseX, variant: variant,
-        windowY: WINDOW_Y[variant], sillY: WINDOW_Y[variant] + 16,
-        trees: stopTrees, delivered: false
-      });
-    }
-    return { stops: stops, trees: trees, width: HOUSE0 + 6 * GAP + 500, leadIn: leadIn };
-  }
-  function makeTree(x, r, nearStop) {
-    var cr = 44 + r() * 16;
-    var crownY = 336 + (r() - 0.5) * 26;
-    return {
-      x: x, crownY: crownY, r: cr, topY: crownY - cr * 0.72,
-      eye: r() < 0.28, lean: (r() - 0.5) * 0.06, seed: Math.floor(r() * 1e6), nearStop: nearStop
-    };
-  }
-
-  /* ── Stars (parallax 0.15, tiled over 2400) ── */
-  var STARS = (function () {
-    var r = rng(777), a = [], i;
-    for (i = 0; i < 85; i++) {
-      a.push({ x: r() * 2400, y: 24 + r() * 280, r: 0.8 + r() * 1.1, ph: r() * 6.28, sp: 0.6 + r() * 1.2 });
-    }
-    return a;
-  })();
-
-  var MOON = { x: 100, y: 95, r: 40 };            // screen-anchored (world scale units)
-
-  /* ── Actors ── */
-  var cat = { x: 300, y: 0, dir: 1, squash: 0, carrying: true, curled: false, visible: true };
-  var kitten = { x: 0, y: 0, dir: 1, squash: 0, carrying: false, curled: false, visible: false };
-  cat.y = WORLD.trees[0].topY;
-
-  var cam = { x: 0 };
-  function camTarget() {
-    var frac = viewW() < 430 ? 0.22 : 0.38;   /* narrow portrait: keep more road ahead visible */
-    var t = cat.x - viewW() * frac;
-    return Math.max(0, Math.min(WORLD.width - viewW(), t));
-  }
-  cam.x = camTarget();
-
-  /* ── Wobbly drawing helpers ── */
-  function wobblyPath(pts, seed) {
-    var r = rng(seed), i, j = [];
-    for (i = 0; i < pts.length; i++) j.push([pts[i][0] + (r() - 0.5) * 5, pts[i][1] + (r() - 0.5) * 5]);
-    ctx.beginPath();
-    ctx.moveTo(j[0][0], j[0][1]);
-    for (i = 1; i <= j.length; i++) {
-      var a = j[i % j.length], p = j[i - 1];
-      var mx = (p[0] + a[0]) / 2 + (r() - 0.5) * 4, my = (p[1] + a[1]) / 2 + (r() - 0.5) * 4;
-      ctx.quadraticCurveTo(mx, my, a[0], a[1]);
-    }
-    ctx.closePath();
-  }
-  function outline() { ctx.strokeStyle = PAL.outline; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke(); }
-
-  /* ── Scene pieces ── */
-  function drawSky() {
-    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, PAL.skyTop); g.addColorStop(1, PAL.skyBot);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    ctx.restore();
-  }
-  function drawStars(t) {
-    var i, s, sx;
-    ctx.fillStyle = PAL.star;
-    for (i = 0; i < STARS.length; i++) {
-      s = STARS[i];
-      sx = ((s.x - cam.x * 0.15) % 2400 + 2400) % 2400;
-      if (sx > viewW() + 20) continue;
-      var alpha = REDUCED ? 0.7 : 0.35 + 0.5 * (0.5 + 0.5 * Math.sin(t * s.sp + s.ph));
-      ctx.globalAlpha = alpha;
-      ctx.beginPath(); ctx.arc(sx, s.y, s.r, 0, 6.28); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-  function drawMoon(pulseOn, t) {
-    ctx.save();
-    var glow = ctx.createRadialGradient(MOON.x, MOON.y, MOON.r * 0.6, MOON.x, MOON.y, MOON.r * 2.6);
-    glow.addColorStop(0, 'rgba(244, 236, 194, 0.28)');
-    glow.addColorStop(1, 'rgba(244, 236, 194, 0)');
-    ctx.beginPath(); ctx.arc(MOON.x, MOON.y, MOON.r * 2.6, 0, 6.28);
-    ctx.fillStyle = glow; ctx.fill();
-    ctx.beginPath(); ctx.arc(MOON.x, MOON.y, MOON.r, 0, 6.28);
-    ctx.fillStyle = PAL.moon; ctx.fill();
-    ctx.globalAlpha = 0.13; ctx.fillStyle = '#b7a86e';
-    ctx.beginPath(); ctx.arc(MOON.x - 14, MOON.y - 6, 8, 0, 6.28); ctx.fill();
-    ctx.beginPath(); ctx.arc(MOON.x + 10, MOON.y + 14, 5, 0, 6.28); ctx.fill();
-    ctx.globalAlpha = 1;
-    if (pulseOn) {
-      var p = REDUCED ? 1 : 1 + 0.06 * Math.sin(t * 4);
-      ctx.beginPath(); ctx.arc(MOON.x, MOON.y, (MOON.r + 10) * p, 0, 6.28);
-      ctx.strokeStyle = PAL.beacon; ctx.lineWidth = 2.5; ctx.setLineDash([7, 7]); ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    ctx.restore();
-  }
-  function drawGround() {
-    var x0 = cam.x - 40, x1 = cam.x + viewW() + 40, i;
-    ctx.fillStyle = PAL.grass;
-    ctx.fillRect(x0, GROUND, x1 - x0, DESIGN_H - GROUND + 40);
-    var start = Math.floor(x0 / 46) * 46;
-    for (i = start; i < x1; i += 46) {
-      var r = rng(i * 13 + 5);
-      ctx.fillStyle = PAL.grassDab;
-      ctx.globalAlpha = 0.5 + r() * 0.4;
-      ctx.beginPath();
-      ctx.ellipse(i + r() * 30, GROUND + 8 + r() * 46, 10 + r() * 12, 4 + r() * 4, 0, 0, 6.28);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-  function drawHouse(stop, t, isTarget) {
-    var x = stop.houseX, v = stop.variant;
-    var w = v === 0 ? 150 : v === 1 ? 172 : 150;
-    var h = v === 0 ? 285 : v === 1 ? 235 : 200;
-    var top = GROUND - h;
-    var bodyCol = v === 0 ? PAL.pink : v === 1 ? PAL.blue : PAL.brick;
-    ctx.save();
-    /* body */
-    wobblyPath([[x - w / 2, GROUND + 4], [x - w / 2, top], [x + w / 2, top], [x + w / 2, GROUND + 4]], stop.houseX | 0);
-    ctx.fillStyle = bodyCol; ctx.fill(); outline();
-    /* roof */
-    if (v === 1) {   /* white snow-gable like the cover's blue house */
-      wobblyPath([[x - w / 2 - 10, top + 2], [x - w / 2 + 14, top - 44], [x + w / 2 - 20, top - 52], [x + w / 2 + 10, top + 2]], stop.houseX + 7);
-      ctx.fillStyle = PAL.gable; ctx.fill(); outline();
-    } else {
-      wobblyPath([[x - w / 2 - 12, top + 2], [x, top - 52], [x + w / 2 + 12, top + 2]], stop.houseX + 7);
-      ctx.fillStyle = v === 0 ? PAL.pinkRoof : PAL.brickRoof; ctx.fill(); outline();
-      /* chimney on the brick house */
-      if (v === 2) {
-        wobblyPath([[x + 26, top - 18], [x + 26, top - 44], [x + 46, top - 44], [x + 46, top - 12]], stop.houseX + 11);
-        ctx.fillStyle = PAL.brickRoof; ctx.fill(); outline();
-      }
-    }
-    /* dark arched windows (decor) */
-    var r = rng(stop.houseX + 23), i;
-    var rows = v === 0 ? 3 : 2;
-    for (i = 0; i < rows; i++) {
-      var wy = top + 46 + i * (h - 80) / rows;
-      drawArchWindow(x - w / 4 - 6, wy, 15, 24, false, stop, t);
-      if (r() > 0.3) drawArchWindow(x + w / 4 + 6, wy, 15, 24, false, stop, t);
-    }
-    /* the lit stop window */
-    drawArchWindow(x, stop.windowY, 19, 30, true, stop, t, isTarget);
-    /* the candle house keeps a little flame in its window */
-    if (stop.id === 'candle') {
-      var flick = REDUCED ? 1 : 1 + 0.25 * Math.sin(t * 9 + Math.sin(t * 17));
-      ctx.fillStyle = '#f6f2e8';
-      ctx.fillRect(x - 2, stop.windowY + 1, 4, 12);
-      ctx.beginPath();
-      ctx.ellipse(x, stop.windowY - 3, 3, 5 * flick, 0, 0, 6.28);
-      ctx.fillStyle = '#ffb347'; ctx.fill();
-    }
-    ctx.restore();
-  }
-  function drawArchWindow(x, y, rw, rh, lit, stop, t, isTarget) {
-    ctx.beginPath();
-    ctx.moveTo(x - rw, y + rh / 2);
-    ctx.lineTo(x - rw, y - rh / 4);
-    ctx.quadraticCurveTo(x, y - rh, x + rw, y - rh / 4);
-    ctx.lineTo(x + rw, y + rh / 2);
-    ctx.closePath();
-    if (lit) {
-      var on = stop.delivered || isTarget;
-      if (on && !REDUCED) {
-        ctx.save(); ctx.shadowColor = PAL.winLit; ctx.shadowBlur = stop.delivered ? 26 : 14;
-        ctx.fillStyle = PAL.winLit; ctx.fill(); ctx.restore();
-      } else {
-        ctx.fillStyle = on ? PAL.winLit : '#8f7f4e'; ctx.fill();
-      }
-      ctx.strokeStyle = PAL.winFrame; ctx.lineWidth = 3; ctx.stroke();
-      /* sill */
-      ctx.fillStyle = PAL.gable;
-      ctx.fillRect(x - rw - 5, y + rh / 2, rw * 2 + 10, 5);
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.strokeRect(x - rw - 5, y + rh / 2, rw * 2 + 10, 5);
-    } else {
-      ctx.fillStyle = PAL.winDark; ctx.fill();
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2.5; ctx.stroke();
-    }
-  }
-  function drawTree(tree, t) {
-    var x = tree.x;
-    ctx.save();
-    ctx.translate(x, GROUND); ctx.rotate(tree.lean); ctx.translate(-x, -GROUND);
-    /* trunk */
-    wobblyPath([[x - 10, GROUND + 4], [x - 7, tree.crownY + 10], [x + 7, tree.crownY + 10], [x + 10, GROUND + 4]], tree.seed);
-    ctx.fillStyle = PAL.trunk; ctx.fill(); outline();
-    /* eye-knot */
-    if (tree.eye) {
-      var ey = GROUND - (GROUND - tree.crownY) * 0.45;
-      ctx.beginPath(); ctx.arc(x, ey, 9, 0, 6.28); ctx.fillStyle = '#241a12'; ctx.fill();
-      ctx.fillStyle = '#f3efe6';
-      ctx.beginPath(); ctx.arc(x - 3, ey - 1, 1.8, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(x + 3, ey - 1, 1.8, 0, 6.28); ctx.fill();
-    }
-    /* crown: blob silhouette — stroke all blobs first, then fill over (keeps only the outer outline) */
-    var r = rng(tree.seed + 1), i;
-    var blobs = [];
-    for (i = 0; i < 4; i++) {
-      var a = i / 4 * 6.28 + r();
-      blobs.push([x + Math.cos(a) * tree.r * 0.42, tree.crownY + Math.sin(a) * tree.r * 0.3, tree.r * (0.55 + r() * 0.2)]);
-    }
-    ctx.strokeStyle = PAL.outline; ctx.lineWidth = 5;
-    for (i = 0; i < blobs.length; i++) {
-      ctx.beginPath(); ctx.arc(blobs[i][0], blobs[i][1], blobs[i][2], 0, 6.28); ctx.stroke();
-    }
-    ctx.fillStyle = PAL.crownA;
-    for (i = 0; i < blobs.length; i++) {
-      ctx.beginPath(); ctx.arc(blobs[i][0], blobs[i][1], blobs[i][2], 0, 6.28); ctx.fill();
-    }
-    /* lighter mottling, inset so it never touches the outline */
-    ctx.fillStyle = PAL.crownB;
-    for (i = 0; i < blobs.length; i += 2) {
-      ctx.beginPath(); ctx.arc(blobs[i][0] - 4, blobs[i][1] - 5, blobs[i][2] * 0.55, 0, 6.28); ctx.fill();
-    }
-    /* the tree-library trees carry hanging book bags */
-    if (tree.nearStop === 3) {
-      var bagX = x + tree.r * 0.4, bagY = tree.crownY + tree.r * 0.5;
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(bagX, bagY); ctx.lineTo(bagX, bagY + 14); ctx.stroke();
-      ctx.fillStyle = tree.seed % 2 ? PAL.bagYellow : PAL.bagRed;
-      ctx.beginPath();
-      ctx.moveTo(bagX - 9, bagY + 14);
-      ctx.lineTo(bagX - 11, bagY + 32);
-      ctx.lineTo(bagX + 11, bagY + 32);
-      ctx.lineTo(bagX + 9, bagY + 14);
-      ctx.closePath();
-      ctx.fill(); ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2.5; ctx.stroke();
-      ctx.strokeStyle = 'rgba(42, 33, 54, 0.55)'; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(bagX - 5, bagY + 20); ctx.lineTo(bagX + 5, bagY + 20); ctx.stroke();
-    }
-    ctx.restore();
-  }
-  function drawCatBody(c, t, col, sc) {
-    if (!c.visible) return;
-    ctx.save();
-    ctx.translate(c.x, c.y);
-    ctx.scale(sc * c.dir, sc * (1 + c.squash));
-    ctx.lineJoin = 'round';
-    if (c.curled) {
-      ctx.beginPath(); ctx.arc(0, -10, 16 + 0.5 * Math.sin(t * 1.4), 0, 6.28);
-      ctx.fillStyle = col; ctx.fill();
-      ctx.beginPath(); ctx.arc(10, -14, 9, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(14, -22); ctx.lineTo(17, -30); ctx.lineTo(20, -22); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(6, -22); ctx.lineTo(9, -31); ctx.lineTo(12, -22); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(0, -6, 18, 0.6, 2.4); ctx.stroke();
-    } else {
-      /* tail */
-      ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(-20, -8);
-      ctx.quadraticCurveTo(-34, -20 + (REDUCED ? 0 : 5 * Math.sin(t * 3 + c.x)), -30, -34 + (REDUCED ? 0 : 3 * Math.sin(t * 3.7 + c.x)));
-      ctx.stroke();
-      /* body */
-      ctx.beginPath(); ctx.ellipse(0, -12, 23, 12, 0, 0, 6.28); ctx.fillStyle = col; ctx.fill();
-      /* legs */
-      ctx.fillRect(-16, -6, 5, 7); ctx.fillRect(-6, -6, 5, 7); ctx.fillRect(4, -6, 5, 7); ctx.fillRect(12, -6, 5, 7);
-      /* head */
-      ctx.beginPath(); ctx.arc(20, -22, 11, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(12, -30); ctx.lineTo(14, -40); ctx.lineTo(19, -31); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(22, -31); ctx.lineTo(26, -40); ctx.lineTo(28, -30); ctx.closePath(); ctx.fill();
-      /* closed happy eyes */
-      ctx.strokeStyle = '#f3efe6'; ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.arc(17, -23, 2.6, 3.4, 6.0); ctx.stroke();
-      ctx.beginPath(); ctx.arc(24, -23, 2.6, 3.4, 6.0); ctx.stroke();
-      /* bundle in teeth */
-      if (c.carrying) {
-        ctx.beginPath(); ctx.arc(31, -16, c === kitten ? 4.5 : 7, 0, 6.28);
-        ctx.fillStyle = PAL.bundle; ctx.fill();
-        ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.stroke();
-        ctx.beginPath(); ctx.arc(31, -22, 2.2, 0, 6.28); ctx.fillStyle = PAL.bundle; ctx.fill(); ctx.stroke();
-      }
-    }
-    ctx.restore();
-  }
-  function drawBeacon(wx, wy, t) {
-    var p = REDUCED ? 1 : 1 + 0.15 * Math.sin(t * 4);
-    var R = 13 * p, r2 = R * 0.45, i;
-    ctx.save();
-    ctx.translate(wx, wy);
-    if (!REDUCED) ctx.rotate(0.15 * Math.sin(t * 1.3));
-    ctx.beginPath();
-    for (i = 0; i < 10; i++) {
-      var rad = i % 2 ? r2 : R, a = i / 10 * 6.28 - 1.57;
-      ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
-    }
-    ctx.closePath();
-    ctx.shadowColor = PAL.beacon; ctx.shadowBlur = REDUCED ? 0 : 18;
-    ctx.fillStyle = PAL.beacon; ctx.fill();
-    ctx.restore();
-  }
-
-  /* ══════════ Game state ══════════ */
-  var state = 'start';
-  var stopIndex = 0;
-  var clock = 0;
-  var hops = [], kittenQueue = [];
-  var pending = [];                          // {at, fn} on the game clock
-  var deliverFx = null;                      // {t0, stop}
-  var cardEl = document.getElementById('mcp-card');
-  var startOv = document.getElementById('mcp-start');
-  var beginBtn = document.getElementById('mcp-begin');
-  var contBtn = document.getElementById('mcp-continue');
-  var hintEl = document.getElementById('mcp-hint');
-  var progressEl = document.getElementById('mcp-progress');
-  var soundBtn = document.getElementById('mcp-sound');
-  var LS_STOP = 'magic-cats-play-stop', LS_SOUND = 'magic-cats-play-sound';
-
-  (function buildDots() {
-    for (var i = 0; i < 7; i++) progressEl.appendChild(document.createElement('span'));
-  })();
-  function updateDots() {
-    var kids = progressEl.children, i;
-    for (i = 0; i < kids.length; i++) kids[i].className = i < stopIndex ? 'mcp-done' : '';
-  }
-  function saveProgress() { try { localStorage.setItem(LS_STOP, String(stopIndex)); } catch (e) {} }
-  function savedProgress() {
-    try { var v = parseInt(localStorage.getItem(LS_STOP), 10); return v >= 1 && v <= 6 ? v : 0; } catch (e) { return 0; }
-  }
-
-  function setupAt(fromStop) {
-    var i;
-    stopIndex = fromStop;
-    for (i = 0; i < 7; i++) WORLD.stops[i].delivered = i < fromStop;
-    cat.curled = false; cat.carrying = true; cat.dir = 1; cat.squash = 0; cat.visible = true;
-    kitten.curled = false; kitten.carrying = fromStop >= 3; kitten.visible = fromStop >= 2;
-    var tr = fromStop === 0 ? WORLD.trees[0] : lastTreeOf(WORLD.stops[fromStop - 1]);
-    cat.x = tr.x; cat.y = tr.topY;
-    if (kitten.visible) { kitten.x = cat.x - 40; kitten.y = cat.y + 3; kitten.dir = 1; }
-    hops = []; kittenQueue = []; pending = []; deliverFx = null;
-    beamFx = null; drinkFx = null; bubbleFx = false; constFx = null; featherFx = null;
-    saucer.visible = false; saucer.fill = 0;
-    bird.visible = false;
-    if (fromStop >= 4) placeBird();
-    document.getElementById('mcp-veil').classList.remove('mcp-on');
-    hintEl.classList.remove('mcp-on');
-    cam.x = camTarget();
-    updateDots();
-  }
-  function lastTreeOf(stop) { return stop.trees[stop.trees.length - 1]; }
-
-  /* ── Movement ── */
-  function hopSegments(fromX, fromY, points, startAt, dur) {
-    var segs = [], px = fromX, py = fromY, i;
-    for (i = 0; i < points.length; i++) {
-      segs.push({ x0: px, y0: py, x1: points[i][0], y1: points[i][1], t0: startAt + i * dur, dur: dur });
-      px = points[i][0]; py = points[i][1];
-    }
-    return segs;
-  }
-  function stepHops(actor, segs, t) {
-    if (!segs.length) return true;
-    var last = segs[segs.length - 1];
-    if (t >= last.t0 + last.dur) {
-      actor.x = last.x1; actor.y = last.y1; actor.squash = 0;
-      return true;
-    }
-    for (var i = 0; i < segs.length; i++) {
-      var s = segs[i];
-      if (t < s.t0) break;
-      if (t <= s.t0 + s.dur) {
-        var p = (t - s.t0) / s.dur;
-        actor.x = s.x0 + (s.x1 - s.x0) * p;
-        actor.y = s.y0 + (s.y1 - s.y0) * p - (REDUCED ? 0 : 46 * Math.sin(Math.PI * p));
-        actor.dir = s.x1 >= s.x0 ? 1 : -1;
-        actor.squash = REDUCED ? 0 : -0.12 * Math.sin(Math.PI * p);
-        return false;
-      }
-    }
-    return false;
-  }
-  function nextTarget() {
-    if (stopIndex >= 7) return null;
-    var stop = WORLD.stops[stopIndex], i, tr;
-    for (i = 0; i < WORLD.trees.length; i++) {
-      tr = WORLD.trees[i];
-      if (tr.x > cat.x + 30 && tr.x < stop.houseX - 60) {
-        return { x: tr.x, y: tr.topY, sill: false };
-      }
-    }
-    return { x: stop.houseX - 14, y: stop.windowY + 15, sill: true };
-  }
-  function advance() {
-    if (state !== 'idle' || stopIndex >= 7) return;
-    var tgt = nextTarget();
-    var dur = REDUCED ? 0.16 : 0.38;
-    if (kitten.visible) {
-      kittenQueue = hopSegments(kitten.x, kitten.y, [[cat.x - 40, cat.y + 3]], clock + 0.16, dur);
-    }
-    hops = hopSegments(cat.x, cat.y, [[tgt.x, tgt.y]], clock, dur);
-    hops.sill = tgt.sill;
-    state = 'walking';
-  }
-  function schedule(delay, fn) { pending.push({ at: clock + delay, fn: fn }); }
-
-  /* ── Audio (synth only, gated by the toggle) ── */
-  var AudioFX = (function () {
-    var ac = null;
-    function actx() {
-      if (!soundOn) return null;
-      if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
-      if (ac && ac.state === 'suspended') ac.resume();
-      return ac;
-    }
-    function tone(f0, f1, dur, type, gain, when) {
-      var a = actx(); if (!a) return;
-      var t = a.currentTime + (when || 0);
-      var o = a.createOscillator(), g = a.createGain();
-      o.type = type; o.frequency.setValueAtTime(f0, t);
-      if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + dur);
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(gain, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-      o.connect(g); g.connect(a.destination);
-      o.start(t); o.stop(t + dur + 0.05);
-    }
-    return {
-      warm: function () { actx(); },
-      bell: function () { tone(880, 660, 0.4, 'triangle', 0.1); tone(1320, 990, 0.3, 'sine', 0.04, 0.05); },
-      purr: function () { tone(110, 90, 0.5, 'sine', 0.09); tone(138, 112, 0.5, 'sine', 0.06, 0.08); },
-      chirp: function () { tone(1400, 1900, 0.09, 'sine', 0.07); tone(1600, 2100, 0.09, 'sine', 0.05, 0.12); },
-      chime: function () { tone(660, 0, 0.5, 'sine', 0.07); tone(990, 0, 0.6, 'sine', 0.04, 0.12); }
-    };
-  })();
-
-  /* ── Set-piece state ── */
-  var saucer = { visible: false, fill: 0, x: 0, y: 0 };
-  var beamFx = null, drinkFx = null, bubbleFx = false, constFx = null, featherFx = null;
-  var bird = { visible: false, x: 0, y: 0, hopT: -9 };
-
-  /* ── Arrival & delivery ── */
-  function arrive() {
-    var stop = WORLD.stops[stopIndex];
-    if (stop.id === 'moon-milk') { startDeliver(stop, function () { moonGateStart(stop); }); return; }
-    if (stop.id === 'lavender-calf') {
-      document.getElementById('mcp-veil').classList.add('mcp-on');
-      bubbleFx = true;
-    }
-    if (stop.id === 'angel') featherFx = { t0: clock };
-    startDeliver(stop);
-  }
-  function startDeliver(stop, thenFn) {
-    state = 'delivering';
-    cat.carrying = false;
-    deliverFx = { t0: clock, stop: stop };
-    schedule(0.8, function () {
-      stop.delivered = true;
-      deliverFx = null;
-      AudioFX.bell();
-      if (thenFn) thenFn(); else openCard(stop.id);
-    });
-  }
-
-  /* ── Moon-milk gate: deliver first, then the moon, then the milk ── */
-  function moonGateStart(stop) {
-    cat.x = stop.houseX - 26;                 /* make room on the sill for the saucer */
-    saucer.visible = true; saucer.fill = 0;
-    saucer.x = stop.houseX + 14; saucer.y = stop.windowY + 15;
-    state = 'moonGate';
-    hintEl.classList.add('mcp-on');
-  }
-  function moonTap() {
-    if (state !== 'moonGate') return;
-    hintEl.classList.remove('mcp-on');
-    state = 'drinking';
-    var stop = WORLD.stops[stopIndex];
-    var beamDur = REDUCED ? 0.25 : 0.9;
-    var drinkDur = REDUCED ? 0.4 : 0.95;
-    beamFx = { t0: clock, dur: beamDur };
-    schedule(beamDur, function () { saucer.fill = 1; });
-    var tAt = beamDur + 0.15;
-    if (kitten.visible) {
-      /* kitten drinks first, exactly as the story says */
-      schedule(tAt, function () {
-        kittenQueue = hopSegments(kitten.x, kitten.y, [[saucer.x + 16, saucer.y + 3]], clock, REDUCED ? 0.16 : 0.34);
-      });
-      schedule(tAt + 0.4, function () { drinkFx = { t0: clock, dur: drinkDur, who: kitten }; AudioFX.purr(); });
-      schedule(tAt + 0.4 + drinkDur, function () {
-        saucer.fill = 0.45;
-        var back = lastTreeOf(stop);
-        kittenQueue = hopSegments(kitten.x, kitten.y, [[back.x - 40, back.topY + 3]], clock, REDUCED ? 0.16 : 0.34);
-      });
-      tAt += 0.4 + drinkDur + 0.4;
-    }
-    schedule(tAt, function () { drinkFx = { t0: clock, dur: drinkDur, who: cat }; AudioFX.purr(); });
-    schedule(tAt + drinkDur, function () {
-      saucer.fill = 0.1; drinkFx = null; beamFx = null;
-      openCard(stop.id);
-    });
-  }
-
-  /* ── Cards ── */
-  function openCard(id) {
-    var tpl = document.getElementById('mcp-tpl-' + id);
-    cardEl.innerHTML = tpl.innerHTML;
-    if (id === 'finale') {
-      var row = document.createElement('div');
-      row.className = 'mcp-btnrow';
-      row.innerHTML = '<button type="button" class="mcp-btn" id="mcp-again">' +
-        '<span lang="en">Play again</span><span lang="de">Noch einmal</span><span lang="ru">Ещё раз</span></button>' +
-        '<a class="mcp-btn mcp-ghost" href="/books/magic-cats">' +
-        '<span lang="en">Read the book</span><span lang="de">Das Buch lesen</span><span lang="ru">Читать книжку</span></a>';
-      cardEl.appendChild(row);
-    } else {
-      var btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'mcp-next'; btn.textContent = '✵';
-      btn.setAttribute('aria-label', 'Continue · Weiter · Дальше');
-      btn.addEventListener('click', dismissCard);
-      cardEl.appendChild(btn);
-    }
-    cardEl.hidden = false;
-    requestAnimationFrame(function () { cardEl.classList.add('mcp-in'); });
-    state = 'card';
-    updateRunning();
-    var b = cardEl.querySelector('.mcp-next');
-    if (b) b.focus({ preventScroll: true });
-  }
-  function dismissCard() {
-    if (state !== 'card') return;
-    cardEl.classList.remove('mcp-in');
-    setTimeout(function () { cardEl.hidden = true; updateRunning(); }, 320);
-    afterCard();
-  }
-  cardEl.addEventListener('click', function (e) {
-    if (e.target && e.target.closest && e.target.closest('#mcp-again')) {
-      cardEl.classList.remove('mcp-in'); cardEl.hidden = true;
-      setupAt(0); saveProgress();
-      state = 'idle';
-      updateRunning();
-    }
-  });
-  function afterCard() {
-    stopIndex++;
-    saveProgress(); updateDots();
-    if (stopIndex === 3) placeBird();
-    if (stopIndex === 5) { document.getElementById('mcp-veil').classList.remove('mcp-on'); bubbleFx = false; }
-    if (stopIndex === 6) constFx = { t0: clock, done: false };
-    if (stopIndex >= 7) { beginFinale(); return; }
-    returnToTree();
-  }
-  function placeBird() {
-    var tr = WORLD.stops[3].trees[0];
-    bird.visible = true; bird.x = tr.x + 14; bird.y = tr.topY + 2;
-  }
-  function returnToTree() {
-    var stop = WORLD.stops[stopIndex - 1];
-    var tr = lastTreeOf(stop);
-    hops = hopSegments(cat.x, cat.y, [[tr.x, tr.topY]], clock, REDUCED ? 0.16 : 0.38);
-    state = 'returning';
-  }
-  function afterReturn() {
-    cat.dir = 1;
-    cat.carrying = true;
-    if (stopIndex === 2 && !kitten.visible) {
-      kitten.visible = true; kitten.dir = 1; kitten.carrying = false;
-      kitten.x = cat.x - 320; kitten.y = cat.y + 3;
-      kittenQueue = hopSegments(kitten.x, kitten.y,
-        [[cat.x - 160, cat.y + 3], [cat.x - 40, cat.y + 3]], clock + 0.1, REDUCED ? 0.16 : 0.4);
-      state = 'joining';
-      return;
-    }
-    if (stopIndex === 3) kitten.carrying = true;
-    state = 'idle';
-  }
-
-  /* ── Finale ── */
-  function beginFinale() {
-    var hx = WORLD.stops[6].houseX;
-    state = 'finale';
-    cat.carrying = false; kitten.carrying = false;
-    var dur = REDUCED ? 0.2 : 0.42;
-    hops = hopSegments(cat.x, cat.y, [[hx - 44, 248], [hx - 6, 198]], clock, dur);
-    if (kitten.visible) {
-      kittenQueue = hopSegments(kitten.x, kitten.y, [[hx - 70, 262], [hx - 36, 224]], clock + 0.35, dur);
-    }
-    schedule(dur * 2 + 0.5, function () { cat.curled = true; kitten.curled = true; });
-    schedule(dur * 2 + 1.6, function () { openCard('finale'); });
-  }
-
-  /* ── Frame hooks ── */
-  function beaconPos() {
-    if ((state === 'idle' || state === 'start') && stopIndex < 7) {
-      var tgt = nextTarget();
-      /* keep the star on screen even on narrow viewports — tapping it still advances */
-      var bx = Math.min(tgt.x, cam.x + viewW() - 26);
-      return { x: bx, y: tgt.sill ? WORLD.stops[stopIndex].windowY - 40 : tgt.y - 34 };
-    }
-    return null;
-  }
-  function moonPulse() { return state === 'moonGate'; }
-  function drawEffects(t) {
-    var p;
-    /* moonbeam pours into the saucer (moon is screen-anchored: convert to world x) */
-    if (beamFx || (saucer.visible && saucer.fill > 0 && state === 'drinking')) {
-      var mwx = MOON.x + cam.x, reach = 1;
-      if (beamFx) reach = Math.min(1, (clock - beamFx.t0) / beamFx.dur);
-      var ex = mwx + (saucer.x - mwx) * reach, ey = MOON.y + (saucer.y - MOON.y) * reach;
-      ctx.beginPath();
-      ctx.moveTo(mwx - 10, MOON.y + 10);
-      ctx.lineTo(mwx + 14, MOON.y + 2);
-      ctx.lineTo(ex + 16, ey);
-      ctx.lineTo(ex - 14, ey);
-      ctx.closePath();
-      ctx.fillStyle = PAL.beam; ctx.fill();
-    }
-    if (saucer.visible) {
-      ctx.beginPath(); ctx.ellipse(saucer.x, saucer.y + 2, 15, 5, 0, 0, 6.28);
-      ctx.fillStyle = PAL.saucer; ctx.fill();
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.stroke();
-      if (saucer.fill > 0.05) {
-        ctx.beginPath(); ctx.ellipse(saucer.x, saucer.y + 1, 11 * saucer.fill + 2, 3, 0, 0, 6.28);
-        ctx.fillStyle = PAL.moon; ctx.fill();
-      }
-    }
-    if (deliverFx) {
-      p = Math.min(1, (clock - deliverFx.t0) / 0.6);
-      if (p < 1) {
-        var s = deliverFx.stop;
-        var x0 = cat.x + 31 * cat.dir, y0 = cat.y - 16;
-        var bx = x0 + (s.houseX - x0) * p, by = y0 + (s.windowY - 2 - y0) * p - 22 * Math.sin(Math.PI * p);
-        ctx.beginPath(); ctx.arc(bx, by, 7, 0, 6.28);
-        ctx.fillStyle = PAL.bundle; ctx.fill();
-        ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2; ctx.stroke();
-      }
-    }
-    if (bird.visible) {
-      var hop = Math.max(0, 1 - (clock - bird.hopT) * 3);
-      var byy = bird.y - (REDUCED ? 0 : 10 * Math.sin(Math.PI * Math.min(1, Math.max(0, 1 - hop))) * (hop > 0 ? 1 : 0));
-      ctx.save();
-      ctx.translate(bird.x, byy - 8);
-      ctx.fillStyle = PAL.bird;
-      ctx.beginPath(); ctx.ellipse(0, 0, 8, 6, 0, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(7, -5, 4.5, 0, 6.28); ctx.fill();
-      ctx.fillStyle = '#e8b93c';
-      ctx.beginPath(); ctx.moveTo(11, -5); ctx.lineTo(16, -3.5); ctx.lineTo(11, -2); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.moveTo(-7, -1); ctx.lineTo(-13, -6); ctx.stroke();
-      ctx.restore();
-    }
-    if (bubbleFx) {
-      var b5 = WORLD.stops[4], bx5 = b5.houseX + 66, by5 = 150;
-      ctx.fillStyle = 'rgba(246, 242, 232, 0.92)';
-      ctx.beginPath(); ctx.arc(b5.houseX + 20, 250, 6, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(b5.houseX + 38, 214, 10, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(bx5, by5, 48, 0, 6.28); ctx.fill();
-      ctx.strokeStyle = PAL.outline; ctx.lineWidth = 2.5; ctx.stroke();
-      /* inside: lavender field, tiny white calf, two stars */
-      ctx.save();
-      ctx.beginPath(); ctx.arc(bx5, by5, 44, 0, 6.28); ctx.clip();
-      ctx.fillStyle = '#8d7aa5'; ctx.fillRect(bx5 - 48, by5 + 8, 96, 44);
-      ctx.fillStyle = '#f6f2e8';
-      ctx.beginPath(); ctx.ellipse(bx5, by5 + 12, 15, 8, 0, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(bx5 + 13, by5 + 4, 6, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(bx5 + 9, by5 - 1); ctx.lineTo(bx5 + 8, by5 - 7); ctx.lineTo(bx5 + 12, by5 - 2); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(bx5 + 15, by5 - 2); ctx.lineTo(bx5 + 18, by5 - 7); ctx.lineTo(bx5 + 18, by5 - 1); ctx.closePath(); ctx.fill();
-      ctx.fillRect(bx5 - 8, by5 + 16, 3, 7); ctx.fillRect(bx5 + 4, by5 + 16, 3, 7);
-      ctx.fillStyle = PAL.star;
-      ctx.beginPath(); ctx.arc(bx5 - 22, by5 - 20, 1.6, 0, 6.28); ctx.fill();
-      ctx.beginPath(); ctx.arc(bx5 + 24, by5 - 26, 1.3, 0, 6.28); ctx.fill();
-      ctx.restore();
-    }
-    if (featherFx) {
-      p = Math.min(1, (clock - featherFx.t0) / 2.4);
-      var s7 = WORLD.stops[6];
-      var fy = s7.windowY - 170 + 210 * p;
-      var fx = s7.houseX - 52 + (REDUCED ? 0 : 20 * Math.sin(p * 9));
-      ctx.save();
-      ctx.translate(fx, fy); ctx.rotate(REDUCED ? 0 : 0.4 * Math.sin(p * 7));
-      ctx.fillStyle = 'rgba(246, 242, 232, 0.9)';
-      ctx.beginPath();
-      ctx.moveTo(0, 0); ctx.quadraticCurveTo(10, -8, 22, -2); ctx.quadraticCurveTo(10, 6, 0, 0);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = 'rgba(42, 33, 54, 0.5)'; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(1, 0); ctx.lineTo(21, -2); ctx.stroke();
-      ctx.restore();
-      if (p >= 1) featherFx = null;
-    }
-  }
-
-  /* chalk constellation over the night-garden (screen space, next to the moon) */
-  var CONST_PTS = (function () {
-    var fish = [[0, 40], [34, 18], [72, 8], [112, 16], [140, 36], [112, 52], [72, 58], [34, 52], [0, 40], [-18, 24], [-26, 44], [0, 40]];
-    var swirl = [], i;
-    for (i = 0; i <= 26; i++) {
-      var a = i / 26 * 4.2, r = 3 + i * 1.35;
-      swirl.push([190 + Math.cos(a) * r, 30 + Math.sin(a) * r * 0.8]);
-    }
-    return fish.concat(swirl);
-  })();
-  function drawSkyFx() {
-    if (!constFx) return;
-    var p = Math.min(1, (clock - constFx.t0) / (REDUCED ? 0.4 : 6));
-    var n = Math.max(2, Math.floor(CONST_PTS.length * p));
-    var ox = MOON.x + 130, oy = 60, i;
-    ctx.strokeStyle = PAL.chalk; ctx.lineWidth = 2; ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(ox + CONST_PTS[0][0], oy + CONST_PTS[0][1]);
-    for (i = 1; i < n; i++) ctx.lineTo(ox + CONST_PTS[i][0], oy + CONST_PTS[i][1]);
-    ctx.stroke();
-    if (p >= 1 && !constFx.done) { constFx.done = true; AudioFX.chime(); }
-  }
-  function updateGame(dt) {
-    clock += dt;
-    for (var i = pending.length - 1; i >= 0; i--) {
-      if (clock >= pending[i].at) { var fn = pending[i].fn; pending.splice(i, 1); fn(); }
-    }
-    if (drinkFx) {
-      if (clock - drinkFx.t0 < drinkFx.dur) {
-        drinkFx.who.squash = REDUCED ? 0 : 0.1 * Math.sin((clock - drinkFx.t0) * 12);
-      } else {
-        drinkFx.who.squash = 0;
-      }
-    }
-    if (state === 'walking' || state === 'returning' || state === 'finale') {
-      var done = stepHops(cat, hops, clock);
-      if (kitten.visible && kittenQueue.length && stepHops(kitten, kittenQueue, clock)) kittenQueue = [];
-      if (done && hops.length) {
-        var wasSill = hops.sill;
-        hops = [];
-        if (state === 'walking') { if (wasSill) arrive(); else state = 'idle'; }
-        else if (state === 'returning') afterReturn();
-      }
-    } else if (state === 'joining') {
-      if (stepHops(kitten, kittenQueue, clock)) { kittenQueue = []; state = 'idle'; }
-    } else if (kitten.visible && kittenQueue.length) {
-      if (stepHops(kitten, kittenQueue, clock)) kittenQueue = [];
-    }
-  }
-
-  /* ── Input ── */
-  canvas.addEventListener('pointerdown', function (e) {
-    AudioFX.warm();
-    var rect = canvas.getBoundingClientRect();
-    var lx = (e.clientX - rect.left) / S, ly = (e.clientY - rect.top) / S;
-    var wx = lx + cam.x;
-    if (state === 'card') { dismissCard(); return; }
-    if (state === 'moonGate') {
-      if (Math.hypot(lx - MOON.x, ly - MOON.y) < MOON.r + 18) moonTap();
-      return;
-    }
-    if (state === 'idle') {
-      if (bird.visible && Math.hypot(wx - bird.x, ly - bird.y) < 30) {
-        bird.hopT = clock; AudioFX.chirp(); return;
-      }
-      if (wx > cat.x - 80) advance();
-    }
-  });
-  window.addEventListener('keydown', function (e) {
-    if (e.key !== ' ' && e.key !== 'ArrowRight' && e.key !== 'Enter') return;
-    if (!startOv.hidden) return;
-    if (state === 'card') { e.preventDefault(); dismissCard(); }
-    else if (state === 'idle') { e.preventDefault(); advance(); }
-    else if (state === 'moonGate') { e.preventDefault(); moonTap(); }
-  });
-
-  /* ── Sound toggle (synth cues arrive with the set-piece pass) ── */
-  var soundOn = false;
-  try { soundOn = localStorage.getItem(LS_SOUND) === '1'; } catch (e) {}
-  function renderSound() {
-    soundBtn.textContent = soundOn ? '🔔' : '🔕';
-    soundBtn.setAttribute('aria-pressed', String(soundOn));
-  }
-  soundBtn.addEventListener('click', function () {
-    soundOn = !soundOn;
-    try { localStorage.setItem(LS_SOUND, soundOn ? '1' : '0'); } catch (e) {}
-    if (soundOn) { AudioFX.warm(); AudioFX.bell(); }
-    renderSound();
-  });
-  renderSound();
-
-  /* ── Start overlay ── */
-  var saved = savedProgress();
-  if (saved) contBtn.hidden = false;
-  setupAt(saved);
-  beginBtn.addEventListener('click', function () { startPlay(0); });
-  contBtn.addEventListener('click', function () { startPlay(saved); });
-  function startPlay(from) {
-    setupAt(from);
-    saveProgress();
-    startOv.hidden = true;
-    state = 'idle';
-    updateRunning();
-  }
-
-  /* ── Debug/test hook (read-only + imperative fallbacks) ── */
-  window.__mcp = {
-    state: function () { return state; },
-    stop: function () { return stopIndex; },
-    beaconXY: function () { var b = beaconPos(); return b ? { x: (b.x - cam.x) * S, y: b.y * S } : null; },
-    moonXY: function () { return { x: MOON.x * S, y: MOON.y * S }; },
-    advance: function () { advance(); },
-    dismissCard: function () { dismissCard(); },
-    moonTap: function () { moonTap(); }
-  };
-
-  function drawFrame(t) {
-    drawSky();
-    drawStars(t);
-    drawMoon(moonPulse(), t);
-    drawSkyFx();
-    ctx.save();
-    ctx.translate(-cam.x, 0);
-    drawGround();
-    var i;
-    for (i = 0; i < WORLD.stops.length; i++) {
-      var st = WORLD.stops[i];
-      if (st.houseX + 200 < cam.x || st.houseX - 200 > cam.x + viewW()) continue;
-      drawHouse(st, t, (state === 'idle' || state === 'walking') && i === stopIndex);
-    }
-    for (i = 0; i < WORLD.trees.length; i++) {
-      var tr = WORLD.trees[i];
-      if (tr.x + 120 < cam.x || tr.x - 120 > cam.x + viewW()) continue;
-      drawTree(tr, t);
-    }
-    drawEffects(t);
-    var b = beaconPos();
-    if (b) drawBeacon(b.x, b.y, t);
-    drawCatBody(kitten, t, PAL.kitten, 0.62);
-    drawCatBody(cat, t, PAL.cat, 1);
-    ctx.restore();
-  }
-
-  /* ── Loop ── */
-  var running = true, lastTs = 0;
-  function frame(ts) {
-    if (!running) { lastTs = 0; return; }
-    var t = ts / 1000, dt = lastTs ? Math.min(0.05, t - lastTs) : 0.016;
-    lastTs = t;
-    updateGame(dt, t);
-    cam.x += (camTarget() - cam.x) * (REDUCED ? 1 : Math.min(1, dt * 5));
-    drawFrame(t);
-    requestAnimationFrame(frame);
-  }
-  function setRunning(on) {
-    if (on === running) return;
-    running = on;
-    if (on) requestAnimationFrame(frame);
-  }
-  function updateRunning() { setRunning(!document.hidden && cardEl.hidden); }
-  document.addEventListener('visibilitychange', updateRunning);
-
-  if (location.search.indexOf('debugscene') > -1) document.getElementById('mcp-start').hidden = true;
-
-  sizeCanvas();
-  requestAnimationFrame(frame);
-})();
+<script id="mcp-story" type="application/json">
+{
+  "langs": {{ book.langs | jsonify }},
+  "title": {{ book.meta.title | jsonify }},
+  "byline": {{ book.meta.byline | jsonify }},
+  "scenes": [
+{%- assign first = true -%}
+{%- for section in book.sections -%}
+{%- for p in section.paragraphs -%}
+{%- unless first -%},{%- endunless -%}{%- assign first = false %}
+    { "id": {{ section.id | jsonify }}, "beats": { {% for l in book.langs %}{{ l | jsonify }}: {{ p[l] | split: " || " | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %} } }
+{%- endfor -%}
+{%- endfor %}
+  ]
+}
 </script>
+<script type="module" src="/js/magic-cats/main.js"></script>
+</body>
+</html>

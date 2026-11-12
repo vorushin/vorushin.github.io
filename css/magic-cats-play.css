@@ -1,103 +1,385 @@
-/* Magic cats play page — The Delivery Round */
-html, body { height: 100%; }
-body.mcp-body { overflow: hidden; overscroll-behavior: none; }
-
-.mcp-stage {
-  position: fixed;
-  inset: 0;
-  touch-action: manipulation;
-  background: linear-gradient(180deg, #131a38 0%, #1b2447 100%);
-}
-#mcp-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-
-.mcp-veil {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(141, 122, 165, 0.55), rgba(141, 122, 165, 0.15));
-  opacity: 0; transition: opacity 1.2s ease; pointer-events: none;
-}
-.mcp-veil.mcp-on { opacity: 1; }
-
-/* Top bar: reuses .mc-topbar/.mc-home/.mc-langs from magic-cats.css */
-.mcp-progress { display: flex; gap: 0.3rem; align-items: center; }
-.mcp-progress span {
-  width: 10px; height: 10px; border-radius: 3px;
-  background: rgba(243, 239, 230, 0.28); display: inline-block;
-  transition: background-color 0.4s ease, box-shadow 0.4s ease;
-}
-.mcp-progress span.mcp-done {
-  background: #ffd76e; box-shadow: 0 0 6px rgba(255, 215, 110, 0.8);
+/* Magic cats — the playable story. Standalone page: canvas stage + a little chrome. */
+:root {
+  --mcp-night: #0b1038;
+  --mcp-ink: #1d1530;
+  --mcp-paper: #f7f0dc;
+  --mcp-text: #2a2440;
+  --mcp-cream: #f6efc9;
+  --mcp-gold: #ffcf5a;
+  --mcp-chalk: #c9d8fb;
+  --mcp-serif: 'Alegreya', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --mcp-display: 'Alice', 'Alegreya', Georgia, serif;
 }
 
-.mcp-sound {
-  font-size: 0.95rem; line-height: 1;
-  background: transparent; border: 1px solid rgba(243, 239, 230, 0.4);
-  border-radius: 999px; padding: 0.25rem 0.55rem; cursor: pointer; color: #f3efe6;
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; overscroll-behavior: none; }   /* no pull-to-refresh under a small finger */
+body.mcp-body {
+  overflow: hidden; overscroll-behavior: none;
+  background: var(--mcp-night); color: var(--mcp-cream);
+  font-family: var(--mcp-serif);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.mcp-sound:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
 
-/* Story card */
-.mcp-card {
-  position: absolute; left: 50%; bottom: 0; transform: translate(-50%, 8%);
-  width: min(40rem, calc(100% - 1.5rem));
-  max-height: 60vh; overflow-y: auto;
-  background: rgba(19, 26, 56, 0.94);
-  border: 1px solid rgba(243, 239, 230, 0.18);
-  border-radius: 14px 14px 0 0;
-  padding: 1.1rem 1.3rem 0.9rem;
-  color: #f3efe6;
-  font-family: 'Iowan Old Style BT', 'Iowan Old Style', Georgia, serif;
-  opacity: 0; transition: opacity 0.45s ease, transform 0.45s ease;
-  z-index: 5;
-}
-.mcp-card.mcp-in { opacity: 1; transform: translate(-50%, 0); }
-.mcp-card p { font-size: clamp(1rem, 2.4vw, 1.15rem); line-height: 1.65; margin: 0 0 1rem; hyphens: auto; -webkit-hyphens: auto; }
-.mcp-card .mcp-next {
-  display: block; margin: 0.2rem auto 0.1rem;
-  font-size: 1.3rem; color: #ffd76e; background: transparent;
-  border: 1px solid rgba(255, 215, 110, 0.5); border-radius: 999px;
-  padding: 0.3rem 1.4rem; cursor: pointer;
-}
-.mcp-card .mcp-next:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
-.mcp-card .mcp-btnrow { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-top: 0.4rem; }
-.mcp-card .mcp-btn, .mcp-card a.mcp-btn {
-  font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; font-weight: 500;
-  color: #131a38; background: #ffd76e; border: none; border-radius: 999px;
-  padding: 0.5rem 1.4rem; cursor: pointer; text-decoration: none; display: inline-block;
-}
-.mcp-card .mcp-btn.mcp-ghost, .mcp-card a.mcp-btn.mcp-ghost { background: transparent; color: #f3efe6; border: 1px solid rgba(243, 239, 230, 0.5); }
-.mcp-card .mcp-btn:focus-visible, .mcp-card a.mcp-btn:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
-@media (max-height: 480px) { .mcp-card { max-height: 50vh; } }
+/* language visibility — same mechanism as the book page */
+html[data-lang="en"] [lang]:not([lang="en"]):not([data-set-lang]),
+html[data-lang="de"] [lang]:not([lang="de"]):not([data-set-lang]),
+html[data-lang="ru"] [lang]:not([lang="ru"]):not([data-set-lang]) { display: none !important; }
 
-/* Start / finale overlay */
-.mcp-overlay {
-  position: absolute; inset: 0; z-index: 6;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 1.5rem;
-  background: rgba(19, 26, 56, 0.82);
-  color: #f3efe6;
-  font-family: 'Iowan Old Style BT', 'Iowan Old Style', Georgia, serif;
-  opacity: 1; transition: opacity 0.5s ease;
-}
-.mcp-overlay[hidden] { display: none; }
-.mcp-overlay h1 { font-size: clamp(1.5rem, 5vw, 2.3rem); line-height: 1.25; margin: 0 0 0.6rem; max-width: 22ch; }
-.mcp-overlay p { font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; color: #c9c4b4; max-width: 34ch; margin: 0 0 1.4rem; }
-.mcp-overlay .mcp-btn {
-  font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 500;
-  color: #131a38; background: #ffd76e; border: none; border-radius: 999px;
-  padding: 0.6rem 1.8rem; margin: 0.25rem; cursor: pointer;
-}
-.mcp-overlay .mcp-btn.mcp-ghost { background: transparent; color: #f3efe6; border: 1px solid rgba(243, 239, 230, 0.5); }
-.mcp-overlay .mcp-btn:focus-visible { outline: 2px solid #ffd76e; outline-offset: 2px; }
+.mcp-stage { position: fixed; top: 0; right: 0; bottom: 0; left: 0; inset: 0; overflow: hidden; touch-action: manipulation; background: linear-gradient(180deg, #0b1038 0%, #17226a 60%, #2c409a 100%); }
+#mcp-canvas { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: pointer; }
 
+/* airbrush grain + vignette over everything painted */
+.mcp-grain {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none;
+  background-size: 200px 200px; opacity: 0.42; mix-blend-mode: soft-light;
+  animation: mcp-grain 0.8s steps(4) infinite;
+}
+/* Firefox blends a full-screen soft-light layer over a live canvas at a heavy cost (half the frame rate on a
+   laptop screen); there the same grain lies on top unblended, at a strength matched by eye */
+@supports (-moz-appearance: none) {
+  .mcp-grain { mix-blend-mode: normal; opacity: 0.1; }
+}
+@keyframes mcp-grain {
+  0% { background-position: 0 0; } 25% { background-position: 61px 37px; }
+  50% { background-position: 23px 113px; } 75% { background-position: 139px 71px; } 100% { background-position: 0 0; }
+}
+.mcp-vignette { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; pointer-events: none; background: radial-gradient(ellipse 120% 105% at 50% 44%, transparent 58%, rgba(8, 9, 34, 0.42) 100%); }
+
+/* ── top chrome ── */
+.mcp-top {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: calc(0.45rem + env(safe-area-inset-top)) calc(0.6rem + env(safe-area-inset-right)) 0.45rem calc(0.6rem + env(safe-area-inset-left));
+  pointer-events: none;
+}
+.mcp-top > * { pointer-events: auto; }
+.mcp-ic {
+  position: relative; flex: none; width: 2.15rem; height: 2.15rem; padding: 0; display: grid; place-items: center;
+  background: rgba(13, 16, 52, 0.62); color: var(--mcp-cream);     /* dark enough for cream to read over a noon sky */
+  border: 1.5px solid rgba(246, 239, 201, 0.6); border-radius: 52% 48% 50% 50% / 50% 52% 48% 50%;
+  cursor: pointer; text-decoration: none; transition: background-color 0.2s, transform 0.15s;
+}
+.mcp-ic[hidden] { display: none; }
+.mcp-ic svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.mcp-ic:hover { background: rgba(13, 16, 52, 0.7); }
+.mcp-ic:active { transform: scale(0.92); }
+.mcp-ic .mcp-mute { opacity: 0; stroke-width: 2.1; }
+.mcp-ic[aria-pressed="false"] .mcp-mute { opacity: 1; }         /* muted: the slash says so, the icon stays readable */
+.mcp-ic:focus-visible, .mcp-langs button:focus-visible, .mcp-stars button:focus-visible, .mcp-btn:focus-visible { outline: 2.5px solid var(--mcp-gold); outline-offset: 2px; }
+
+/* nine chapter stars: the button is a plain square a finger can find (and a focus ring can wrap),
+   the star itself is drawn on ::before */
+.mcp-stars { list-style: none; margin: 0 auto; padding: 0 0.3rem; display: flex; gap: 0; align-items: center; background: rgba(13, 16, 52, 0.62); border-radius: 999px; }
+.mcp-stars button { position: relative; width: 1.6rem; height: 1.6rem; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
+.mcp-stars button::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 1.05rem; height: 1.05rem; margin: -0.525rem 0 0 -0.525rem;
+  background: rgba(246, 239, 201, 0.85);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  transform: scale(0.72); transition: transform 0.3s, background-color 0.4s;
+}
+.mcp-stars button.mcp-locked { cursor: default; }
+.mcp-stars button.mcp-locked::before { background: rgba(246, 239, 201, 0.3); }
+.mcp-stars button.mcp-done::before { background: var(--mcp-gold); transform: scale(0.92); }
+.mcp-stars button.mcp-cur::before { transform: scale(1.12); animation: mcp-pulse 2.2s ease-in-out infinite; }
+.mcp-stars button.mcp-won::before { animation: mcp-won 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.4); }
+@keyframes mcp-won { 0% { transform: scale(0.4) rotate(-90deg); } 55% { transform: scale(2.1) rotate(20deg); } 100% { transform: scale(0.92); } }
+@keyframes mcp-pulse { 0%, 100% { transform: scale(1.02); } 50% { transform: scale(1.24); } }
+
+.mcp-flies { display: flex; align-items: center; gap: 0.3rem; font-family: var(--mcp-display); font-size: 0.95rem; color: #fff3a0; background: rgba(13, 16, 52, 0.62); border-radius: 999px; padding: 0.18rem 0.6rem 0.18rem 0.45rem; }
+.mcp-flies[hidden] { display: none; }
+.mcp-flies i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #fff7c0; box-shadow: 0 0 8px 3px rgba(255, 243, 160, 0.75); }
+.mcp-flies.mcp-pop { animation: mcp-pop 0.4s ease; }
+@keyframes mcp-pop { 40% { transform: scale(1.22); } }
+
+.mcp-langs { display: flex; gap: 0.2rem; }
+.mcp-langs button {
+  position: relative; font-family: var(--mcp-display); font-size: 0.82rem; letter-spacing: 0.03em; line-height: 1;
+  color: var(--mcp-cream); background: rgba(13, 16, 52, 0.62); border: 1.5px solid rgba(246, 239, 201, 0.55);
+  border-radius: 48% 52% 50% 50% / 55% 50% 50% 45%; padding: 0.42rem 0.5rem; cursor: pointer; transition: background-color 0.2s, color 0.2s;
+}
+.mcp-langs button[aria-pressed="true"] { background: var(--mcp-cream); color: var(--mcp-ink); border-color: var(--mcp-ink); }
+
+/* big thumbs: every control answers a little beyond its drawn edge (the bar itself lets touches through) */
+@media (pointer: coarse) {
+  .mcp-ic::after, .mcp-langs button::after, .mcp-speak::after, .mcp-auto::after { content: ''; position: absolute; top: -0.45rem; bottom: -0.45rem; left: -0.3rem; right: -0.3rem; }
+  .mcp-langs button::after { left: -0.1rem; right: -0.1rem; }
+}
+@media (prefers-contrast: more) {
+  .mcp-ic, .mcp-langs button, .mcp-stars, .mcp-flies, .mcp-auto { background: rgba(13, 16, 52, 0.9); }
+}
+
+/* ── caption: a strip of paper cut from the book ── */
+.mcp-caption {
+  position: absolute; left: 50%; bottom: max(0.7rem, env(safe-area-inset-bottom)); transform: translateX(-50%);
+  width: min(94vw, 41rem); z-index: 10; pointer-events: none;
+  filter: drop-shadow(0 7px 14px rgba(6, 8, 36, 0.5));
+}
+.mcp-caption[hidden] { display: none; }
+.mcp-paper {
+  position: relative; width: 100%; padding: 0.8rem 1.25rem 0.85rem;
+  background-color: var(--mcp-paper);
+  background-image: radial-gradient(rgba(120, 100, 60, 0.07) 1px, transparent 1.2px), linear-gradient(178deg, #fbf6e6, #f1e8cf);
+  background-size: 5px 5px, 100% 100%;
+  color: var(--mcp-text);
+  opacity: 0; transform: translateY(16px) rotate(var(--tilt, 0deg)) scale(0.985);
+  transition: opacity 0.22s ease, transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.mcp-paper.mcp-in { opacity: 1; transform: rotate(var(--tilt, 0deg)); }
+.mcp-paper p { margin: 0; font-size: clamp(1.02rem, 0.82rem + 1.05vw, 1.42rem); line-height: 1.36; font-weight: 500; text-wrap: pretty; }
+.mcp-w { display: inline-block; opacity: 0; animation: mcp-word 0.42s ease forwards; }
+@keyframes mcp-word { from { opacity: 0; transform: translateY(0.22em); } to { opacity: 1; transform: none; } }
+.mcp-more {
+  position: absolute; right: 0.55rem; bottom: 0.3rem; width: 1rem; height: 1rem; opacity: 0; transition: opacity 0.3s;
+  background: #c7791f; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.mcp-more.mcp-on { opacity: 1; animation: mcp-more 1.1s ease-in-out infinite; }
+.mcp-watching .mcp-more { display: none; }       /* the story is playing by itself: nothing to tap */
+@keyframes mcp-more { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-4px) scale(1.18) rotate(18deg); } }
+
+/* read aloud: a small round tab on the corner of the paper */
+.mcp-speak {
+  position: absolute; left: -0.3rem; top: -1.55rem; width: 2.15rem; height: 2.15rem; padding: 0; display: grid; place-items: center;
+  pointer-events: auto; cursor: pointer; color: var(--mcp-text); background: var(--mcp-paper);
+  border: 2px solid var(--mcp-ink); border-radius: 52% 48% 50% 50% / 50% 52% 48% 50%;
+  box-shadow: 0 2px 0 rgba(13, 12, 40, 0.45); transition: opacity 0.25s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+.mcp-speak[hidden] { display: none; }
+.mcp-speak svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mcp-speak svg path:first-child { fill: currentColor; stroke-width: 1.2; }
+.mcp-speak .mcp-wave { opacity: 0.28; }
+.mcp-speak[aria-pressed="true"] { background: var(--mcp-gold); }
+.mcp-speak[aria-pressed="true"] .mcp-wave { opacity: 1; }
+.mcp-speak:active { transform: scale(0.92); }
+.mcp-speak:focus-visible { outline: 2.5px solid var(--mcp-gold); outline-offset: 2px; }
+.mcp-paper:not(.mcp-in) ~ .mcp-speak { opacity: 0; pointer-events: none; }
+.mcp-captop .mcp-speak { top: auto; bottom: -1.55rem; }
+
+/* the story plays by itself / play it yourself: a small switch in the corner */
+.mcp-auto {
+  position: absolute; z-index: 16; left: max(0.6rem, env(safe-area-inset-left)); bottom: max(0.7rem, env(safe-area-inset-bottom));
+  width: 2.15rem; height: 2.15rem; padding: 0; display: grid; place-items: center; cursor: pointer;
+  color: var(--mcp-cream); background: rgba(13, 16, 52, 0.62);
+  border: 1.5px solid rgba(246, 239, 201, 0.5); border-radius: 50% 52% 48% 50% / 52% 50% 50% 48%;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+.mcp-auto[hidden] { display: none; }
+.mcp-auto svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.mcp-auto .mcp-auto-play { fill: currentColor; stroke-width: 1.4; }
+.mcp-auto .mcp-auto-pause { display: none; }
+.mcp-auto[aria-pressed="true"] { background: var(--mcp-gold); color: var(--mcp-ink); border-color: var(--mcp-ink); }
+.mcp-auto[aria-pressed="true"] .mcp-auto-play { display: none; }
+.mcp-auto[aria-pressed="true"] .mcp-auto-pause { display: inline; }
+.mcp-auto:hover { background: rgba(13, 16, 52, 0.7); }
+.mcp-auto[aria-pressed="true"]:hover { background: #ffdb7d; }
+.mcp-auto:active { transform: scale(0.92); }
+.mcp-auto:focus-visible { outline: 2.5px solid var(--mcp-gold); outline-offset: 2px; }
+
+/* what to do — up in the sky, clear of the things being touched */
 .mcp-hint {
-  position: absolute; top: 4.2rem; left: 50%; transform: translateX(-50%);
-  font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; color: #ffd76e;
-  background: rgba(19, 26, 56, 0.8); border-radius: 999px; padding: 0.35rem 1rem;
-  z-index: 4; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
-  white-space: nowrap;
+  position: absolute; left: 50%; top: calc(5.5rem + env(safe-area-inset-top)); z-index: 14; pointer-events: none;
+  width: max-content; max-width: min(92vw, 34rem); text-align: center;
+  font-style: italic; font-size: clamp(0.98rem, 0.84rem + 0.6vw, 1.2rem); line-height: 1.2; color: #fff3b8;
+  background: rgba(22, 16, 44, 0.8); border-radius: 999px; padding: 0.34rem 1.05rem 0.4rem;
+  opacity: 0; transform: translate(-50%, -6px); transition: opacity 0.35s ease, transform 0.35s ease;
 }
-.mcp-hint.mcp-on { opacity: 1; }
+.mcp-hint.mcp-on { opacity: 1; transform: translate(-50%, 0); }
+.mcp-hint:empty { display: none; }
+
+/* ── title ── */
+.mcp-title {
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 12; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: calc(3.6rem + env(safe-area-inset-top)) 1.2rem calc(1.2rem + env(safe-area-inset-bottom));
+}
+.mcp-title[hidden] { display: none; }
+.mcp-title > * { pointer-events: auto; }
+.mcp-title h1 {
+  margin: 0; max-width: 15ch; font-family: var(--mcp-display); font-weight: 400;
+  font-size: clamp(2rem, 2.6vw + 3.2vh, 4.3rem); line-height: 1.08; color: var(--mcp-cream);
+  text-shadow: 0 3px 22px rgba(6, 8, 40, 0.85), 0 0 2px rgba(6, 8, 40, 0.6);
+  animation: mcp-rise 1.1s 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+html[data-lang="de"] .mcp-title h1, html[data-lang="ru"] .mcp-title h1 { max-width: 17ch; }
+.mcp-byline-part { display: block; }
+.mcp-byline { margin: 0.7rem 0 0; line-height: 1.3; font-style: italic; font-size: clamp(0.95rem, 0.8rem + 0.6vw, 1.2rem); color: #dfe2f6; text-shadow: 0 1px 10px rgba(6, 8, 40, 0.9); animation: mcp-rise 1.1s 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.mcp-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: center; margin-top: 1.3rem; animation: mcp-rise 1.1s 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+/* "or simply watch the story": the game plays itself, like a film */
+.mcp-watch {
+  display: inline-flex; align-items: center; gap: 0.5em; margin-top: 0.95rem; padding: 0.3rem 0.2rem;
+  font-family: var(--mcp-serif); font-style: italic; font-size: clamp(1rem, 0.86rem + 0.6vw, 1.22rem); line-height: 1.2;
+  color: var(--mcp-cream); background: none; border: 0; cursor: pointer;
+  text-shadow: 0 1px 10px rgba(6, 8, 40, 0.95), 0 0 2px rgba(6, 8, 40, 0.8);
+  animation: mcp-rise 1.1s 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.mcp-watch svg { flex: none; width: 1.5em; height: 1.5em; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; filter: drop-shadow(0 1px 4px rgba(6, 8, 40, 0.8)); }
+.mcp-watch svg path { fill: currentColor; stroke-width: 1.2; }
+.mcp-watch span { border-bottom: 1px solid rgba(246, 239, 201, 0.45); }
+.mcp-watch:hover { color: var(--mcp-gold); }
+.mcp-watch:hover span { border-bottom-color: currentColor; }
+.mcp-watch:focus-visible { outline: 2.5px solid var(--mcp-gold); outline-offset: 3px; border-radius: 6px; }
+/* arriving with ?watch (from the book's "watch it" link): watching is the main offer */
+.mcp-prefer-watch .mcp-watch { color: var(--mcp-gold); font-size: clamp(1.15rem, 1rem + 0.8vw, 1.45rem); }
+.mcp-prefer-watch .mcp-watch svg { animation: mcp-pulse 2.2s ease-in-out infinite; }
+.mcp-intro[hidden] { display: none; }
+.mcp-intro { margin: auto 0 0; max-width: 34ch; font-size: clamp(0.95rem, 0.8rem + 0.5vw, 1.12rem); line-height: 1.35; color: var(--mcp-cream); background: rgba(22, 16, 44, 0.6); border-radius: 1.1rem; padding: 0.5rem 1rem; animation: mcp-rise 1.1s 1.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes mcp-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.mcp-btn {
+  display: inline-block; font-family: var(--mcp-display); font-size: clamp(1.15rem, 1rem + 0.8vw, 1.5rem); line-height: 1; text-decoration: none;
+  color: var(--mcp-ink); background: var(--mcp-gold); border: 2.5px solid var(--mcp-ink);
+  border-radius: 255px 22px 225px 18px / 18px 225px 22px 255px; padding: 0.62rem 1.7rem 0.7rem; cursor: pointer;
+  box-shadow: 0 4px 0 rgba(13, 12, 40, 0.55), 0 0 26px rgba(255, 207, 90, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.mcp-btn[hidden] { display: none; }
+.mcp-btn:hover { transform: translateY(-2px) rotate(-0.6deg); }
+.mcp-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(13, 12, 40, 0.55); }
+.mcp-btn.mcp-ghost, .mcp-title #mcp-resume:not([hidden]) ~ #mcp-begin { background: rgba(246, 239, 201, 0.92); box-shadow: 0 4px 0 rgba(13, 12, 40, 0.55); }
+.mcp-lbl-restart { display: none; }
+#mcp-resume:not([hidden]) ~ #mcp-begin .mcp-lbl-begin { display: none; }
+#mcp-resume:not([hidden]) ~ #mcp-begin .mcp-lbl-restart { display: inline; }
+
+/* ── closing card ── */
+.mcp-end { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 30; display: grid; place-items: center; padding: 1.2rem; background: rgba(8, 9, 34, 0); transition: background-color 1.4s ease; }
+.mcp-end[hidden] { display: none; }
+.mcp-end.mcp-on { background: rgba(8, 9, 34, 0.45); }
+.mcp-end-card {
+  text-align: center; color: var(--mcp-text); max-width: 26rem; padding: 1.6rem 1.8rem 1.8rem;
+  background: linear-gradient(178deg, #fbf6e6, #f1e8cf); border-radius: 6px 9px 7px 10px;
+  box-shadow: 0 14px 40px rgba(4, 5, 28, 0.6); opacity: 0; transform: translateY(24px) rotate(-1.2deg); transition: opacity 1s ease 0.4s, transform 1s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.4s;
+}
+.mcp-end.mcp-on .mcp-end-card { opacity: 1; transform: rotate(-0.6deg); }
+.mcp-end-card h2 { margin: 0 0 0.4rem; font-family: var(--mcp-display); font-weight: 400; font-size: clamp(2rem, 6vw, 2.9rem); }
+.mcp-end-card p { margin: 0; font-size: 1.15rem; font-style: italic; }
+.mcp-end-card .mcp-end-tree { margin-top: 0.55rem; font-size: 1.02rem; color: #5a4a6e; text-wrap: balance; }
+.mcp-end-card .mcp-end-tree[hidden] { display: none; }
+.mcp-end-card .mcp-actions { animation: none; }
+
+.mcp-fade { position: absolute; top: 0; right: 0; bottom: 0; left: 0; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(ellipse 90% 70% at 50% 46%, #1a2468 0%, var(--mcp-night) 78%); opacity: 0; pointer-events: none; transition: opacity 0.42s ease; }
+.mcp-fade.mcp-on { opacity: 1; pointer-events: auto; }
+#mcp-safe { position: absolute; left: 0; bottom: 0; width: 0; height: env(safe-area-inset-bottom, 0px); visibility: hidden; pointer-events: none; }
+
+/* the chapter on the curtain between two scenes */
+.mcp-chapter { display: grid; justify-items: center; gap: 0.9rem; padding: 0 1.2rem; text-align: center; visibility: hidden; }
+.mcp-chapter.mcp-show { visibility: visible; }
+.mcp-chapter-dots { display: flex; gap: 0.5rem; align-items: center; }
+.mcp-chapter-dots i {
+  width: 0.8rem; height: 0.8rem; background: rgba(246, 239, 201, 0.22);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.mcp-chapter-dots i.mcp-was { background: rgba(255, 207, 90, 0.75); }
+.mcp-chapter-dots i.mcp-now { background: var(--mcp-gold); width: 1.5rem; height: 1.5rem; }
+.mcp-chapter.mcp-show .mcp-chapter-dots i.mcp-now { animation: mcp-now 1.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both; }
+@keyframes mcp-now { 0% { transform: scale(0.2) rotate(-70deg); } 45% { transform: scale(1.35) rotate(12deg); } 70%, 100% { transform: none; } }
+.mcp-chapter-name { margin: 0; font-family: var(--mcp-display); font-size: clamp(1.9rem, 1.2rem + 4vw, 3.4rem); line-height: 1.1; color: var(--mcp-cream); text-wrap: balance; }
+.mcp-chapter.mcp-show .mcp-chapter-name { animation: mcp-rise 0.8s 0.15s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.mcp-chapter-line { width: min(60vw, 15rem); height: auto; overflow: visible; }
+.mcp-chapter-line path { fill: none; stroke: var(--mcp-chalk); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 2; stroke-dashoffset: 1.02; }
+.mcp-chapter.mcp-show .mcp-chapter-line path { animation: mcp-draw 1.1s 0.3s cubic-bezier(0.5, 0, 0.3, 1) forwards; }
+@keyframes mcp-draw { to { stroke-dashoffset: 0; } }
+
+/* upright screens: the caption sits under the bar, the hint down by the thumbs (see view.js) */
+.mcp-captop .mcp-caption { top: calc(3.3rem + env(safe-area-inset-top)); bottom: auto; }
+.mcp-captop .mcp-paper { transform: translateY(-16px) rotate(var(--tilt, 0deg)) scale(0.985); }
+.mcp-captop .mcp-paper.mcp-in { transform: rotate(var(--tilt, 0deg)); }
+.mcp-captop .mcp-hint { top: auto; bottom: max(0.85rem, env(safe-area-inset-bottom)); max-width: min(calc(100vw - 6.4rem), 34rem); }
+.mcp-noscript { position: absolute; top: auto; right: 0; bottom: 40%; left: 0; inset: auto 0 40% 0; z-index: 60; text-align: center; padding: 0 1rem; }
+.mcp-noscript a { color: var(--mcp-gold); font-size: 1.2rem; }
+
+/* wide screens: the title sits in the sky on the left, the houses stand on the right */
+@media (min-aspect-ratio: 11/10) {
+  .mcp-title { align-items: flex-start; text-align: left; padding-left: max(4.5vw, 1.4rem); padding-right: 57vw; }
+  .mcp-title h1 { max-width: 11ch; }
+  html[data-lang="de"] .mcp-title h1, html[data-lang="ru"] .mcp-title h1 { max-width: 12ch; }
+  .mcp-title .mcp-actions { justify-content: flex-start; }
+  .mcp-intro { text-align: left; margin-left: -0.2rem; }
+}
+
+/* ── small screens ── */
+@media (max-width: 30rem) {
+  .mcp-top { gap: 0.3rem; }
+  #mcp-full { display: none; }
+  .mcp-ic { width: 1.95rem; height: 1.95rem; }
+  .mcp-stars { padding: 0 0.25rem; }
+  .mcp-stars button { width: 1.5rem; height: 1.5rem; }
+  .mcp-stars button::before { width: 0.9rem; height: 0.9rem; margin: -0.45rem 0 0 -0.45rem; }
+  /* the row must fit a narrow phone: the fireflies count only in the chapters, the language is chosen on the
+     title (where the row also holds the language buttons, so its stars are a little smaller) */
+  .mcp-top:not(.mcp-playing) .mcp-stars button { width: 1.25rem; height: 1.25rem; }
+  .mcp-top:not(.mcp-playing) .mcp-flies, .mcp-playing .mcp-langs { display: none; }
+  .mcp-langs button { padding: 0.38rem 0.36rem; font-size: 0.76rem; }
+  .mcp-flies { font-size: 0.85rem; padding: 0.15rem 0.45rem 0.15rem 0.35rem; }
+}
+@media (max-width: 24rem) {
+  .mcp-top:not(.mcp-playing) .mcp-stars button { width: 1.05rem; height: 1.05rem; }
+  .mcp-playing .mcp-stars button { width: 1.3rem; height: 1.3rem; }
+}
+@media (max-width: 22rem) {                      /* the smallest phones, or a big zoom */
+  .mcp-top:not(.mcp-playing) .mcp-stars button { width: 0.95rem; height: 0.95rem; }
+  .mcp-top:not(.mcp-playing) .mcp-langs button { padding: 0.34rem 0.26rem; }
+}
+@media (max-height: 30rem) {
+  .mcp-top { padding-top: calc(0.25rem + env(safe-area-inset-top)); padding-bottom: 0.25rem; }
+  .mcp-ic { width: 1.85rem; height: 1.85rem; }
+  .mcp-paper { padding: 0.45rem 1rem 0.5rem; }
+  .mcp-paper p { line-height: 1.25; }
+  .mcp-caption { bottom: max(0.35rem, env(safe-area-inset-bottom)); gap: 0.25rem; width: min(86vw, 46rem, calc(100vw - 2 * (max(0.6rem, env(safe-area-inset-left, 0px)) + 2.6rem))); }
+  .mcp-title { padding-top: calc(2.3rem + env(safe-area-inset-top)); }
+  .mcp-title h1 { max-width: none; font-size: clamp(1.5rem, 8.5vh, 2.6rem); }
+  .mcp-byline { margin-top: 0.3rem; }
+  .mcp-actions { margin-top: 0.6rem; }
+  .mcp-watch { margin-top: 0.4rem; }
+  .mcp-intro { display: none; }
+  .mcp-speak { top: -1.8rem; width: 1.95rem; height: 1.95rem; }
+  /* short screens: the hint sits right under the bar */
+  .mcp-hint { top: calc(2.55rem + env(safe-area-inset-top)); padding: 0.2rem 0.9rem 0.26rem; }
+  .mcp-chapter { gap: 0.5rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .mcp-card, .mcp-overlay, .mcp-veil, .mcp-progress span { transition: none; }
+  .mcp-grain, .mcp-stars button.mcp-cur::before, .mcp-stars button.mcp-won::before, .mcp-flies.mcp-pop, .mcp-more.mcp-on { animation: none; }
+  .mcp-paper { transition: opacity 0.22s ease; }
+  .mcp-hint { transition: opacity 0.35s ease; }
+  .mcp-end-card { transition: opacity 1s ease 0.4s; }
+  .mcp-w { animation-duration: 0.01s; }
+  .mcp-title h1, .mcp-byline, .mcp-actions, .mcp-intro, .mcp-watch { animation-duration: 0.01s; animation-delay: 0s; }
+  .mcp-prefer-watch .mcp-watch svg { animation: none; }
+  .mcp-chapter.mcp-show .mcp-chapter-dots i.mcp-now, .mcp-chapter.mcp-show .mcp-chapter-name { animation: none; }
+  .mcp-chapter.mcp-show .mcp-chapter-line path { animation: none; stroke-dashoffset: 0; }
 }
+
+/* high-contrast themes paint no backgrounds: the stars and the dots are drawn in the theme's own ink */
+@media (forced-colors: active) {
+  .mcp-stars button::before, .mcp-chapter-dots i { forced-color-adjust: none; background: ButtonText; }
+  .mcp-stars button.mcp-locked::before, .mcp-chapter-dots i { background: GrayText; }
+  .mcp-stars button.mcp-done::before, .mcp-stars button.mcp-cur::before, .mcp-chapter-dots i.mcp-now, .mcp-chapter-dots i.mcp-was { background: Highlight; }
+}
+
+/* the hint pill does it for you when tapped (never while the story plays by itself) */
+.mcp-hint.mcp-on { pointer-events: auto; cursor: pointer; }
+.mcp-watching .mcp-hint { pointer-events: none; }
+
+/* "good night" on the curtain between chapters */
+.mcp-night { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.98rem; padding: 0.5rem 1.1rem; opacity: 0; transition: opacity 0.45s ease 0.35s; }   /* fully there from 0.8 s; the curtain then stays about 2.5 s more (main.js chapter) */
+.mcp-night svg { width: 1.05rem; height: 1.05rem; fill: currentColor; }
+.mcp-night[hidden] { display: none; }
+.mcp-chapter.mcp-show .mcp-night { opacity: 1; }
+/* the end card is modal: the corner switch and the caption's voice button are not offered behind it */
+.mcp-modal .mcp-auto, .mcp-modal .mcp-speak { visibility: hidden; }
+
+/* dozing: left alone for a long while, the picture dims and the music fades like a night-light; a touch wakes it */
+#mcp-canvas, .mcp-title, .mcp-top, .mcp-auto { transition: opacity 0.5s ease; }
+.mcp-dozing #mcp-canvas, .mcp-dozing .mcp-caption, .mcp-dozing .mcp-hint, .mcp-dozing .mcp-title, .mcp-dozing .mcp-end-card, .mcp-dozing .mcp-auto { transition: opacity 16s ease; opacity: 0.16; }
+.mcp-dozing .mcp-top { transition: opacity 16s ease; opacity: 0.35; }
+
+/* "read it to me" on the title */
+.mcp-readme { margin-top: 0.35rem; font-size: clamp(0.95rem, 0.82rem + 0.5vw, 1.12rem); }
+.mcp-readme[hidden] { display: none; }
+.mcp-readme svg { fill: none; }
+.mcp-readme svg path:first-child { fill: currentColor; }
+.mcp-readme .mcp-wave { opacity: 0.3; }
+.mcp-readme[aria-pressed="true"] { color: var(--mcp-gold); }
+.mcp-readme[aria-pressed="true"] .mcp-wave { opacity: 1; }
+.mcp-readme[aria-pressed="true"] span { border-bottom-color: currentColor; }
+@media (max-height: 30rem) { .mcp-readme { margin-top: 0.1rem; } }

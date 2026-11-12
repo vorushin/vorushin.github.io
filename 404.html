@@ -3,6 +3,10 @@ layout: default
 title: "404"
 permalink: /404.html
 ---
+<script>
+  // a typed trailing slash (/books/magic-cats/play/?scene=3): the page lives without it
+  (function () { var p = location.pathname; if (p.length > 1 && p.slice(-1) === '/') location.replace(p.replace(/\/+$/, '') + location.search + location.hash); })();
+</script>
 <div style="text-align: center; padding: 4rem 0;">
   <h1 style="font-size: 3rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.5rem;">404</h1>
   <p style="color: var(--text-secondary);">This page doesn't exist.</p>
