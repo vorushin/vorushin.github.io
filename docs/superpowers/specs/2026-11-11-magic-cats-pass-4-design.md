@@ -246,5 +246,12 @@ units after its hop at the start of the tale-picking; on the phone the kitten at
 the picture while Papa is at the far right tale. Smaller accepted items are listed in the reviewers'
 reports (`book_cats/pass4/reports/`).
 
+**The morning after** (12 November, after the first push): two of the known defects were fixed. The
+kitten's pop: the hop round Papa switched between two targets, a snapshot and the live spot, and a
+long frame could flip the choice; it now always aims at the live spot, and a change of lane waits for
+a hop to finish (seven slowed runs clean; the shipped version popped in one of three). And in scene 5
+on a landscape phone the first branch of the climb lay under a chapter star for ten frames while the
+camera left the ground shot; it is now offered once it is in the picture.
+
 **Still unverified:** the sound by ear; any real phone or tablet (the iPhone's silent switch, real
 two-hand touch, frame rate on a slow device); a real print dialog.

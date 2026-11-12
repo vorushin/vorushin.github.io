@@ -523,6 +523,21 @@ export default class Library extends Street {
       onLand: (q) => { if (q.kind === 'branch') this.leaves(q.x, q.y - 4, 3, ['#5cc94a', '#27a035']); if (q === this.pHam) { this.kitOnHam = true; this.audio.sfx.thump(); } }
     });
     this.focusY = null;
+    // The first branch is offered once the climb framing has it in the picture. For a moment after the camera
+    // leaves the ground shot it lies under the star bar, where a very quick tap would hit a chapter star instead.
+    this.leap.enabled = false;
+    await this.untilSeen(this.pA1.x, this.pA1.y - 14);
+    this.leap.enabled = true;
+  }
+  // Wait until a world point is inside the free part of the screen by a margin (30 px), or 2.5 s at most:
+  // the story never waits for a camera.
+  untilSeen(wx, wy) {
+    const v = this.view, t0 = this.t;
+    return this.until(() => {
+      if (this.t - t0 > 2.5) return true;
+      const F = v.freeRect(), x = v.sx(wx), y = v.sy(wy);
+      return x > F.l + 30 && x < F.r - 30 && y > F.t + 30 && y < F.b - 30;
+    });
   }
 
   // the hammock throws the cats up into the crown

@@ -220,7 +220,7 @@ export default class Garden extends Street {
       await this.wait(0.5);
       for (const f of this.folk) { f.talk = 1.6; f.cat.dir = 1; f.cat.look = this.headOf(this.papa); this.wave(f.cat, 1.3); await this.wait(0.25); }
     });
-    this.spawn(async () => { await this.wait(1.2); for (const c of [this.papa, this.kit]) this.spawn(() => this.tween(c, { y: 0 }, 1.4, ease.inOutSine)); });   // past the houses, back onto the road
+    this.spawn(async () => { await this.wait(1.2); for (const c of [this.papa, this.kit]) this.spawn(() => this.yTo(c, 0, 1.4, ease.inOutSine)); });   // past the houses, back onto the road
     await Promise.all([this.say(2), this.travel(X.gate - 124)]);
     this.camPhase = 'gate';
     this.papa.look = { x: X.gate, y: -176 }; this.kit.look = { x: X.gate, y: -150 };   // what does the sign say?
@@ -301,11 +301,13 @@ export default class Garden extends Street {
     // watches the tales ripen and fly in; Papa alone goes from tale to tale (passing behind it, so nobody has to
     // change sides) — keepApart leaves a minding kitten alone
     const MIND = this.basket.x - 44;
+    const mindTok = this._mindTok = (this._mindTok || 0) + 1;
     this.spawn(async () => {
       await this.wait(0.45);
       await this.goTo(this.kit, MIND, TROT);
+      if (this._mindTok !== mindTok || this.phase !== 'pick' && this.picked >= 5) return;
       const K = this.kit; K._mind = true; K.dir = 1; K.mode = 'sit';
-      await this.tween(K, { y: K.y + 10 }, 0.3, ease.outQuad);
+      await this.yTo(K, 10, 0.3, ease.outQuad);                              // (its place by the basket: 10 nearer to us)
     });
     await Promise.all([this.say(5), this.goTo(this.papa, MIND - 72, TROT)]);   // (his first place: a talking distance from the kitten's)
     this.audio.sfx.knock();
@@ -331,7 +333,7 @@ export default class Garden extends Street {
       if (f.state !== 'picked') { f.state = 'white'; await this.tween(f, { gold: 0 }, 0.5); } else await this.wait(0.55);
     }
     this.cur = null; this.phase = '';
-    { const K = this.kit; await this.tween(K, { y: K.y - 10 }, 0.3, ease.inOutQuad); K._mind = false; K.mode = 'upright'; }   // (the kitten gets up from its place)
+    { const K = this.kit; this._mindTok++; if (K._ytw) await this.until(() => !K._ytw); await this.yTo(K, 0, 0.3, ease.inOutQuad); K._mind = false; K.mode = 'upright'; }   // (the kitten gets up from its place, back onto the road)
     await this.wait(0.5);
     await this.goTo(this.papa, this.basket.x + 46, TROT);
     this.papa.dir = -1; this.papa.look = this.kit.look = { x: this.basket.x, y: -30 };
@@ -728,7 +730,7 @@ export default class Garden extends Street {
     await this.goTo(K, papaX + lead * 56, STROLL);
   }
   jump(cat, x, y, o) { cat._go = null; cat.walking = 0; cat.leapTo(x, y, o); return this.until(() => !cat.jump); }
-  bounce(cat) { if (cat.jump || cat._bn || cat._go || cat._hop || (cat === this.kit && this.papa._go && !cat._mind)) return; cat._bn = true; this.spawn(async () => { const y = cat.y; try { await this.tween(cat, { y: y - 12 }, 0.13, ease.outQuad); await this.tween(cat, { y }, 0.17, ease.inQuad); } finally { cat._bn = false; } }); }
+  bounce(cat) { if (cat.jump || cat._bn || cat._go || cat._hop || cat._ytw || (cat === this.kit && this.papa._go && !cat._mind)) return; cat._bn = true; this.spawn(async () => { const y = cat.y; try { await this.tween(cat, { y: y - 12 }, 0.13, ease.outQuad); await this.tween(cat, { y }, 0.17, ease.inQuad); } finally { cat._bn = false; } }); }
   bubble(cat, icon) { this.says.push({ cat, icon, k: 0, life: 2.5 }); }
   // a raised paw (upright cats), lowered again after `dur` seconds
   wave(cat, dur) {
@@ -792,7 +794,7 @@ export default class Garden extends Street {
     if (Math.abs(P.y - K.y) > 30) return;                                   // (one of them up in a tree)
     const dx = K.x - P.x, d = Math.abs(dx);
     if (!(P._go || K._go)) {                                                // both standing: never one inside the other
-      if (d < 26 * P.size + 26 * K.size && !K._bn && (P.mode === 'upright' || P.mode === 'stand') && K.mode !== 'curl') this.hopRound(K, Math.sign(dx) || -P.dir, P.dir);
+      if (d < 26 * P.size + 26 * K.size && !K._bn && !K._ytw && (P.mode === 'upright' || P.mode === 'stand') && K.mode !== 'curl') this.hopRound(K, Math.sign(dx) || -P.dir, P.dir);
       return;
     }
     let Dc = 26 * P.size + 26 * K.size + 46;
@@ -801,12 +803,15 @@ export default class Garden extends Street {
     const dP = P._go ? Math.sign(P._go.x - P.x) : 0, sideK = Math.sign(dx) || -(dP || 1), pT = P._go ? P._go.x : P.x;
     // which side of Papa the kitten belongs on: the side of its own goal (or, standing in his way, behind him)
     const want = K._go ? (Math.sign(K._go.x - pT) || sideK) : (dP ? (sideK === dP ? -dP : sideK) : sideK);
-    if (want !== sideK) { if (!K._bn) this.hopRound(K, want, dP || want); return; }   // it has to change sides: a hop round him
+    if (want !== sideK) { if (!K._bn && !K._ytw) this.hopRound(K, want, dP || want); return; }   // it has to change sides: a hop round him
     if (dP && sideK === dP) { K.x += Math.max(0, (P.x - pp) * dP) * dP + dP * Math.min(3, Dc - d); return; }   // it leads: it keeps (and makes) its lead
     if (d < Math.abs(pk - P.x)) K.x = pk;                                   // it follows: it does not come any closer
   }
   // the kitten sets off after Papa a moment later, so that a gap opens between them first
   trail(K, x, speed) { const tok = (K._fw || 0) + 1; K._fw = tok; this.spawn(async () => { await this.wait(0.45); if (K._fw === tok) this.stroll(K, x, speed); }); }
+  // a change of height (lanes, sitting down by the basket) that nothing else may move at the same time: a hop
+  // waits for it (one owner of the kitten's position at any time)
+  async yTo(c, y, dur, fn) { if (c._hop) await this.until(() => !c._hop); c._ytw = (c._ytw || 0) + 1; try { await this.tween(c, { y }, dur, fn); } finally { c._ytw--; } }
   // a small hop round Papa through the nearer lane (the kitten stays on its feet, upright or not)
   hopRound(K, side, face) {
     K._hop = true; K.walking = 0; K.wake();
@@ -822,11 +827,12 @@ export default class Garden extends Street {
         this.audio.sfx.hop(this.pan(x0));
         await this.frames((dt, el) => {
           const u = clamp01(el / dur), e = ease.inOutSine(u), x1 = this.papa.x + side * gap();     // (the spot moves on with Papa)
-          K.x = lerp(x0, Math.abs(x1 - x) < 60 ? x1 : x, e); const o = Math.sin(Math.PI * u) * 6 - Math.sin(Math.PI * u) * (R ? 8 : 26); K.y += o - off; off = o;   // …and a real arc, about 20 up, through the nearer lane
+          K.x = lerp(x0, x1, e);                                              // (always the live spot: no switch between two targets on a long frame)
+          const o = Math.sin(Math.PI * u) * 6 - Math.sin(Math.PI * u) * (R ? 8 : 26); K.y += o - off; off = o;   // …and a real arc, about 20 up, through the nearer lane
           return u >= 1;
         });
         K.sq.v += 3;
-      } finally { K.y -= off; off = 0; K._hop = false; K.dir = face; }
+      } finally { K.y -= off; off = 0; K._hop = false; K.dir = face; if (K._go) K._go.sp = 0; }   // (whatever walk comes next starts from here, from rest)
     });
   }
   // the town cats step aside if one of ours is going to stand where they are (to a place free of everybody)
